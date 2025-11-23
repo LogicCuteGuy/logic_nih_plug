@@ -23,6 +23,7 @@ quickly get started with NIH-plug.
   - [Building](#building)
   - [Plugin formats](#plugin-formats)
   - [Example plugins](#example-plugins)
+- [JUCE Ported Modules](#juce-ported-modules)
 - [Licensing](#licensing)
 
 ## Plugins
@@ -182,12 +183,23 @@ cargo xtask bundle gain --release
 
 ### Plugin formats
 
-NIH-plug can currently export VST3 and
-[CLAP](https://github.com/free-audio/clap) plugins. Exporting a specific plugin
-format for a plugin is as simple as calling the `nih_export_<format>!(Foo);`
-macro. The `cargo xtask bundle` command will detect which plugin formats your
-plugin supports and create the appropriate bundles accordingly, even when cross
-compiling.
+NIH-plug can export plugins in multiple formats:
+
+- **VST3** - Steinberg's modern plugin format (built-in)
+- **CLAP** - Free Audio's modern plugin format (built-in)
+- **VST2** - Legacy VST format (optional, deprecated)
+- **AU** - Apple's Audio Units for macOS (optional)
+- **AUv3** - Modern Audio Units for iOS/macOS (optional)
+- **LV2** - Open-source format for Linux (optional)
+- **AAX** - Avid's format for Pro Tools (optional, requires SDK)
+
+Exporting a specific plugin format for a plugin is as simple as calling the
+`nih_export_<format>!(Foo);` macro. The `cargo xtask bundle` command will detect
+which plugin formats your plugin supports and create the appropriate bundles
+accordingly, even when cross compiling.
+
+For detailed information on using these formats, see the
+[Multi-Format Export Guide](MULTI_FORMAT_EXPORT.md).
 
 ### Example plugins
 
@@ -222,6 +234,41 @@ examples.
   compositional `Buffer` interfaces.
 - [**sysex**](plugins/examples/sysex) is a simple example of how to send and
   receive SysEx messages by defining custom message types.
+
+## JUCE Ported Modules
+
+NIH-plug includes pure Rust implementations of several JUCE modules, providing
+DSP algorithms, audio file I/O, data structures, graphics, GUI components, and more
+without any C++ dependencies. These modules are designed to integrate seamlessly
+with nih-plug while maintaining compatibility with JUCE's design patterns.
+
+**Available Modules:**
+- `nih_plug_dsp` - Digital signal processing (filters, oscillators, envelopes, convolution)
+- `nih_plug_audio_formats` - Audio file I/O (WAV, AIFF, FLAC, OGG)
+- `nih_plug_data` - Data structures (ValueTree, UndoManager)
+- `nih_plug_graphics` - 2D graphics primitives
+- `nih_plug_gui` - GUI components and layout
+- `nih_plug_osc` - Open Sound Control networking
+- `nih_plug_crypto` - Cryptography utilities
+- `nih_plug_animation` - Animation and easing functions
+- `nih_plug_midi_ci` - MIDI Capability Inquiry (MIDI 2.0)
+
+**Documentation:**
+- 📚 [Documentation Index](DOCUMENTATION_INDEX.md) - **Complete documentation guide**
+- 🚀 [Quick Start Guide](QUICK_START.md) - Get started in 5 minutes
+- 📖 [Module Overview](README_PORTED_MODULES.md) - Detailed information about each module
+- 🔄 [Migration Guide](MIGRATION_GUIDE.md) - Migrating from JUCE C++ to Rust
+- 📋 [API Reference](API_REFERENCE.md) - Comprehensive API documentation
+- 💻 Full API docs: `cargo doc --open --workspace`
+
+**Quick Example:**
+```rust
+use nih_plug_dsp::filters::IIRFilter;
+
+let mut filter = IIRFilter::new();
+filter.set_coefficients(&[1.0, 0.5], &[1.0, -0.5])?;
+filter.process(&input, &mut output);
+```
 
 ## Licensing
 

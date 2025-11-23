@@ -1,0 +1,25 @@
+[package]
+name = "nih_plug_midi_ci"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["midi", "midi-ci", "midi2"]
+description = "MIDI Capability Inquiry (MIDI-CI) support ported from JUCE for nih-plug"
+repository = "https://github.com/robbert-vdh/nih-plug"
+
+[features]
+default = ["discovery", "profiles", "properties"]
+discovery = []
+profiles = []
+properties = []
+protocol = []
+full = ["discovery", "profiles", "properties", "protocol"]
+
+[dependencies]
+thiserror = "1.0"
+
+[dev-dependencies]
+proptest = "1.4"

@@ -1,0 +1,33 @@
+[package]
+name = "nih_plug_dsp"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["audio", "dsp", "plugin"]
+description = "Digital signal processing algorithms ported from JUCE for nih-plug"
+repository = "https://github.com/robbert-vdh/nih-plug"
+
+[features]
+default = ["filters", "oscillators"]
+filters = []
+oscillators = []
+convolution = ["dep:rustfft"]
+envelopes = []
+smoothing = []
+full = ["filters", "oscillators", "convolution", "envelopes", "smoothing"]
+
+[dependencies]
+nih_plug = { path = "..", default-features = false }
+thiserror = "1.0"
+rustfft = { version = "6.0", optional = true }
+
+[dev-dependencies]
+proptest = "1.4"
+criterion = "0.5"
+
+[[bench]]
+name = "dsp_benchmarks"
+harness = false

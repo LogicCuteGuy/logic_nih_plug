@@ -1,0 +1,13 @@
+[package]
+name = "juce_dsp_filter"
+version = "0.1.0"
+edition = "2021"
+authors = ["NIH-plug Contributors"]
+license = "ISC"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+nih_plug = { path = "../../../" }
+nih_plug_dsp = { path = "../../../nih_plug_dsp", features = ["filters", "oscillators", "smoothing"] }

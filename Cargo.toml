@@ -19,6 +19,17 @@ members = [
   "nih_plug_vizia",
   "nih_plug_xtask",
 
+  # JUCE module ports
+  "nih_plug_dsp",
+  "nih_plug_audio_formats",
+  "nih_plug_data",
+  "nih_plug_graphics",
+  "nih_plug_gui",
+  "nih_plug_osc",
+  "nih_plug_crypto",
+  "nih_plug_animation",
+  "nih_plug_midi_ci",
+
   "cargo_nih_plug",
   "xtask",
 
@@ -29,11 +40,20 @@ members = [
   "plugins/examples/gain_gui_egui",
   "plugins/examples/gain_gui_iced",
   "plugins/examples/gain_gui_vizia",
+  "plugins/examples/gain_vst2",
+  "plugins/examples/gain_au",
+  "plugins/examples/gain_auv3",
+  "plugins/examples/gain_lv2",
+  "plugins/examples/gain_aax",
+  "plugins/examples/gain_multi_format",
   "plugins/examples/midi_inverter",
   "plugins/examples/poly_mod_synth",
   "plugins/examples/sine",
   "plugins/examples/stft",
   "plugins/examples/sysex",
+  "plugins/examples/juce_dsp_filter",
+  "plugins/examples/juce_gui_demo",
+  "plugins/examples/juce_multi_module",
 
   "plugins/soft_vacuum",
   "plugins/buffr_glitch",
@@ -45,6 +65,12 @@ members = [
   "plugins/safety_limiter",
   "plugins/spectral_compressor",
 ]
+
+[workspace.dependencies]
+# Shared dependencies for JUCE module ports
+thiserror = "1.0"
+proptest = "1.4"
+criterion = "0.5"
 
 [features]
 default = ["vst3"]
@@ -63,6 +89,16 @@ standalone = ["dep:baseview", "dep:clap", "dep:cpal", "dep:jack", "dep:midir", "
 # wrapper you might otherwise still include a couple (unused) symbols from the
 # `vst3-sys` crate.
 vst3 = ["dep:vst3-sys"]
+# Enables the `nih_export_vst2!()` macro for VST2 plugin export
+vst2 = ["dep:vst2-sys"]
+# Enables the `nih_export_au!()` macro for Audio Units plugin export (macOS only)
+au = ["dep:coreaudio-sys"]
+# Enables the `nih_export_auv3!()` macro for Audio Units v3 plugin export (macOS/iOS only)
+auv3 = ["au", "dep:coreaudio-sys"]
+# Enables the `nih_export_lv2!()` macro for LV2 plugin export
+lv2 = ["dep:lv2-sys"]
+# Enables the `nih_export_aax!()` macro for AAX plugin export (requires AAX SDK)
+aax = []
 # Add adapters to the Buffer object for reading the channel data to and from
 # `std::simd` vectors. Requires a nightly compiler.
 simd = []
@@ -114,11 +150,18 @@ rtrb = { version = "0.2.2", optional = true }
 # Used for the `vst3` feature
 vst3-sys = { git = "https://github.com/robbert-vdh/vst3-sys.git", branch = "fix/drop-box-from-raw", optional = true }
 
+# Used for the `vst2` feature
+vst2-sys = { version = "0.2", optional = true }
+
+# Used for the `lv2` feature
+lv2-sys = { version = "2.0", optional = true }
+
 # Used for the `zstd` feature
 zstd = { version = "0.12.3", optional = true }
 
 [dev-dependencies]
 approx = "0.5.1"
+proptest = "1.4"
 
 [target.'cfg(all(target_family = "unix", not(target_os = "macos")))'.dependencies]
 libc = "0.2.124"
@@ -126,6 +169,8 @@ libc = "0.2.124"
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"
 core-foundation = "0.9.3"
+# Used for the `au` and `auv3` features
+coreaudio-sys = { version = "0.2", optional = true }
 
 [target.'cfg(target_os = "windows")'.dependencies.windows]
 version = "0.44"

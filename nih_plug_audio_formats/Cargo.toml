@@ -1,0 +1,33 @@
+[package]
+name = "nih_plug_audio_formats"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["audio", "wav", "aiff", "flac", "ogg"]
+description = "Audio file format support ported from JUCE for nih-plug"
+repository = "https://github.com/robbert-vdh/nih-plug"
+
+[features]
+default = ["wav", "aiff"]
+wav = ["dep:hound"]
+aiff = []
+flac = ["dep:claxon"]
+ogg = ["dep:lewton"]
+full = ["wav", "aiff", "flac", "ogg"]
+
+[dependencies]
+thiserror = "1.0"
+hound = { version = "3.5", optional = true }
+claxon = { version = "0.4", optional = true }
+lewton = { version = "0.10", optional = true }
+
+[dev-dependencies]
+proptest = "1.4"
+criterion = "0.5"
+
+[[bench]]
+name = "audio_io_benchmarks"
+harness = false

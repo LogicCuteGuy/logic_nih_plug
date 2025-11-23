@@ -426,7 +426,18 @@ fn bundle_plugin(
         .with_context(|| format!("Could not parse '{}'", first_lib_path.display()))?;
     let bundle_vst3 = symbols::exported(first_lib_path, "GetPluginFactory")
         .with_context(|| format!("Could not parse '{}'", first_lib_path.display()))?;
-    let bundled_plugin = bundle_clap || bundle_vst2 || bundle_vst3;
+    
+    // Detect new plugin formats
+    let bundle_au = symbols::exported(first_lib_path, "AudioComponentFactoryFunction")
+        .with_context(|| format!("Could not parse '{}'", first_lib_path.display()))?;
+    let bundle_auv3 = symbols::exported(first_lib_path, "create_auv3_instance")
+        .with_context(|| format!("Could not parse '{}'", first_lib_path.display()))?;
+    let bundle_lv2 = symbols::exported(first_lib_path, "lv2_descriptor")
+        .with_context(|| format!("Could not parse '{}'", first_lib_path.display()))?;
+    let bundle_aax = symbols::exported(first_lib_path, "AAX_GetPlugInDescriptor")
+        .with_context(|| format!("Could not parse '{}'", first_lib_path.display()))?;
+    
+    let bundled_plugin = bundle_clap || bundle_vst2 || bundle_vst3 || bundle_au || bundle_auv3 || bundle_lv2 || bundle_aax;
 
     if bundle_clap {
         let clap_bundle_library_name = clap_bundle_library_name(&bundle_name, compilation_target);
@@ -483,6 +494,121 @@ fn bundle_plugin(
         maybe_codesign(&vst2_bundle_home, compilation_target);
 
         eprintln!("Created a VST2 bundle at '{}'", vst2_bundle_home.display());
+    }
+    if bundle_au {
+        let au_bundle_library_name = au_bundle_library_name(&bundle_name, compilation_target);
+        let au_lib_path = bundle_home_dir.join(&au_bundle_library_name);
+
+        fs::create_dir_all(au_lib_path.parent().unwrap())
+            .context("Could not create AU bundle directory")?;
+        util::reflink_or_combine(lib_paths, &au_lib_path, compilation_target)
+            .context("Could not create AU bundle")?;
+
+        let au_bundle_home = bundle_home_dir.join(
+            Path::new(&au_bundle_library_name)
+                .components()
+                .next()
+                .expect("Malformed AU library path"),
+        );
+        maybe_create_macos_bundle_metadata(
+            package,
+            &bundle_name,
+            &au_bundle_home,
+            compilation_target,
+            BundleType::Plugin,
+        )?;
+        maybe_codesign(&au_bundle_home, compilation_target);
+
+        eprintln!("Created an AU bundle at '{}'", au_bundle_home.display());
+    }
+    if bundle_auv3 {
+        let auv3_bundle_library_name = auv3_bundle_library_name(&bundle_name, compilation_target);
+        let auv3_lib_path = bundle_home_dir.join(&auv3_bundle_library_name);
+
+        fs::create_dir_all(auv3_lib_path.parent().unwrap())
+            .context("Could not create AUv3 bundle directory")?;
+        util::reflink_or_combine(lib_paths, &auv3_lib_path, compilation_target)
+            .context("Could not create AUv3 bundle")?;
+
+        let auv3_bundle_home = bundle_home_dir.join(
+            Path::new(&auv3_bundle_library_name)
+                .components()
+                .next()
+                .expect("Malformed AUv3 library path"),
+        );
+        maybe_create_macos_bundle_metadata(
+            package,
+            &bundle_name,
+            &auv3_bundle_home,
+            compilation_target,
+            BundleType::Plugin,
+        )?;
+        maybe_codesign(&auv3_bundle_home, compilation_target);
+
+        eprintln!("Created an AUv3 bundle at '{}'", auv3_bundle_home.display());
+    }
+    if bundle_lv2 {
+        let lv2_bundle_library_name = lv2_bundle_library_name(&bundle_name, compilation_target);
+        let lv2_lib_path = bundle_home_dir.join(&lv2_bundle_library_name);
+
+        fs::create_dir_all(lv2_lib_path.parent().unwrap())
+            .context("Could not create LV2 bundle directory")?;
+        util::reflink_or_combine(lib_paths, &lv2_lib_path, compilation_target)
+            .context("Could not create LV2 bundle")?;
+
+        // LV2 bundles need manifest files
+        let lv2_bundle_home = bundle_home_dir.join(
+            Path::new(&lv2_bundle_library_name)
+                .components()
+                .next()
+                .expect("Malformed LV2 library path"),
+        );
+        
+        // Generate manifest.ttl and plugin.ttl files
+        // Note: In a real implementation, these would be generated from plugin metadata
+        // For now, we'll create placeholder files
+        let manifest_path = lv2_bundle_home.join("manifest.ttl");
+        let plugin_ttl_path = lv2_bundle_home.join(&format!("{}.ttl", package));
+        
+        fs::write(&manifest_path, generate_lv2_manifest_placeholder(package, &bundle_name))
+            .context("Could not write LV2 manifest.ttl")?;
+        fs::write(&plugin_ttl_path, generate_lv2_plugin_ttl_placeholder(package, &bundle_name))
+            .context("Could not write LV2 plugin.ttl")?;
+
+        eprintln!("Created an LV2 bundle at '{}'", lv2_bundle_home.display());
+    }
+    if bundle_aax {
+        let aax_bundle_library_name = aax_bundle_library_name(&bundle_name, compilation_target);
+        let aax_lib_path = bundle_home_dir.join(&aax_bundle_library_name);
+
+        fs::create_dir_all(aax_lib_path.parent().unwrap())
+            .context("Could not create AAX bundle directory")?;
+        util::reflink_or_combine(lib_paths, &aax_lib_path, compilation_target)
+            .context("Could not create AAX bundle")?;
+
+        let aax_bundle_home = bundle_home_dir.join(
+            Path::new(&aax_bundle_library_name)
+                .components()
+                .next()
+                .expect("Malformed AAX library path"),
+        );
+        
+        // AAX bundles on macOS need Info.plist
+        if matches!(compilation_target, CompilationTarget::MacOS(_) | CompilationTarget::MacOSUniversal) {
+            maybe_create_macos_bundle_metadata(
+                package,
+                &bundle_name,
+                &aax_bundle_home,
+                compilation_target,
+                BundleType::Plugin,
+            )?;
+        }
+        
+        // AAX plugins require code signing
+        maybe_codesign(&aax_bundle_home, compilation_target);
+
+        eprintln!("Created an AAX bundle at '{}'", aax_bundle_home.display());
+        eprintln!("WARNING: AAX plugins require signing with an Avid developer certificate to work in Pro Tools");
     }
     if bundle_vst3 {
         let vst3_lib_path =
@@ -725,6 +851,106 @@ fn vst3_bundle_library_name(package: &str, target: CompilationTarget) -> String 
             panic!("riscv64 are not supported by windows currently!")
         }
     }
+}
+
+/// The full path to the library file inside of an AU bundle.
+/// AU plugins are macOS-only and use the .component bundle format.
+fn au_bundle_library_name(package: &str, target: CompilationTarget) -> String {
+    match target {
+        CompilationTarget::MacOS(_) | CompilationTarget::MacOSUniversal => {
+            format!("{package}.component/Contents/MacOS/{package}")
+        }
+        _ => {
+            // AU is macOS-only, but we'll provide a fallback for completeness
+            format!("{package}.component")
+        }
+    }
+}
+
+/// The full path to the library file inside of an AUv3 app extension bundle.
+/// AUv3 plugins are macOS/iOS-only and use the .appex bundle format.
+fn auv3_bundle_library_name(package: &str, target: CompilationTarget) -> String {
+    match target {
+        CompilationTarget::MacOS(_) | CompilationTarget::MacOSUniversal => {
+            format!("{package}.appex/Contents/MacOS/{package}")
+        }
+        _ => {
+            // AUv3 is macOS/iOS-only, but we'll provide a fallback for completeness
+            format!("{package}.appex")
+        }
+    }
+}
+
+/// The full path to the library file inside of an LV2 bundle.
+/// LV2 bundles use the .lv2 directory format on all platforms.
+fn lv2_bundle_library_name(package: &str, target: CompilationTarget) -> String {
+    match target {
+        CompilationTarget::Linux(_) => {
+            format!("{package}.lv2/{package}.so")
+        }
+        CompilationTarget::MacOS(_) | CompilationTarget::MacOSUniversal => {
+            format!("{package}.lv2/{package}.dylib")
+        }
+        CompilationTarget::Windows(_) => {
+            format!("{package}.lv2/{package}.dll")
+        }
+    }
+}
+
+/// The full path to the library file inside of an AAX bundle.
+/// AAX plugins use the .aaxplugin bundle format on macOS and .aaxplugin directory on Windows.
+fn aax_bundle_library_name(package: &str, target: CompilationTarget) -> String {
+    match target {
+        CompilationTarget::MacOS(_) | CompilationTarget::MacOSUniversal => {
+            format!("{package}.aaxplugin/Contents/MacOS/{package}")
+        }
+        CompilationTarget::Windows(Architecture::X86) => {
+            format!("{package}.aaxplugin/Contents/Win32/{package}.aaxplugin")
+        }
+        CompilationTarget::Windows(Architecture::X86_64) => {
+            format!("{package}.aaxplugin/Contents/x64/{package}.aaxplugin")
+        }
+        CompilationTarget::Windows(Architecture::AArch64) => {
+            format!("{package}.aaxplugin/Contents/ARM64/{package}.aaxplugin")
+        }
+        _ => {
+            // AAX is primarily macOS/Windows, but we'll provide a fallback
+            format!("{package}.aaxplugin")
+        }
+    }
+}
+
+/// Generate a placeholder LV2 manifest.ttl file.
+/// In a real implementation, this would be generated from plugin metadata.
+fn generate_lv2_manifest_placeholder(package: &str, _display_name: &str) -> String {
+    format!(
+        r#"@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/plugins/{package}>
+    a lv2:Plugin ;
+    lv2:binary <{package}.so> , <{package}.dylib> , <{package}.dll> ;
+    rdfs:seeAlso <{package}.ttl> .
+"#
+    )
+}
+
+/// Generate a placeholder LV2 plugin.ttl file.
+/// In a real implementation, this would be generated from plugin metadata.
+fn generate_lv2_plugin_ttl_placeholder(package: &str, display_name: &str) -> String {
+    format!(
+        r#"@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+
+<http://example.org/plugins/{package}>
+    a lv2:Plugin ;
+    doap:name "{display_name}" ;
+    doap:license <http://opensource.org/licenses/isc> ;
+    lv2:project <http://example.org/> ;
+    lv2:port [] .
+"#
+    )
 }
 
 /// If compiling for macOS, create all of the bundl-y stuff Steinberg and Apple require you to have.

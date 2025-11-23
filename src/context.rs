@@ -16,6 +16,16 @@ pub enum PluginApi {
     Clap,
     Standalone,
     Vst3,
+    #[cfg(feature = "vst2")]
+    Vst2,
+    #[cfg(all(feature = "au", target_os = "macos"))]
+    Au,
+    #[cfg(all(feature = "auv3", target_os = "macos"))]
+    Auv3,
+    #[cfg(feature = "lv2")]
+    Lv2,
+    #[cfg(feature = "aax")]
+    Aax,
 }
 
 impl Display for PluginApi {
@@ -24,6 +34,16 @@ impl Display for PluginApi {
             PluginApi::Clap => write!(f, "CLAP"),
             PluginApi::Standalone => write!(f, "standalone"),
             PluginApi::Vst3 => write!(f, "VST3"),
+            #[cfg(feature = "vst2")]
+            PluginApi::Vst2 => write!(f, "VST2"),
+            #[cfg(all(feature = "au", target_os = "macos"))]
+            PluginApi::Au => write!(f, "AU"),
+            #[cfg(all(feature = "auv3", target_os = "macos"))]
+            PluginApi::Auv3 => write!(f, "AUv3"),
+            #[cfg(feature = "lv2")]
+            PluginApi::Lv2 => write!(f, "LV2"),
+            #[cfg(feature = "aax")]
+            PluginApi::Aax => write!(f, "AAX"),
         }
     }
 }

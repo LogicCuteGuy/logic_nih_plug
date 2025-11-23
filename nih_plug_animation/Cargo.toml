@@ -1,0 +1,23 @@
+[package]
+name = "nih_plug_animation"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["animation", "easing", "ui"]
+description = "Animation utilities ported from JUCE for nih-plug"
+repository = "https://github.com/robbert-vdh/nih-plug"
+
+[features]
+default = ["easing", "chaining"]
+easing = []
+chaining = []
+full = ["easing", "chaining"]
+
+[dependencies]
+thiserror = "1.0"
+
+[dev-dependencies]
+proptest = "1.4"

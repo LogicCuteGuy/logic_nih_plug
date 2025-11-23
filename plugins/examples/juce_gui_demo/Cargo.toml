@@ -1,0 +1,16 @@
+[package]
+name = "juce_gui_demo"
+version = "0.1.0"
+edition = "2021"
+authors = ["NIH-plug Contributors"]
+license = "ISC"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+nih_plug = { path = "../../../" }
+nih_plug_gui = { path = "../../../nih_plug_gui", features = ["components", "softbuffer-editor", "gl-editor", "graphics", "text"] }
+nih_plug_graphics = { path = "../../../nih_plug_graphics" }
+crossbeam = "0.8"
+glow = "0.16"

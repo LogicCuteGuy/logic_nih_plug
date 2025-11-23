@@ -1,0 +1,30 @@
+[package]
+name = "nih_plug_graphics"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["graphics", "2d", "drawing"]
+description = "2D graphics primitives ported from JUCE for nih-plug"
+repository = "https://github.com/robbert-vdh/nih-plug"
+
+[features]
+default = ["primitives"]
+primitives = []
+images = ["dep:image"]
+text = ["dep:fontdue"]
+full = ["primitives", "images", "text"]
+
+[dependencies]
+thiserror = "1.0"
+image = { version = "0.24", optional = true }
+fontdue = { version = "0.7", optional = true }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "graphics_benchmarks"
+harness = false

@@ -1,0 +1,17 @@
+[package]
+name = "juce_multi_module"
+version = "0.1.0"
+edition = "2021"
+authors = ["NIH-plug Contributors"]
+license = "ISC"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+nih_plug = { path = "../../../" }
+nih_plug_dsp = { path = "../../../nih_plug_dsp", features = ["filters", "oscillators", "envelopes", "smoothing"] }
+nih_plug_data = { path = "../../../nih_plug_data" }
+nih_plug_audio_formats = { path = "../../../nih_plug_audio_formats" }
+nih_plug_animation = { path = "../../../nih_plug_animation" }
+nih_plug_crypto = { path = "../../../nih_plug_crypto" }
