@@ -14,3 +14,4 @@ nih_plug_gui = { path = "../../../nih_plug_gui", features = ["components", "soft
 nih_plug_graphics = { path = "../../../nih_plug_graphics" }
 crossbeam = "0.8"
 glow = "0.16"
+baseview = { git = "https://github.com/RustAudio/baseview.git", rev = "9a0b42c09d712777b2edb4c5e0cb6baf21e988f0", features = ["opengl"] }

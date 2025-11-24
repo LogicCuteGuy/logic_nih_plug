@@ -24,7 +24,8 @@ pub struct GlWindowBuilder {
     title: String,
     width: u32,
     height: u32,
-    draw: Option<Arc<Mutex<dyn FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static>>>,
+    // Draw callback plus optional event callback so callers can receive platform events
+    draw: Option<Arc<Mutex<DrawCallbacks>>>,
 }
 
 impl GlWindowBuilder {
@@ -35,7 +36,21 @@ impl GlWindowBuilder {
     pub fn draw<F>(mut self, f: F) -> Self
     where F: FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static
     {
-        self.draw = Some(Arc::new(Mutex::new(f)));
+        // Default event callback does nothing (ignored) — callers can later make use of
+        // `draw_with_event` if they want to handle events.
+        let cb = DrawCallbacks { draw: Box::new(f), event: Box::new(|_e| baseview::EventStatus::Ignored) };
+        self.draw = Some(Arc::new(Mutex::new(cb)));
+        self
+    }
+
+    /// Like `draw`, but also allows you to provide an event handler that receives
+    /// platform events (useful for mapping input into your UI state).
+    pub fn draw_with_event<F, E>(mut self, f: F, e: E) -> Self
+    where F: FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static,
+          E: FnMut(baseview::Event) -> baseview::EventStatus + Send + 'static
+    {
+        let cb = DrawCallbacks { draw: Box::new(f), event: Box::new(e) };
+        self.draw = Some(Arc::new(Mutex::new(cb)));
         self
     }
 
@@ -75,6 +90,43 @@ impl GlWindowBuilder {
         GlWindow { join_handle: Some(join_handle), should_close }
     }
 
+    /// Open a GL window embedded in a host-provided parent window.
+    ///
+    /// This will call `baseview::Window::open_parented` and return a `WindowHandle` that the
+    /// caller (host wrapper) can keep alive while the editor is open.
+    pub fn open_parented<P>(self, parent: &P) -> baseview::WindowHandle
+    where
+        P: raw_window_handle::HasRawWindowHandle,
+    {
+        let title = self.title.clone();
+        let width = self.width;
+        let height = self.height;
+        let draw = self.draw.expect("Missing draw callback");
+
+        let options = WindowOpenOptions {
+            title: title.clone(),
+            size: baseview::Size::new(width as f64, height as f64),
+            scale: WindowScalePolicy::SystemScaleFactor,
+            gl_config: Some(GlConfig::default()),
+        };
+
+        baseview::Window::open_parented(parent, options, move |window: &mut baseview::Window<'_>| {
+            // Create the same GL handler used for the standalone window. The handler will be
+            // driven by baseview inside the host window.
+            GlHandler { draw: draw.clone(), gl: Arc::new({
+                // We need to create a glow context from the platform loader. Use an approach
+                // similar to open() to get a loader, then build the glow::Context.
+                let gl_ctx = window.gl_context().expect("failed to get baseview gl context");
+                unsafe {
+                    gl_ctx.make_current();
+                    let ctx = glow::Context::from_loader_function(|s| gl_ctx.get_proc_address(s));
+                    gl_ctx.make_not_current();
+                    ctx
+                }
+            }), logical_width: width, logical_height: height, should_close: Arc::new(AtomicBool::new(false)), tex: None, program: None, vao: None, vbo: None }
+        })
+    }
+
     pub fn spawn<F>(title: impl Into<String>, width: u32, height: u32, f: F) -> GlWindow
     where F: FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static
     {
@@ -83,7 +135,7 @@ impl GlWindowBuilder {
 }
 
 struct GlHandler {
-    draw: Arc<Mutex<dyn FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static>>,
+    draw: Arc<Mutex<DrawCallbacks>>,
     gl: Arc<glow::Context>,
     logical_width: u32,
     logical_height: u32,
@@ -93,6 +145,12 @@ struct GlHandler {
     program: Option<glow::NativeProgram>,
     vao: Option<glow::NativeVertexArray>,
     vbo: Option<glow::NativeBuffer>,
+}
+
+/// Callbacks holder — contains both draw and event handlers.
+struct DrawCallbacks {
+    draw: Box<dyn FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static>,
+    event: Box<dyn FnMut(baseview::Event) -> baseview::EventStatus + Send + 'static>,
 }
 
 impl baseview::WindowHandler for GlHandler {
@@ -110,7 +168,7 @@ impl baseview::WindowHandler for GlHandler {
         };
 
         if let Ok(mut f) = self.draw.lock() {
-            (f)(&mut graphics, (self.logical_width, self.logical_height));
+            (f.draw)(&mut graphics, (self.logical_width, self.logical_height));
         }
 
         let gl_ctx = window.gl_context().expect("no gl ctx");
@@ -158,11 +216,14 @@ impl baseview::WindowHandler for GlHandler {
                 self.gl.delete_shader(frag);
                 self.program = Some(prog);
 
+                // Flip the V coordinate so that textures created from Graphics::as_bytes
+                // (which are top-to-bottom) map correctly into OpenGL's coordinate system
+                // without needing to reorder rows on the CPU.
                 let verts: [f32; 16] = [
-                    -1.0, -1.0, 0.0, 0.0,
-                    1.0, -1.0, 1.0, 0.0,
-                    1.0, 1.0, 1.0, 1.0,
-                    -1.0, 1.0, 0.0, 1.0,
+                    -1.0, -1.0, 0.0, 1.0,
+                    1.0, -1.0, 1.0, 1.0,
+                    1.0, 1.0, 1.0, 0.0,
+                    -1.0, 1.0, 0.0, 0.0,
                 ];
 
                 let vbo = self.gl.create_buffer().unwrap();
@@ -200,6 +261,16 @@ impl baseview::WindowHandler for GlHandler {
     }
 
     fn on_event(&mut self, _window: &mut baseview::Window, event: baseview::Event) -> baseview::EventStatus {
+        // First allow the user-provided event handler to process the event. If it returns
+        // a status other than Ignored we'll forward that to baseview. Otherwise we fall back
+        // to the default handling (resize updates, etc).
+        if let Ok(mut cb) = self.draw.lock() {
+            let status = (cb.event)(event.clone());
+            if status != baseview::EventStatus::Ignored {
+                return status;
+            }
+        }
+
         if let baseview::Event::Window(w) = event {
             if let baseview::WindowEvent::Resized(info) = w {
                 self.logical_width = info.logical_size().width.round() as u32;

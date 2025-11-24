@@ -3388,6 +3388,7 @@ dependencies = [
 name = "juce_gui_demo"
 version = "0.1.0"
 dependencies = [
+ "baseview 0.1.0 (git+https://github.com/RustAudio/baseview.git?rev=9a0b42c09d712777b2edb4c5e0cb6baf21e988f0)",
  "crossbeam",
  "glow 0.16.0",
  "nih_plug",

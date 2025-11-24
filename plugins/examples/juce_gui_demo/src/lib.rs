@@ -81,6 +81,10 @@ impl Plugin for JuceGuiDemo {
         self.params.clone()
     }
 
+    fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Editor>> {
+        Some(Box::new(self.make_editor()))
+    }
+
     fn process(
         &mut self,
         buffer: &mut Buffer,
@@ -117,60 +121,175 @@ struct JuceGuiEditor {
 }
 
 impl nih_plug::prelude::Editor for JuceGuiEditor {
-    fn spawn(&self, _parent: nih_plug::editor::ParentWindowHandle, _context: Arc<dyn nih_plug::prelude::GuiContext>) -> Box<dyn std::any::Any + Send> {
+    fn spawn(&self, _parent: nih_plug::editor::ParentWindowHandle, context: Arc<dyn nih_plug::prelude::GuiContext>) -> Box<dyn std::any::Any + Send> {
         // Spawn a simple softbuffer window and render a placeholder UI using nih_plug_graphics
         let params = Arc::clone(&self.params);
 
         // Try GL window first: draw into a Graphics buffer which is uploaded to GL every frame.
-        let window = nih_plug_gui::GlWindowBuilder::spawn("JUCE GUI Demo", 400, 300, move |graphics: &mut nih_plug_graphics::Graphics, (w, h)| {
-            use nih_plug_graphics::{Color, text::FontSettings, Font};
+        // Open a window parented inside the host's provided parent window. This will allow the
+        // plugin GUI to be embedded into the host (DAW) instead of creating a separate OS window.
+        // Create a small, sharable state object for the editor UI that's safe to send across
+        // threads. The actual control objects will be created each frame from that state since
+        // the control types in nih_plug_gui use non-Send Rc/RefCell internals.
+        use std::sync::Mutex as StdMutex;
+        use std::sync::Arc as StdArc;
 
-            // Clear background
-            graphics.set_color(Color::rgb(24, 24, 24));
-            graphics.clear();
+        #[derive(Debug, Clone)]
+        struct EditorState {
+            slider_value: f64, // normalized 0..1
+            // fixed layout bounds (in logical pixels)
+            slider_x: i32,
+            slider_y: i32,
+            slider_w: u32,
+            slider_h: u32,
+            btn_x: i32,
+            btn_y: i32,
+            btn_w: u32,
+            btn_h: u32,
+            dragging: bool,
+            last_mouse: (i32, i32),
+        }
 
-            // Title text (try to load the bundled test font)
-            if let Ok(font) = Font::from_bytes(
-                include_bytes!("../../../../nih_plug_graphics/tests/test_font.ttf"),
-                FontSettings::default(),
-            ) {
-                graphics.set_color(Color::rgb(220, 220, 220));
-                graphics.draw_text("JUCE GUI Demo", (w as i32) / 2, 30, &font, 24.0);
+        let state = StdArc::new(StdMutex::new(EditorState {
+            slider_value: params.gain.modulated_normalized_value() as f64,
+            slider_x: 50,
+            slider_y: 80,
+            slider_w: 300,
+            slider_h: 40,
+            btn_x: (400 / 2) as i32 - 50,
+            btn_y: 150,
+            btn_w: 100,
+            btn_h: 40,
+            dragging: false,
+            last_mouse: (0, 0),
+        }));
+
+        // Shared params for draw / event callbacks
+        let params_for_draw = Arc::clone(&params);
+        let params_for_event = Arc::clone(&params);
+
+        let state_for_draw = state.clone();
+        let state_for_event = state.clone();
+
+        // Provide both draw and event callbacks, so the editor becomes interactive.
+        let window = nih_plug_gui::GlWindowBuilder::new("JUCE GUI Demo", 400, 300).draw_with_event(
+            move |graphics: &mut nih_plug_graphics::Graphics, (w, h)| {
+                use nih_plug_graphics::{Color, text::FontSettings, Font};
+
+                // Pull current state copy (short-lived lock)
+                let snapshot = { state_for_draw.lock().unwrap().clone() };
+
+                // Clear background
+                graphics.set_color(Color::rgb(24, 24, 24));
+                graphics.clear();
+
+                // Title text (try to load the bundled test font)
+                if let Ok(font) = Font::from_bytes(
+                    include_bytes!("../../../../nih_plug_graphics/tests/test_font.ttf"),
+                    FontSettings::default(),
+                ) {
+                    graphics.set_color(Color::rgb(220, 220, 220));
+                    graphics.draw_text("JUCE GUI Demo", (w as i32) / 2, 30, &font, 24.0);
+                }
+
+                // Slider track
+                graphics.set_color(Color::rgb(150, 150, 150));
+                graphics.fill_rect(snapshot.slider_x, snapshot.slider_y, snapshot.slider_w, snapshot.slider_h);
+
+                // Draw slider thumb by materializing a temporary Slider control
+                let mut tmp_slider = Slider::new(SliderOrientation::Horizontal);
+                let _ = tmp_slider.set_range(0.0, 1.0);
+                let mut tmp_bounds = nih_plug_gui::components::Bounds::new(snapshot.slider_x, snapshot.slider_y, snapshot.slider_w, snapshot.slider_h);
+                let _ = tmp_slider.set_bounds(tmp_bounds);
+                tmp_slider.set_value(snapshot.slider_value);
+                tmp_slider.render(graphics).ok();
+
+                // Bypass button (rendered via a temporary Button)
+                graphics.set_color(Color::rgb(200, 200, 200));
+                let mut tmp_btn = Button::new("Bypass");
+                let _ = tmp_btn.set_bounds(nih_plug_gui::components::Bounds::new(snapshot.btn_x, snapshot.btn_y, snapshot.btn_w, snapshot.btn_h));
+                tmp_btn.set_button_state(if params_for_draw.bypass.value() { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
+                tmp_btn.render(graphics).ok();
+                // Button border will be drawn inside render
+
+            },
+            move |event| {
+                    use baseview::Event;
+
+                // Update internal state and convert events to parameter updates
+                    // Baseview's events use a separate Mouse variant with specific sub-variants.
+                    if let Event::Mouse(mouse_event) = event {
+                        match mouse_event {
+                            baseview::MouseEvent::CursorMoved { position, .. } => {
+                                let (x, y) = (position.x as i32, position.y as i32);
+                                let mut s = state_for_event.lock().unwrap();
+                                s.last_mouse = (x, y);
+                                if s.dragging {
+                                    // Convert x into normalized slider value
+                                    let rel = (x - s.slider_x) as f64 / (s.slider_w as f64);
+                                    let norm = rel.clamp(0.0, 1.0);
+                                    s.slider_value = norm;
+                                    // Update the plugin parameter (use ParamSetter for host automation)
+                                    let setter = nih_plug::prelude::ParamSetter::new(context.as_ref());
+                                    setter.set_parameter_normalized(&params_for_event.gain, norm as f32);
+                                }
+                            }
+                            baseview::MouseEvent::ButtonPressed { button, .. } => {
+                                if button == baseview::MouseButton::Left {
+                                    let mut s = state_for_event.lock().unwrap();
+                                    let (mx, my) = s.last_mouse;
+                                    // Check button hit
+                                    if mx >= s.btn_x && mx < s.btn_x + s.btn_w as i32 && my >= s.btn_y && my < s.btn_y + s.btn_h as i32 {
+                                        // toggle bypass
+                                        let new = !params_for_event.bypass.value();
+                                        let setter = nih_plug::prelude::ParamSetter::new(context.as_ref());
+                                        setter.set_parameter(&params_for_event.bypass, new);
+                                    }
+
+                                    // check slider hit -> start dragging
+                                    if mx >= s.slider_x && mx < s.slider_x + s.slider_w as i32 && my >= s.slider_y && my < s.slider_y + s.slider_h as i32 {
+                                        s.dragging = true;
+                                        // set immediate value
+                                        let rel = (mx - s.slider_x) as f64 / (s.slider_w as f64);
+                                        let norm = rel.clamp(0.0, 1.0);
+                                        s.slider_value = norm;
+                                        let setter = nih_plug::prelude::ParamSetter::new(context.as_ref());
+                                        setter.begin_set_parameter(&params_for_event.gain);
+                                        setter.set_parameter_normalized(&params_for_event.gain, norm as f32);
+                                    }
+                                }
+                            }
+                            baseview::MouseEvent::ButtonReleased { button, .. } => {
+                                if button == baseview::MouseButton::Left {
+                                    let mut s = state_for_event.lock().unwrap();
+                                    if s.dragging {
+                                        // finalize gesture
+                                        let setter = nih_plug::prelude::ParamSetter::new(context.as_ref());
+                                        setter.end_set_parameter(&params_for_event.gain);
+                                    }
+                                    s.dragging = false;
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+
+                // We return Ignored; the GL handler still handles the resize case locally.
+                baseview::EventStatus::Ignored
             }
-
-            // Slider track
-            graphics.set_color(Color::rgb(150, 150, 150));
-            let track_x = 50i32;
-            let track_y = 80i32;
-            let track_w = (w.saturating_sub(100)) as u32;
-            let track_h = 40u32;
-            graphics.fill_rect(track_x, track_y, track_w, track_h);
-
-            // Slider thumb (centered demo position)
-            graphics.set_color(Color::rgb(100, 100, 200));
-            let thumb_x = track_x + (track_w as i32 / 2) - 5;
-            let thumb_y = track_y + (track_h as i32 / 2) - 5;
-            graphics.fill_rect(thumb_x, thumb_y, 10u32, 10u32);
-
-            // Bypass button
-            graphics.set_color(Color::rgb(200, 200, 200));
-            let btn_x = (w as i32 / 2) - 50;
-            let btn_y = 150i32;
-            graphics.fill_rect(btn_x, btn_y, 100u32, 40u32);
-            // Button border
-            graphics.set_color(Color::rgb(0, 0, 0));
-            graphics.draw_line(btn_x, btn_y, btn_x + 100, btn_y);
-            graphics.draw_line(btn_x + 100, btn_y, btn_x + 100, btn_y + 40);
-            graphics.draw_line(btn_x + 100, btn_y + 40, btn_x, btn_y + 40);
-            graphics.draw_line(btn_x, btn_y + 40, btn_x, btn_y);
-        });
+        );
 
         // Keep window handle alive in returned handle object. We'll return an object that's
         // Send so the host wrapper can store it.
-        struct EditorHandle { window: nih_plug_gui::GlWindow }
+        struct EditorHandle { window: baseview::WindowHandle }
         unsafe impl Send for EditorHandle {}
 
-        Box::new(EditorHandle { window })
+        // Use the parent provided by the host so this editor gets embedded. If the host does not
+        // support parented windows then baseview will typically fail; falling back to a standalone
+        // window via `spawn` could be implemented here if desired.
+        let _window_handle = window.open_parented(&_parent);
+
+        Box::new(EditorHandle { window: _window_handle })
     }
 
     fn size(&self) -> (u32, u32) { (400, 300) }
