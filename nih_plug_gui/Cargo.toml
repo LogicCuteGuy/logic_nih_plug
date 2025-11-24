@@ -36,3 +36,8 @@ glow = { version = "0.16", optional = true }
 
 [dev-dependencies]
 proptest = "1.4"
+criterion = "0.5"
+
+[[bench]]
+name = "gui_benchmarks"
+harness = false

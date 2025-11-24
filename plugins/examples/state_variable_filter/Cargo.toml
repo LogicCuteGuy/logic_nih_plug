@@ -1,0 +1,20 @@
+[package]
+name = "state_variable_filter"
+version = "0.1.0"
+edition = "2021"
+authors = ["NIH-plug Contributors"]
+license = "ISC"
+
+description = "Example plugin demonstrating state variable filter with real-time frequency response visualization"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+nih_plug = { path = "../../../", features = ["standalone"] }
+nih_plug_dsp = { path = "../../../nih_plug_dsp", features = ["filters"] }
+nih_plug_gui = { path = "../../../nih_plug_gui", features = ["gl-editor"] }
+nih_plug_graphics = { path = "../../../nih_plug_graphics" }
+
+atomic_float = "0.1"
+crossbeam = "0.8"

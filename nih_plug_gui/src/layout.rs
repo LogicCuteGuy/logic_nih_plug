@@ -9,6 +9,7 @@
 //! to specific rules:
 //!
 //! - **FlexLayout**: Flexible box layout (horizontal or vertical)
+//! - **FlexBox**: CSS FlexBox-like layout with comprehensive features
 //! - **GridLayout**: Grid-based layout with rows and columns
 //! - **AbsoluteLayout**: Manual positioning with constraints
 //!
@@ -45,8 +46,15 @@
 //! layout.apply(&mut parent).unwrap();
 //! ```
 
+pub mod flexbox;
+
 use crate::components::{Bounds, Component};
 use crate::error::{GuiError, Result};
+
+pub use flexbox::{
+    AlignContent, AlignItems, AlignSelf, FlexBox, FlexDirection as FlexBoxDirection,
+    FlexItem, FlexWrap, JustifyContent, Margin, Rect,
+};
 
 /// Size constraint for a component.
 #[derive(Debug, Clone, Copy, PartialEq)]

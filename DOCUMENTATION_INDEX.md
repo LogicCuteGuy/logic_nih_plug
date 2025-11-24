@@ -43,9 +43,29 @@ Complete documentation for the JUCE modules ported to nih-plug.
    - Optimization guidelines
    - Profiling tools
 
+6. **[Benchmark Quick Start](BENCHMARK_QUICK_START.md)** ⚡
+   - Quick instructions for running new benchmarks
+   - State variable filter, FIR, FFT, processor chain benchmarks
+   - FlexBox layout benchmarks
+   - Performance targets and actual results
+   - Tips for accurate benchmarking
+
+7. **[Benchmark Results](BENCHMARK_RESULTS.md)** 📊
+   - Detailed performance results for all new components
+   - Performance comparison with JUCE
+   - SIMD optimization results
+   - System configuration and recommendations
+
+8. **[JUCE Examples Validation](JUCE_EXAMPLES_VALIDATION.md)**
+   - Validation methodology and results
+   - Implemented features from JUCE examples
+   - Property-based testing summary
+   - Performance comparison with JUCE
+   - Example plugins documentation
+
 ### Generated Documentation
 
-6. **Rustdoc API Documentation**
+7. **Rustdoc API Documentation**
    ```bash
    # Generate and open full API docs
    cargo doc --open --workspace
@@ -87,10 +107,19 @@ Complete documentation for the JUCE modules ported to nih-plug.
 → See [Quick Start: Building a Plugin](QUICK_START.md#building-a-plugin)
 
 #### Process audio with filters
-→ [DSP Quick Start](QUICK_START.md#1-dsp-apply-a-filter) • [DSP API](API_REFERENCE.md#filtersIIRFilter)
+→ [DSP Quick Start](QUICK_START.md#1-dsp-apply-a-filter) • [DSP API](API_REFERENCE.md#filtersIIRFilter) • [State Variable Filter](QUICK_START.md#7-state-variable-filter) • [FIR Filter](QUICK_START.md#8-fir-filter-design) • [State Variable Filter Example](plugins/examples/state_variable_filter/README.md)
 
 #### Generate waveforms
 → [Oscillator Quick Start](QUICK_START.md#2-generate-a-waveform) • [Oscillator API](API_REFERENCE.md#oscillatorsOscillator)
+
+#### Build effect chains
+→ [Processor Chain Quick Start](QUICK_START.md#9-processor-chain-overdrive-effect) • [Chain API](API_REFERENCE.md#processorsProcessorChain) • [Overdrive Example](plugins/examples/overdrive/README.md)
+
+#### Analyze spectrum
+→ [FFT Quick Start](QUICK_START.md#10-fft-spectrum-analysis) • [FFT API](API_REFERENCE.md#analysisFFT) • [Spectrum Analyzer Example](plugins/examples/spectrum_analyzer/README.md)
+
+#### Create responsive layouts
+→ [FlexBox Quick Start](QUICK_START.md#11-flexbox-layout) • [FlexBox API](API_REFERENCE.md#layoutFlexBox) • [FlexBox Demo Example](plugins/examples/flexbox_demo/README.md)
 
 #### Read/write audio files
 → [Audio I/O Quick Start](QUICK_START.md#3-read-an-audio-file) • [Audio Formats API](API_REFERENCE.md#nih_plug_audio_formats)
@@ -185,7 +214,15 @@ cargo run --example -p nih_plug_dsp
 cargo run --example smoothing_demo -p nih_plug_dsp
 cargo run --example animation_demo -p nih_plug_animation
 cargo run --example sender_demo -p nih_plug_osc
+
+# Run example plugins (from JUCE validation)
+cargo run --bin state_variable_filter
+cargo run --bin overdrive
+cargo run --bin spectrum_analyzer
+cargo run --bin flexbox_demo
 ```
+
+See **[JUCE Examples](plugins/examples/JUCE_EXAMPLES.md)** for detailed plugin documentation.
 
 ### Testing
 
@@ -262,8 +299,9 @@ Documentation is licensed under the same terms as the code:
 
 ---
 
-**Last Updated**: 2024
-**Documentation Version**: 1.0
+**Last Updated**: November 2025
+**Documentation Version**: 1.1 (updated for v0.1.0)
 **Modules Documented**: 9/9 ✅
+**New Components**: State Variable Filter, FIR Filter, Wave Shaper, Processor Chain, Gain, Bias, DC Filter, FFT, SIMD, FlexBox
 
 For the latest documentation, always run `cargo doc --open --workspace`.

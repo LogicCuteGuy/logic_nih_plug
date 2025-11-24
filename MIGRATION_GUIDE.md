@@ -234,6 +234,216 @@ smoothed.set_target(1.0);
 let current = smoothed.next();
 ```
 
+#### State Variable Filter (TPT)
+
+**JUCE (C++):**
+```cpp
+juce::dsp::StateVariableTPTFilter<float> filter;
+juce::dsp::ProcessSpec spec;
+spec.sampleRate = 44100.0;
+spec.maximumBlockSize = 512;
+spec.numChannels = 1;
+
+filter.prepare(spec);
+filter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+filter.setCutoffFrequency(1000.0f);
+filter.setResonance(0.7f);
+
+juce::dsp::AudioBlock<float> block(buffer);
+juce::dsp::ProcessContextReplacing<float> context(block);
+filter.process(context);
+```
+
+**nih-plug (Rust):**
+```rust
+use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+
+let mut filter = StateVariableFilter::new();
+filter.prepare(44100.0)?;
+filter.set_type(FilterType::Lowpass);
+filter.set_cutoff(1000.0);
+filter.set_resonance(0.7);
+
+filter.process(&input, &mut output);
+```
+
+#### FIR Filters
+
+**JUCE (C++):**
+```cpp
+juce::dsp::FIR::Filter<float> filter;
+auto coeffs = juce::dsp::FIR::Coefficients<float>::makeLowPass(
+    44100.0,
+    1000.0,
+    65
+);
+filter.coefficients = coeffs;
+
+juce::dsp::AudioBlock<float> block(buffer);
+juce::dsp::ProcessContextReplacing<float> context(block);
+filter.process(context);
+```
+
+**nih-plug (Rust):**
+```rust
+use nih_plug_dsp::fir::{FIRFilter, WindowFunction, design_lowpass};
+
+let coeffs = design_lowpass(
+    1000.0,
+    44100.0,
+    65,
+    WindowFunction::Hann
+)?;
+let mut filter = FIRFilter::new(coeffs);
+
+filter.process(&input, &mut output);
+```
+
+#### Processor Chain
+
+**JUCE (C++):**
+```cpp
+juce::dsp::ProcessorChain<
+    juce::dsp::Gain<float>,
+    juce::dsp::WaveShaper<float>,
+    juce::dsp::IIR::Filter<float>
+> chain;
+
+juce::dsp::ProcessSpec spec;
+spec.sampleRate = 44100.0;
+spec.maximumBlockSize = 512;
+spec.numChannels = 1;
+chain.prepare(spec);
+
+chain.get<0>().setGainDecibels(12.0f);
+chain.get<1>().functionToUse = [](float x) { return std::tanh(x); };
+
+juce::dsp::AudioBlock<float> block(buffer);
+juce::dsp::ProcessContextReplacing<float> context(block);
+chain.process(context);
+```
+
+**nih-plug (Rust):**
+```rust
+use nih_plug_dsp::processors::{
+    ProcessorChain, Gain, WaveShaper, DCFilter, transfer_functions
+};
+
+let mut chain = ProcessorChain::new();
+
+let mut gain = Gain::new();
+gain.set_gain_db(12.0);
+chain.add(gain);
+
+let shaper = WaveShaper::new(transfer_functions::tanh);
+chain.add(shaper);
+
+let dc_filter = DCFilter::new();
+chain.add(dc_filter);
+
+chain.prepare(44100.0, 512);
+chain.process(&input, &mut output);
+```
+
+#### FFT
+
+**JUCE (C++):**
+```cpp
+juce::dsp::FFT fft(10); // 2^10 = 1024 points
+
+std::vector<float> timeDomain(1024);
+std::vector<float> frequencyDomain(2048); // Complex data needs 2x space
+
+fft.performFrequencyOnlyForwardTransform(timeDomain.data());
+```
+
+**nih-plug (Rust):**
+```rust
+use nih_plug_dsp::analysis::FFT;
+use num_complex::Complex;
+
+let fft = FFT::new(1024)?;
+
+let input = vec![0.0; 1024];
+let mut spectrum = vec![Complex::new(0.0, 0.0); 1024];
+fft.forward(&input, &mut spectrum);
+
+// Or get magnitude only
+let mut magnitudes = vec![0.0; 1024];
+fft.forward_magnitude(&input, &mut magnitudes);
+```
+
+#### Gain Processor
+
+**JUCE (C++):**
+```cpp
+juce::dsp::Gain<float> gain;
+gain.setGainDecibels(6.0f);
+
+juce::dsp::AudioBlock<float> block(buffer);
+juce::dsp::ProcessContextReplacing<float> context(block);
+gain.process(context);
+```
+
+**nih-plug (Rust):**
+```rust
+use nih_plug_dsp::processors::Gain;
+
+let mut gain = Gain::new();
+gain.prepare(44100.0, 512);
+gain.set_gain_db(6.0);
+
+gain.process(&input, &mut output);
+```
+
+#### Bias/DC Offset
+
+**JUCE (C++):**
+```cpp
+juce::dsp::Bias<float> bias;
+bias.setBias(0.1f);
+
+juce::dsp::AudioBlock<float> block(buffer);
+juce::dsp::ProcessContextReplacing<float> context(block);
+bias.process(context);
+```
+
+**nih-plug (Rust):**
+```rust
+use nih_plug_dsp::processors::Bias;
+
+let mut bias = Bias::new();
+bias.prepare(44100.0, 512);
+bias.set_bias(0.1);
+
+bias.process(&input, &mut output);
+```
+
+#### WaveShaper
+
+**JUCE (C++):**
+```cpp
+juce::dsp::WaveShaper<float> shaper;
+shaper.functionToUse = [](float x) { return std::tanh(x); };
+
+juce::dsp::AudioBlock<float> block(buffer);
+juce::dsp::ProcessContextReplacing<float> context(block);
+shaper.process(context);
+```
+
+**nih-plug (Rust):**
+```rust
+use nih_plug_dsp::processors::{WaveShaper, transfer_functions};
+
+// Use predefined function
+let mut shaper = WaveShaper::new(transfer_functions::tanh);
+shaper.prepare(44100.0, 512);
+shaper.process(&input, &mut output);
+
+// Or custom function
+let custom_shaper = WaveShaper::new(|x| x * x * x);
+```
+
 ### Audio Formats (juce_audio_formats → nih_plug_audio_formats)
 
 #### Reading Audio Files
@@ -474,6 +684,59 @@ impl LookAndFeel for MyLookAndFeel {
     }
     // ... other methods ...
 }
+```
+
+#### FlexBox Layout
+
+**JUCE (C++):**
+```cpp
+juce::FlexBox flexbox;
+flexbox.flexDirection = juce::FlexBox::Direction::row;
+flexbox.flexWrap = juce::FlexBox::Wrap::wrap;
+flexbox.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
+flexbox.alignItems = juce::FlexBox::AlignItems::center;
+
+flexbox.items.add(juce::FlexItem(100, 50).withMargin(10));
+flexbox.items.add(juce::FlexItem().withFlex(1).withHeight(50));
+flexbox.items.add(juce::FlexItem(100, 50).withMargin(10));
+
+flexbox.performLayout(bounds);
+```
+
+**nih-plug (Rust):**
+```rust
+use nih_plug_gui::layout::{
+    FlexBox, FlexItem, FlexDirection, FlexWrap, 
+    JustifyContent, AlignItems, Margin
+};
+
+let mut flexbox = FlexBox::new();
+flexbox.set_direction(FlexDirection::Row);
+flexbox.set_wrap(FlexWrap::Wrap);
+flexbox.set_justify_content(JustifyContent::SpaceBetween);
+flexbox.set_align_items(AlignItems::Center);
+
+flexbox.add_item(FlexItem {
+    width: Some(100.0),
+    height: Some(50.0),
+    margin: Margin::all(10.0),
+    ..Default::default()
+});
+
+flexbox.add_item(FlexItem {
+    flex_grow: 1.0,
+    height: Some(50.0),
+    ..Default::default()
+});
+
+flexbox.add_item(FlexItem {
+    width: Some(100.0),
+    height: Some(50.0),
+    margin: Margin::all(10.0),
+    ..Default::default()
+});
+
+let rects = flexbox.layout(800.0, 600.0);
 ```
 
 ### OSC (juce_osc → nih_plug_osc)

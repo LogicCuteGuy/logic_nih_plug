@@ -23,10 +23,15 @@ Digital signal processing algorithms.
 ### Modules
 
 - `filters` - IIR filter implementations
+- `fir` - FIR filter implementations with windowing
+- `state_variable` - State variable filters (TPT)
 - `oscillators` - Waveform generators
 - `convolution` - FFT-based convolution
 - `envelopes` - ADSR envelope generators
 - `smoothing` - Parameter smoothing utilities
+- `processors` - Audio processors (gain, bias, waveshaper, chain, DC filter)
+- `analysis` - FFT and frequency analysis
+- `simd` - SIMD optimizations (optional feature)
 - `util` - DSP utility functions
 
 ### filters::IIRFilter
@@ -196,6 +201,483 @@ let mut smoothed = SmoothedValue::new(44100.0, 0.05);
 smoothed.set_target(1.0);
 
 let current = smoothed.next();
+```
+
+### state_variable::StateVariableFilter
+
+State variable filter using Topology-Preserving Transform (TPT) method.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new() -> Self
+
+// Configuration
+pub fn prepare(&mut self, sample_rate: f32) -> Result<(), DspError>
+pub fn set_type(&mut self, filter_type: FilterType)
+pub fn set_cutoff(&mut self, hz: f32)
+pub fn set_resonance(&mut self, q: f32)
+
+// Processing
+pub fn process_sample(&mut self, input: f32) -> f32
+pub fn process(&mut self, input: &[f32], output: &mut [f32])
+
+// State management
+pub fn reset(&mut self)
+
+// Queries
+pub fn filter_type(&self) -> FilterType
+pub fn cutoff(&self) -> f32
+pub fn resonance(&self) -> f32
+```
+
+#### Filter Types
+
+```rust
+pub enum FilterType {
+    Lowpass,   // -12 dB/octave
+    Bandpass,  // -6 dB/octave each side
+    Highpass,  // -12 dB/octave
+}
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+
+let mut filter = StateVariableFilter::new();
+filter.prepare(44100.0)?;
+filter.set_type(FilterType::Lowpass);
+filter.set_cutoff(1000.0);
+filter.set_resonance(0.7);
+
+let input = vec![1.0; 512];
+let mut output = vec![0.0; 512];
+filter.process(&input, &mut output);
+```
+
+### fir::FIRFilter
+
+Finite Impulse Response filter with linear phase characteristics.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new(coefficients: Vec<f32>) -> Self
+
+// Configuration
+pub fn set_coefficients(&mut self, coefficients: Vec<f32>)
+
+// Processing
+pub fn process_sample(&mut self, input: f32) -> f32
+pub fn process(&mut self, input: &[f32], output: &mut [f32])
+
+// State management
+pub fn reset(&mut self)
+
+// Queries
+pub fn length(&self) -> usize
+```
+
+#### Window Functions
+
+```rust
+pub enum WindowFunction {
+    Rectangular,
+    Triangular,
+    Hann,
+    Hamming,
+    Blackman,
+    BlackmanHarris,
+    FlatTop,
+    Kaiser { beta: f32 },
+}
+```
+
+#### Filter Design
+
+```rust
+// Design FIR filters
+pub fn design_lowpass(
+    cutoff_hz: f32,
+    sample_rate: f32,
+    length: usize,
+    window: WindowFunction,
+) -> Result<Vec<f32>, DspError>
+
+pub fn design_highpass(
+    cutoff_hz: f32,
+    sample_rate: f32,
+    length: usize,
+    window: WindowFunction,
+) -> Result<Vec<f32>, DspError>
+
+pub fn design_bandpass(
+    low_hz: f32,
+    high_hz: f32,
+    sample_rate: f32,
+    length: usize,
+    window: WindowFunction,
+) -> Result<Vec<f32>, DspError>
+
+pub fn design_bandstop(
+    low_hz: f32,
+    high_hz: f32,
+    sample_rate: f32,
+    length: usize,
+    window: WindowFunction,
+) -> Result<Vec<f32>, DspError>
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::fir::{FIRFilter, WindowFunction, design_lowpass};
+
+// Design a lowpass filter
+let coeffs = design_lowpass(1000.0, 44100.0, 65, WindowFunction::Hann)?;
+let mut filter = FIRFilter::new(coeffs);
+
+// Process audio
+let input = vec![1.0; 512];
+let mut output = vec![0.0; 512];
+filter.process(&input, &mut output);
+```
+
+### processors::Gain
+
+Gain processor with decibel control and smoothing.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new() -> Self
+
+// Configuration
+pub fn prepare(&mut self, sample_rate: f32, max_block_size: usize)
+pub fn set_gain_db(&mut self, db: f32)
+pub fn set_gain_linear(&mut self, gain: f32)
+pub fn set_smoothing_time(&mut self, time_ms: f32)
+
+// Processing
+pub fn process(&mut self, input: &[f32], output: &mut [f32])
+pub fn process_sample(&mut self, input: f32) -> f32
+
+// State management
+pub fn reset(&mut self)
+
+// Queries
+pub fn gain_db(&self) -> f32
+pub fn gain_linear(&self) -> f32
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::processors::Gain;
+
+let mut gain = Gain::new();
+gain.prepare(44100.0, 512);
+gain.set_gain_db(6.0);  // +6 dB boost
+
+let input = vec![1.0; 512];
+let mut output = vec![0.0; 512];
+gain.process(&input, &mut output);
+```
+
+### processors::Bias
+
+DC offset processor for asymmetric distortion.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new() -> Self
+
+// Configuration
+pub fn prepare(&mut self, sample_rate: f32, max_block_size: usize)
+pub fn set_bias(&mut self, offset: f32)
+
+// Processing
+pub fn process(&mut self, input: &[f32], output: &mut [f32])
+pub fn process_sample(&mut self, input: f32) -> f32
+
+// State management
+pub fn reset(&mut self)
+
+// Queries
+pub fn bias(&self) -> f32
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::processors::Bias;
+
+let mut bias = Bias::new();
+bias.prepare(44100.0, 512);
+bias.set_bias(0.1);  // Add 0.1 DC offset
+
+let input = vec![0.0; 512];
+let mut output = vec![0.0; 512];
+bias.process(&input, &mut output);
+// Output will be [0.1, 0.1, 0.1, ...]
+```
+
+### processors::WaveShaper
+
+Non-linear waveshaping processor with custom transfer functions.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new<F>(transfer_function: F) -> Self
+where
+    F: Fn(f32) -> f32 + Send + 'static
+
+// Configuration
+pub fn prepare(&mut self, sample_rate: f32, max_block_size: usize)
+
+// Processing
+pub fn process(&mut self, input: &[f32], output: &mut [f32])
+pub fn process_sample(&mut self, input: f32) -> f32
+
+// State management
+pub fn reset(&mut self)
+```
+
+#### Transfer Functions
+
+```rust
+// Predefined transfer functions
+pub mod transfer_functions {
+    pub fn tanh(x: f32) -> f32
+    pub fn tanh_approx(x: f32) -> f32  // Fast approximation
+    pub fn hard_clip(x: f32) -> f32
+    pub fn soft_clip(x: f32) -> f32
+    pub fn cubic(x: f32) -> f32
+}
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::processors::{WaveShaper, transfer_functions};
+
+// Use predefined transfer function
+let mut shaper = WaveShaper::new(transfer_functions::tanh);
+shaper.prepare(44100.0, 512);
+
+// Or use custom function
+let mut custom_shaper = WaveShaper::new(|x| x * x * x);
+
+let input = vec![0.5; 512];
+let mut output = vec![0.0; 512];
+shaper.process(&input, &mut output);
+```
+
+### processors::DCFilter
+
+DC offset removal filter.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new() -> Self
+
+// Configuration
+pub fn prepare(&mut self, sample_rate: f32, max_block_size: usize)
+pub fn set_cutoff(&mut self, hz: f32)
+
+// Processing
+pub fn process(&mut self, input: &[f32], output: &mut [f32])
+pub fn process_sample(&mut self, input: f32) -> f32
+
+// State management
+pub fn reset(&mut self)
+
+// Queries
+pub fn cutoff(&self) -> f32
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::processors::DCFilter;
+
+let mut dc_filter = DCFilter::new();
+dc_filter.prepare(44100.0, 512);
+dc_filter.set_cutoff(5.0);  // 5 Hz highpass
+
+let input = vec![1.0; 512];  // DC signal
+let mut output = vec![0.0; 512];
+dc_filter.process(&input, &mut output);
+// DC component will be removed
+```
+
+### processors::ProcessorChain
+
+Chain multiple processors in sequence.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new() -> Self
+
+// Configuration
+pub fn prepare(&mut self, sample_rate: f32, max_block_size: usize)
+pub fn add<P: Processor + 'static>(&mut self, processor: P)
+
+// Processing
+pub fn process(&mut self, input: &[f32], output: &mut [f32])
+
+// State management
+pub fn reset(&mut self)
+
+// Queries
+pub fn len(&self) -> usize
+pub fn is_empty(&self) -> bool
+pub fn get(&self, index: usize) -> Option<&dyn Processor>
+pub fn get_mut(&mut self, index: usize) -> Option<&mut dyn Processor>
+```
+
+#### Processor Trait
+
+```rust
+pub trait Processor: Send {
+    fn prepare(&mut self, sample_rate: f32, max_block_size: usize);
+    fn process(&mut self, input: &[f32], output: &mut [f32]);
+    fn reset(&mut self);
+}
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::processors::{ProcessorChain, Gain, Bias, WaveShaper, DCFilter, transfer_functions};
+
+// Build an overdrive effect chain
+let mut chain = ProcessorChain::new();
+
+let mut input_gain = Gain::new();
+input_gain.set_gain_db(12.0);
+chain.add(input_gain);
+
+let mut bias = Bias::new();
+bias.set_bias(0.1);
+chain.add(bias);
+
+let shaper = WaveShaper::new(transfer_functions::tanh);
+chain.add(shaper);
+
+let dc_filter = DCFilter::new();
+chain.add(dc_filter);
+
+let mut output_gain = Gain::new();
+output_gain.set_gain_db(-6.0);
+chain.add(output_gain);
+
+// Prepare and process
+chain.prepare(44100.0, 512);
+let input = vec![0.5; 512];
+let mut output = vec![0.0; 512];
+chain.process(&input, &mut output);
+```
+
+### analysis::FFT
+
+Fast Fourier Transform for frequency analysis.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new(size: usize) -> Result<Self, DspError>
+
+// Processing
+pub fn forward(&self, input: &[f32], output: &mut [Complex<f32>])
+pub fn inverse(&self, input: &[Complex<f32>], output: &mut [f32])
+pub fn forward_magnitude(&self, input: &[f32], output: &mut [f32])
+
+// Queries
+pub fn size(&self) -> usize
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::analysis::FFT;
+
+// Create 1024-point FFT
+let fft = FFT::new(1024)?;
+
+// Forward transform
+let input = vec![0.0; 1024];
+let mut spectrum = vec![Complex::new(0.0, 0.0); 1024];
+fft.forward(&input, &mut spectrum);
+
+// Get magnitude spectrum
+let mut magnitudes = vec![0.0; 1024];
+fft.forward_magnitude(&input, &mut magnitudes);
+
+// Inverse transform
+let mut output = vec![0.0; 1024];
+fft.inverse(&spectrum, &mut output);
+```
+
+### simd::optimizations (Optional Feature)
+
+SIMD-optimized versions of DSP operations.
+
+Enable with feature flag:
+```toml
+nih_plug_dsp = { path = "../nih_plug_dsp", features = ["simd"] }
+```
+
+#### Functions
+
+```rust
+// SIMD filter processing
+pub fn process_filter_simd(
+    filter: &mut IIRFilter,
+    input: &[f32],
+    output: &mut [f32],
+)
+
+// SIMD gain application
+pub fn apply_gain_simd(
+    input: &[f32],
+    output: &mut [f32],
+    gain: f32,
+)
+
+// Platform detection
+pub fn has_simd_support() -> bool
+pub fn simd_width() -> usize
+```
+
+#### Example
+
+```rust
+use nih_plug_dsp::simd::optimizations;
+
+if optimizations::has_simd_support() {
+    println!("SIMD width: {}", optimizations::simd_width());
+    optimizations::apply_gain_simd(&input, &mut output, 2.0);
+} else {
+    // Fallback to scalar code
+    for (i, o) in input.iter().zip(output.iter_mut()) {
+        *o = *i * 2.0;
+    }
+}
 ```
 
 ---
@@ -543,6 +1025,186 @@ pub fn set_callback(&mut self, callback: Box<dyn Fn(f32)>)
 pub fn value(&self) -> f32
 pub fn min(&self) -> f32
 pub fn max(&self) -> f32
+```
+
+### layout::FlexBox
+
+CSS-like flexible box layout system for responsive UI design.
+
+#### Methods
+
+```rust
+// Construction
+pub fn new() -> Self
+
+// Configuration
+pub fn set_direction(&mut self, direction: FlexDirection)
+pub fn set_wrap(&mut self, wrap: FlexWrap)
+pub fn set_justify_content(&mut self, justify: JustifyContent)
+pub fn set_align_items(&mut self, align: AlignItems)
+pub fn set_align_content(&mut self, align: AlignContent)
+
+// Items
+pub fn add_item(&mut self, item: FlexItem)
+pub fn clear_items(&mut self)
+
+// Layout
+pub fn layout(&self, container_width: f32, container_height: f32) -> Vec<Rect>
+
+// Queries
+pub fn item_count(&self) -> usize
+```
+
+#### FlexBox Properties
+
+```rust
+pub enum FlexDirection {
+    Row,           // Left to right
+    RowReverse,    // Right to left
+    Column,        // Top to bottom
+    ColumnReverse, // Bottom to top
+}
+
+pub enum FlexWrap {
+    NoWrap,      // Single line
+    Wrap,        // Multi-line, top to bottom
+    WrapReverse, // Multi-line, bottom to top
+}
+
+pub enum JustifyContent {
+    FlexStart,    // Pack to start
+    FlexEnd,      // Pack to end
+    Center,       // Pack to center
+    SpaceBetween, // Even spacing, no edge gaps
+    SpaceAround,  // Even spacing, half-size edge gaps
+    SpaceEvenly,  // Even spacing, equal edge gaps
+}
+
+pub enum AlignItems {
+    FlexStart,  // Align to cross-start
+    FlexEnd,    // Align to cross-end
+    Center,     // Center on cross axis
+    Stretch,    // Stretch to fill
+}
+
+pub enum AlignContent {
+    FlexStart,    // Pack lines to start
+    FlexEnd,      // Pack lines to end
+    Center,       // Pack lines to center
+    SpaceBetween, // Even line spacing
+    SpaceAround,  // Even line spacing with gaps
+    Stretch,      // Stretch lines to fill
+}
+
+pub enum AlignSelf {
+    Auto,       // Use parent align-items
+    FlexStart,  // Override to flex-start
+    FlexEnd,    // Override to flex-end
+    Center,     // Override to center
+    Stretch,    // Override to stretch
+}
+```
+
+#### FlexItem
+
+```rust
+pub struct FlexItem {
+    pub order: i32,           // Display order (default: 0)
+    pub flex_grow: f32,       // Growth factor (default: 0.0)
+    pub flex_shrink: f32,     // Shrink factor (default: 1.0)
+    pub flex_basis: f32,      // Initial size (default: auto)
+    pub align_self: AlignSelf, // Override alignment
+    pub width: Option<f32>,   // Fixed width
+    pub height: Option<f32>,  // Fixed height
+    pub min_width: Option<f32>,
+    pub min_height: Option<f32>,
+    pub max_width: Option<f32>,
+    pub max_height: Option<f32>,
+    pub margin: Margin,
+}
+
+pub struct Margin {
+    pub top: f32,
+    pub right: f32,
+    pub bottom: f32,
+    pub left: f32,
+}
+
+pub struct Rect {
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
+}
+```
+
+#### Example
+
+```rust
+use nih_plug_gui::layout::{FlexBox, FlexItem, FlexDirection, JustifyContent, AlignItems};
+
+// Create a horizontal layout with centered items
+let mut flexbox = FlexBox::new();
+flexbox.set_direction(FlexDirection::Row);
+flexbox.set_justify_content(JustifyContent::SpaceBetween);
+flexbox.set_align_items(AlignItems::Center);
+
+// Add items
+let item1 = FlexItem {
+    width: Some(100.0),
+    height: Some(50.0),
+    flex_grow: 0.0,
+    ..Default::default()
+};
+flexbox.add_item(item1);
+
+let item2 = FlexItem {
+    flex_grow: 1.0,  // Takes remaining space
+    height: Some(50.0),
+    ..Default::default()
+};
+flexbox.add_item(item2);
+
+let item3 = FlexItem {
+    width: Some(100.0),
+    height: Some(50.0),
+    flex_grow: 0.0,
+    ..Default::default()
+};
+flexbox.add_item(item3);
+
+// Calculate layout
+let rects = flexbox.layout(800.0, 600.0);
+// rects[0]: x=0, width=100
+// rects[1]: x=100, width=600 (grows to fill)
+// rects[2]: x=700, width=100
+```
+
+#### Responsive Layout Example
+
+```rust
+use nih_plug_gui::layout::{FlexBox, FlexItem, FlexDirection, FlexWrap, JustifyContent};
+
+// Create a responsive grid
+let mut flexbox = FlexBox::new();
+flexbox.set_direction(FlexDirection::Row);
+flexbox.set_wrap(FlexWrap::Wrap);
+flexbox.set_justify_content(JustifyContent::SpaceAround);
+
+// Add grid items
+for _ in 0..12 {
+    let item = FlexItem {
+        width: Some(150.0),
+        height: Some(150.0),
+        margin: Margin::all(10.0),
+        ..Default::default()
+    };
+    flexbox.add_item(item);
+}
+
+// Layout adapts to container size
+let rects_wide = flexbox.layout(1200.0, 600.0);  // 6 items per row
+let rects_narrow = flexbox.layout(600.0, 600.0); // 3 items per row
 ```
 
 ---

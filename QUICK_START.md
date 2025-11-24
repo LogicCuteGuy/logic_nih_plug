@@ -114,6 +114,137 @@ loop {
 }
 ```
 
+### 7. State Variable Filter
+
+```rust
+use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+
+// Create a resonant lowpass filter
+let mut filter = StateVariableFilter::new();
+filter.prepare(44100.0)?;
+filter.set_type(FilterType::Lowpass);
+filter.set_cutoff(1000.0);
+filter.set_resonance(0.8);
+
+// Process audio
+let input = vec![1.0; 512];
+let mut output = vec![0.0; 512];
+filter.process(&input, &mut output);
+```
+
+### 8. FIR Filter Design
+
+```rust
+use nih_plug_dsp::fir::{FIRFilter, WindowFunction, design_lowpass};
+
+// Design a linear-phase lowpass filter
+let coeffs = design_lowpass(
+    1000.0,                  // Cutoff frequency
+    44100.0,                 // Sample rate
+    65,                      // Filter length (odd number)
+    WindowFunction::Hann,    // Window function
+)?;
+
+let mut filter = FIRFilter::new(coeffs);
+let input = vec![1.0; 512];
+let mut output = vec![0.0; 512];
+filter.process(&input, &mut output);
+```
+
+### 9. Processor Chain (Overdrive Effect)
+
+```rust
+use nih_plug_dsp::processors::{
+    ProcessorChain, Gain, Bias, WaveShaper, DCFilter, transfer_functions
+};
+
+// Build an overdrive effect
+let mut chain = ProcessorChain::new();
+
+// Input gain
+let mut input_gain = Gain::new();
+input_gain.set_gain_db(12.0);
+chain.add(input_gain);
+
+// Add DC bias for asymmetric distortion
+let mut bias = Bias::new();
+bias.set_bias(0.1);
+chain.add(bias);
+
+// Waveshaping
+let shaper = WaveShaper::new(transfer_functions::tanh);
+chain.add(shaper);
+
+// Remove DC offset
+let dc_filter = DCFilter::new();
+chain.add(dc_filter);
+
+// Output gain
+let mut output_gain = Gain::new();
+output_gain.set_gain_db(-6.0);
+chain.add(output_gain);
+
+// Process
+chain.prepare(44100.0, 512);
+let input = vec![0.5; 512];
+let mut output = vec![0.0; 512];
+chain.process(&input, &mut output);
+```
+
+### 10. FFT Spectrum Analysis
+
+```rust
+use nih_plug_dsp::analysis::FFT;
+
+// Create 1024-point FFT
+let fft = FFT::new(1024)?;
+
+// Analyze audio
+let input = vec![0.0; 1024];
+let mut magnitudes = vec![0.0; 1024];
+fft.forward_magnitude(&input, &mut magnitudes);
+
+// magnitudes[0] = DC component
+// magnitudes[512] = Nyquist frequency
+// Each bin represents sample_rate / 1024 Hz
+```
+
+### 11. FlexBox Layout
+
+```rust
+use nih_plug_gui::layout::{
+    FlexBox, FlexItem, FlexDirection, JustifyContent, AlignItems
+};
+
+// Create a horizontal layout
+let mut flexbox = FlexBox::new();
+flexbox.set_direction(FlexDirection::Row);
+flexbox.set_justify_content(JustifyContent::SpaceBetween);
+flexbox.set_align_items(AlignItems::Center);
+
+// Add items
+flexbox.add_item(FlexItem {
+    width: Some(100.0),
+    height: Some(50.0),
+    ..Default::default()
+});
+
+flexbox.add_item(FlexItem {
+    flex_grow: 1.0,  // Takes remaining space
+    height: Some(50.0),
+    ..Default::default()
+});
+
+flexbox.add_item(FlexItem {
+    width: Some(100.0),
+    height: Some(50.0),
+    ..Default::default()
+});
+
+// Calculate layout
+let rects = flexbox.layout(800.0, 600.0);
+```
+
 ## Common Patterns
 
 ### Error Handling
@@ -281,6 +412,119 @@ nih_export_clap!(MyPlugin);
 nih_export_vst3!(MyPlugin);
 ```
 
+## Migrating from JUCE
+
+### State Variable Filter
+
+**JUCE C++:**
+```cpp
+juce::dsp::StateVariableTPTFilter<float> filter;
+filter.prepare(spec);
+filter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+filter.setCutoffFrequency(1000.0f);
+filter.setResonance(0.7f);
+filter.process(context);
+```
+
+**nih-plug Rust:**
+```rust
+use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+
+let mut filter = StateVariableFilter::new();
+filter.prepare(44100.0)?;
+filter.set_type(FilterType::Lowpass);
+filter.set_cutoff(1000.0);
+filter.set_resonance(0.7);
+filter.process(&input, &mut output);
+```
+
+### FIR Filter
+
+**JUCE C++:**
+```cpp
+juce::dsp::FIR::Filter<float> filter;
+juce::dsp::FIR::Coefficients<float>::Ptr coeffs = 
+    juce::dsp::FIR::Coefficients<float>::makeLowPass(44100.0, 1000.0, 65);
+filter.coefficients = coeffs;
+filter.process(context);
+```
+
+**nih-plug Rust:**
+```rust
+use nih_plug_dsp::fir::{FIRFilter, WindowFunction, design_lowpass};
+
+let coeffs = design_lowpass(1000.0, 44100.0, 65, WindowFunction::Hann)?;
+let mut filter = FIRFilter::new(coeffs);
+filter.process(&input, &mut output);
+```
+
+### Processor Chain
+
+**JUCE C++:**
+```cpp
+juce::dsp::ProcessorChain<Gain, WaveShaper, DCFilter> chain;
+chain.prepare(spec);
+chain.get<0>().setGainDecibels(12.0f);
+chain.process(context);
+```
+
+**nih-plug Rust:**
+```rust
+use nih_plug_dsp::processors::{ProcessorChain, Gain, WaveShaper, DCFilter};
+
+let mut chain = ProcessorChain::new();
+let mut gain = Gain::new();
+gain.set_gain_db(12.0);
+chain.add(gain);
+chain.add(WaveShaper::new(|x| x.tanh()));
+chain.add(DCFilter::new());
+chain.prepare(44100.0, 512);
+chain.process(&input, &mut output);
+```
+
+### FFT
+
+**JUCE C++:**
+```cpp
+juce::dsp::FFT fft(10);  // 2^10 = 1024 points
+fft.performFrequencyOnlyForwardTransform(data);
+```
+
+**nih-plug Rust:**
+```rust
+use nih_plug_dsp::analysis::FFT;
+
+let fft = FFT::new(1024)?;
+let mut magnitudes = vec![0.0; 1024];
+fft.forward_magnitude(&input, &mut magnitudes);
+```
+
+### FlexBox Layout
+
+**JUCE C++:**
+```cpp
+juce::FlexBox flexbox;
+flexbox.flexDirection = juce::FlexBox::Direction::row;
+flexbox.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
+flexbox.items.add(juce::FlexItem(100, 50));
+flexbox.performLayout(bounds);
+```
+
+**nih-plug Rust:**
+```rust
+use nih_plug_gui::layout::{FlexBox, FlexItem, FlexDirection, JustifyContent};
+
+let mut flexbox = FlexBox::new();
+flexbox.set_direction(FlexDirection::Row);
+flexbox.set_justify_content(JustifyContent::SpaceBetween);
+flexbox.add_item(FlexItem {
+    width: Some(100.0),
+    height: Some(50.0),
+    ..Default::default()
+});
+let rects = flexbox.layout(800.0, 600.0);
+```
+
 ## Next Steps
 
 1. **Read the documentation**
@@ -292,6 +536,10 @@ nih_export_vst3!(MyPlugin);
    ```bash
    cargo run --example smoothing_demo -p nih_plug_dsp
    cargo run --example animation_demo -p nih_plug_animation
+   cargo run --bin state_variable_filter
+   cargo run --bin overdrive
+   cargo run --bin spectrum_analyzer
+   cargo run --bin flexbox_demo
    ```
 
 3. **Run the tests**
@@ -301,6 +549,7 @@ nih_export_vst3!(MyPlugin);
 
 4. **Migrate from JUCE**
    - See [Migration Guide](MIGRATION_GUIDE.md)
+   - Check [JUCE Examples](plugins/examples/JUCE_EXAMPLES.md)
 
 5. **Join the community**
    - nih-plug Discord server

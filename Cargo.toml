@@ -54,6 +54,10 @@ members = [
   "plugins/examples/juce_dsp_filter",
   "plugins/examples/juce_gui_demo",
   "plugins/examples/juce_multi_module",
+  "plugins/examples/state_variable_filter",
+  "plugins/examples/overdrive",
+  "plugins/examples/spectrum_analyzer",
+  "plugins/examples/flexbox_demo",
 
   "plugins/soft_vacuum",
   "plugins/buffr_glitch",

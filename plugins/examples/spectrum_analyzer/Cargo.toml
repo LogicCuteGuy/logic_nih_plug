@@ -1,0 +1,21 @@
+[package]
+name = "spectrum_analyzer"
+version = "0.1.0"
+edition = "2021"
+authors = ["NIH-plug Contributors"]
+license = "ISC"
+
+description = "Example plugin demonstrating real-time spectrum analysis using FFT with spectrogram display"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+nih_plug = { path = "../../../", features = ["standalone"] }
+nih_plug_dsp = { path = "../../../nih_plug_dsp", features = ["analysis"] }
+nih_plug_gui = { path = "../../../nih_plug_gui", features = ["gl-editor"] }
+nih_plug_graphics = { path = "../../../nih_plug_graphics" }
+
+atomic_float = "0.1"
+crossbeam = "0.8"
+num-complex = "0.4"

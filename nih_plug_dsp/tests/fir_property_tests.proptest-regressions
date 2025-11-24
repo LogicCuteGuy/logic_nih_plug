@@ -1,0 +1,11 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 5a1ade1961910041481f63aa3c0f134d94a69e3b09f70ea884eab5b1e6b320de # shrinks to cutoff = 1000.0, sample_rate = 44100.0, length = 51, window = Hamming
+cc c27a6e3793f95d028ca5de5dc9df665dc09a1d37b9c829600417a6b4d6761d0f # shrinks to low_cutoff = 1490.7683, high_cutoff = 7645.0884, sample_rate = 80746.984, length = 53, filter_type = "bandpass"
+cc 8613ef0acdc124c759a1f72e459f1dc0c697d38b0708665d258c8cdf5de935d3 # shrinks to position = 17, length = 101, window = FlatTop
+cc 8dc4c0e49ae8a4021140983f0a81fed132b4b32f9822160905c8ea27fd9b3a5a # shrinks to cutoff = 6874.391, sample_rate = 78561.01, length = 97, window = Hann
+cc b87dbfa706749fde2b84c41a2549613aa9458451f2085c34fe05c5cec3f3fc91 # shrinks to position = 25, length = 51

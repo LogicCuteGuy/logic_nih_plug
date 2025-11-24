@@ -87,7 +87,9 @@ pub use error::{GuiError, Result};
 
 #[cfg(feature = "layout")]
 pub use layout::{
-    AbsoluteLayout, FlexAlign, FlexDirection, FlexLayout, GridLayout, SizeConstraint,
+    AbsoluteLayout, AlignContent, AlignItems, AlignSelf, FlexAlign, FlexBox, FlexBoxDirection,
+    FlexDirection, FlexItem, FlexLayout, FlexWrap, GridLayout, JustifyContent, Margin, Rect,
+    SizeConstraint,
 };
 
 #[cfg(feature = "components")]

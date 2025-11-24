@@ -1140,3 +1140,825 @@ mod oscillator_reset_restores_initial_state {
         }
     }
 }
+
+/// **Feature: juce-examples-validation, Property 1: Filter type switching maintains state continuity**
+/// **Validates: Requirements 1.2**
+///
+/// This property verifies that changing filter type maintains state continuity.
+/// For any state variable filter with existing state, when the filter type is changed,
+/// processing the next sample should not produce a discontinuity greater than the
+/// expected filter response.
+mod filter_type_switching_continuity {
+    use super::*;
+    use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+
+    proptest! {
+        #![proptest_config(ProptestConfig {
+            cases: 100,
+            ..ProptestConfig::default()
+        })]
+
+        /// Test that switching filter types doesn't cause large discontinuities.
+        #[test]
+        fn prop_filter_type_switch_maintains_continuity(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 200.0f32..=8000.0f32,
+            resonance in 0.0f32..=0.9f32,
+            input_samples in prop::collection::vec(-1.0f32..=1.0f32, 50..150),
+            switch_point in 10usize..100,
+            filter_type1 in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            filter_type2 in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ]
+        ) {
+            prop_assume!(switch_point < input_samples.len() - 1);
+            prop_assume!(filter_type1 != filter_type2);
+            
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type1);
+            
+            let mut output = vec![0.0; input_samples.len()];
+            
+            // Process samples before switch
+            for i in 0..switch_point {
+                output[i] = filter.process_sample(input_samples[i]);
+            }
+            
+            // Switch filter type
+            filter.set_type(filter_type2);
+            
+            // Process samples after switch
+            for i in switch_point..input_samples.len() {
+                output[i] = filter.process_sample(input_samples[i]);
+            }
+            
+            // Check for discontinuity at switch point
+            // The discontinuity should be bounded by the filter's response characteristics
+            // For a TPT filter, the maximum output change is related to the input change
+            // and the filter's gain at the cutoff frequency
+            let discontinuity = (output[switch_point] - output[switch_point - 1]).abs();
+            
+            // Maximum expected discontinuity is bounded by:
+            // - Input signal range: 2.0 (from -1 to 1)
+            // - Filter resonance can amplify by up to ~10x at Q=0.9
+            // - Type switching can cause output to jump between LP/BP/HP outputs
+            let max_expected_discontinuity = 20.0;
+            
+            prop_assert!(discontinuity < max_expected_discontinuity,
+                "Discontinuity {} exceeds maximum {} at switch from {:?} to {:?}",
+                discontinuity, max_expected_discontinuity, filter_type1, filter_type2);
+            
+            // Also verify that the output remains finite
+            prop_assert!(output[switch_point].is_finite(),
+                "Output became non-finite after filter type switch");
+        }
+
+        /// Test that filter type switching preserves internal state variables.
+        #[test]
+        fn prop_filter_type_switch_preserves_state(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 200.0f32..=8000.0f32,
+            resonance in 0.0f32..=0.9f32,
+            input_samples in prop::collection::vec(-0.5f32..=0.5f32, 20..50)
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(FilterType::Lowpass);
+            
+            // Process some samples to build up state
+            let mut output = vec![0.0; input_samples.len()];
+            filter.process(&input_samples, &mut output);
+            
+            // Switch filter type multiple times
+            filter.set_type(FilterType::Bandpass);
+            filter.set_type(FilterType::Highpass);
+            filter.set_type(FilterType::Lowpass);
+            
+            // Process more samples - should not crash or produce NaN
+            let more_input = vec![0.1; 10];
+            let mut more_output = vec![0.0; 10];
+            filter.process(&more_input, &mut more_output);
+            
+            // All outputs should be finite
+            for (i, &sample) in more_output.iter().enumerate() {
+                prop_assert!(sample.is_finite(),
+                    "Output sample {} is not finite after filter type switches: {}",
+                    i, sample);
+            }
+        }
+
+        /// Test that switching between all filter types produces valid output.
+        #[test]
+        fn prop_all_filter_type_combinations_valid(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 500.0f32..=5000.0f32,
+            resonance in 0.1f32..=0.8f32,
+            input in -0.5f32..=0.5f32
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            
+            let filter_types = [FilterType::Lowpass, FilterType::Bandpass, FilterType::Highpass];
+            
+            // Try all combinations of filter type switches
+            for &type1 in &filter_types {
+                for &type2 in &filter_types {
+                    filter.reset();
+                    filter.set_type(type1);
+                    
+                    // Process a sample
+                    let output1 = filter.process_sample(input);
+                    prop_assert!(output1.is_finite(),
+                        "Output not finite for {:?}: {}", type1, output1);
+                    
+                    // Switch type
+                    filter.set_type(type2);
+                    
+                    // Process another sample
+                    let output2 = filter.process_sample(input);
+                    prop_assert!(output2.is_finite(),
+                        "Output not finite after switch from {:?} to {:?}: {}",
+                        type1, type2, output2);
+                }
+            }
+        }
+    }
+}
+
+/// **Feature: juce-examples-validation, Property 2: TPT filter stability**
+/// **Validates: Requirements 1.3, 1.4**
+///
+/// This property verifies that the TPT filter remains stable for all parameter settings.
+/// For any cutoff frequency, resonance value, and input signal, the state variable filter
+/// output should remain finite and not produce NaN or infinity.
+mod tpt_filter_stability {
+    use super::*;
+    use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+
+    proptest! {
+        #![proptest_config(ProptestConfig {
+            cases: 100,
+            ..ProptestConfig::default()
+        })]
+
+        /// Test that filter remains stable with extreme parameter values.
+        #[test]
+        fn prop_filter_stable_with_extreme_parameters(
+            sample_rate in 44100.0f32..=192000.0f32,
+            cutoff in 10.0f32..=20000.0f32,
+            resonance in 0.0f32..=1.0f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_samples in prop::collection::vec(-10.0f32..=10.0f32, 100..500)
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type);
+            
+            let mut output = vec![0.0; input_samples.len()];
+            filter.process(&input_samples, &mut output);
+            
+            // All outputs must be finite (no NaN or infinity)
+            for (i, &sample) in output.iter().enumerate() {
+                prop_assert!(sample.is_finite(),
+                    "Output sample {} is not finite with cutoff={}, resonance={}, type={:?}: {}",
+                    i, cutoff, resonance, filter_type, sample);
+            }
+        }
+
+        /// Test that filter remains stable with rapidly changing parameters.
+        #[test]
+        fn prop_filter_stable_with_parameter_modulation(
+            sample_rate in 44100.0f32..=96000.0f32,
+            base_cutoff in 500.0f32..=5000.0f32,
+            cutoff_mod_depth in 100.0f32..=2000.0f32,
+            base_resonance in 0.3f32..=0.7f32,
+            resonance_mod_depth in 0.1f32..=0.2f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            num_samples in 100usize..300
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_type(filter_type);
+            
+            let mut output = Vec::new();
+            
+            // Modulate parameters per sample
+            for i in 0..num_samples {
+                let t = i as f32 / num_samples as f32;
+                let cutoff = base_cutoff + cutoff_mod_depth * (t * 2.0 * std::f32::consts::PI * 5.0).sin();
+                let resonance = (base_resonance + resonance_mod_depth * (t * 2.0 * std::f32::consts::PI * 3.0).cos()).clamp(0.0, 1.0);
+                
+                filter.set_cutoff(cutoff);
+                filter.set_resonance(resonance);
+                
+                let input = (t * 2.0 * std::f32::consts::PI * 440.0).sin();
+                output.push(filter.process_sample(input));
+            }
+            
+            // All outputs must be finite
+            for (i, &sample) in output.iter().enumerate() {
+                prop_assert!(sample.is_finite(),
+                    "Output sample {} is not finite with parameter modulation: {}",
+                    i, sample);
+            }
+        }
+
+        /// Test that filter remains stable at Nyquist frequency.
+        #[test]
+        fn prop_filter_stable_at_nyquist(
+            sample_rate in 44100.0f32..=96000.0f32,
+            resonance in 0.0f32..=0.95f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_samples in prop::collection::vec(-1.0f32..=1.0f32, 50..200)
+        ) {
+            let nyquist = sample_rate * 0.5;
+            let cutoff = nyquist * 0.99; // Just below Nyquist
+            
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type);
+            
+            let mut output = vec![0.0; input_samples.len()];
+            filter.process(&input_samples, &mut output);
+            
+            // All outputs must be finite
+            for (i, &sample) in output.iter().enumerate() {
+                prop_assert!(sample.is_finite(),
+                    "Output sample {} is not finite at near-Nyquist cutoff: {}",
+                    i, sample);
+            }
+        }
+
+        /// Test that filter remains stable with high resonance.
+        #[test]
+        fn prop_filter_stable_with_high_resonance(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 500.0f32..=8000.0f32,
+            resonance in 0.9f32..=1.0f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_samples in prop::collection::vec(-1.0f32..=1.0f32, 100..300)
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type);
+            
+            let mut output = vec![0.0; input_samples.len()];
+            filter.process(&input_samples, &mut output);
+            
+            // All outputs must be finite even with high resonance
+            for (i, &sample) in output.iter().enumerate() {
+                prop_assert!(sample.is_finite(),
+                    "Output sample {} is not finite with high resonance {}: {}",
+                    i, resonance, sample);
+            }
+        }
+
+        /// Test that filter remains stable with DC input.
+        #[test]
+        fn prop_filter_stable_with_dc_input(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 100.0f32..=10000.0f32,
+            resonance in 0.0f32..=0.95f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            dc_level in -5.0f32..=5.0f32,
+            num_samples in 100usize..500
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type);
+            
+            let input = vec![dc_level; num_samples];
+            let mut output = vec![0.0; num_samples];
+            filter.process(&input, &mut output);
+            
+            // All outputs must be finite
+            for (i, &sample) in output.iter().enumerate() {
+                prop_assert!(sample.is_finite(),
+                    "Output sample {} is not finite with DC input {}: {}",
+                    i, dc_level, sample);
+            }
+            
+            // For lowpass, output should converge to DC level
+            // For highpass, output should converge to zero
+            // For bandpass, output should converge to zero
+            if num_samples > 100 {
+                let final_sample = output[num_samples - 1];
+                match filter_type {
+                    FilterType::Lowpass => {
+                        // Should approach DC level
+                        prop_assert!((final_sample - dc_level).abs() < dc_level.abs() * 0.5 + 0.1,
+                            "Lowpass output {} didn't converge toward DC level {}",
+                            final_sample, dc_level);
+                    }
+                    FilterType::Highpass | FilterType::Bandpass => {
+                        // Should approach zero
+                        prop_assert!(final_sample.abs() < dc_level.abs() * 0.5 + 0.1,
+                            "{:?} output {} didn't converge toward zero with DC input {}",
+                            filter_type, final_sample, dc_level);
+                    }
+                }
+            }
+        }
+
+        /// Test that filter output is bounded for bounded input.
+        #[test]
+        fn prop_filter_output_bounded_for_bounded_input(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 200.0f32..=8000.0f32,
+            resonance in 0.0f32..=0.95f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_samples in prop::collection::vec(-1.0f32..=1.0f32, 100..300)
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type);
+            
+            let mut output = vec![0.0; input_samples.len()];
+            filter.process(&input_samples, &mut output);
+            
+            // Output should be bounded (resonance can amplify, but not infinitely)
+            // With resonance up to 0.95, gain can be ~20x at resonance peak
+            let max_expected_output = 30.0;
+            
+            for (i, &sample) in output.iter().enumerate() {
+                prop_assert!(sample.abs() < max_expected_output,
+                    "Output sample {} exceeds expected bounds: {} (cutoff={}, resonance={})",
+                    i, sample, cutoff, resonance);
+            }
+        }
+    }
+}
+
+/// **Feature: juce-examples-validation, Property 3: Reset preserves coefficients**
+/// **Validates: Requirements 1.5**
+///
+/// This property verifies that resetting a state variable filter clears internal state
+/// but preserves filter parameters. For any filter with set parameters, resetting and
+/// then processing the same input should produce the same output as a freshly created
+/// filter with the same parameters.
+mod filter_reset_preserves_coefficients {
+    use super::*;
+    use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+
+    proptest! {
+        #![proptest_config(ProptestConfig {
+            cases: 100,
+            ..ProptestConfig::default()
+        })]
+
+        /// Test that reset produces the same output as a fresh filter.
+        #[test]
+        fn prop_reset_produces_fresh_filter_output(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 200.0f32..=8000.0f32,
+            resonance in 0.1f32..=0.9f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_before in prop::collection::vec(-1.0f32..=1.0f32, 50..150),
+            input_after in prop::collection::vec(-1.0f32..=1.0f32, 50..150)
+        ) {
+            // Create two filters with same settings
+            let mut filter1 = StateVariableFilter::new();
+            filter1.prepare(sample_rate).unwrap();
+            filter1.set_cutoff(cutoff);
+            filter1.set_resonance(resonance);
+            filter1.set_type(filter_type);
+            
+            let mut filter2 = StateVariableFilter::new();
+            filter2.prepare(sample_rate).unwrap();
+            filter2.set_cutoff(cutoff);
+            filter2.set_resonance(resonance);
+            filter2.set_type(filter_type);
+            
+            // Process some audio with filter2 then reset
+            let mut temp = vec![0.0; input_before.len()];
+            filter2.process(&input_before, &mut temp);
+            filter2.reset();
+            
+            // Both filters should now produce identical output
+            let mut output1 = vec![0.0; input_after.len()];
+            let mut output2 = vec![0.0; input_after.len()];
+            filter1.process(&input_after, &mut output1);
+            filter2.process(&input_after, &mut output2);
+            
+            for (i, (a, b)) in output1.iter().zip(output2.iter()).enumerate() {
+                prop_assert!((a - b).abs() < 1e-6,
+                    "Outputs differ after reset at sample {}: filter1={}, filter2={}",
+                    i, a, b);
+            }
+        }
+
+        /// Test that reset preserves all filter parameters.
+        #[test]
+        fn prop_reset_preserves_parameters(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 500.0f32..=5000.0f32,
+            resonance in 0.2f32..=0.8f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_samples in prop::collection::vec(-1.0f32..=1.0f32, 50..150)
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type);
+            
+            // Process some audio to populate state
+            let mut output = vec![0.0; input_samples.len()];
+            filter.process(&input_samples, &mut output);
+            
+            // Reset should preserve parameters
+            filter.reset();
+            
+            prop_assert_eq!(filter.cutoff(), cutoff,
+                "Cutoff changed after reset");
+            prop_assert_eq!(filter.resonance(), resonance,
+                "Resonance changed after reset");
+            prop_assert_eq!(filter.filter_type(), filter_type,
+                "Filter type changed after reset");
+        }
+
+        /// Test that multiple resets produce consistent results.
+        #[test]
+        fn prop_multiple_resets_are_consistent(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 500.0f32..=5000.0f32,
+            resonance in 0.2f32..=0.8f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_samples in prop::collection::vec(-0.5f32..=0.5f32, 30..100)
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type);
+            
+            // Process and reset multiple times
+            let mut outputs = Vec::new();
+            for _ in 0..3 {
+                let mut output = vec![0.0; input_samples.len()];
+                filter.process(&input_samples, &mut output);
+                outputs.push(output);
+                filter.reset();
+            }
+            
+            // All outputs should be identical
+            for i in 1..outputs.len() {
+                for (j, (a, b)) in outputs[0].iter().zip(outputs[i].iter()).enumerate() {
+                    prop_assert!((a - b).abs() < 1e-6,
+                        "Outputs differ after multiple resets at sample {}: {} vs {}",
+                        j, a, b);
+                }
+            }
+        }
+
+        /// Test that reset works correctly after parameter changes.
+        #[test]
+        fn prop_reset_after_parameter_changes(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff1 in 500.0f32..=2000.0f32,
+            cutoff2 in 3000.0f32..=8000.0f32,
+            resonance1 in 0.2f32..=0.5f32,
+            resonance2 in 0.6f32..=0.9f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_samples in prop::collection::vec(-0.5f32..=0.5f32, 30..100)
+        ) {
+            // Create reference filter with final parameters
+            let mut filter_ref = StateVariableFilter::new();
+            filter_ref.prepare(sample_rate).unwrap();
+            filter_ref.set_cutoff(cutoff2);
+            filter_ref.set_resonance(resonance2);
+            filter_ref.set_type(filter_type);
+            
+            // Create test filter with initial parameters
+            let mut filter_test = StateVariableFilter::new();
+            filter_test.prepare(sample_rate).unwrap();
+            filter_test.set_cutoff(cutoff1);
+            filter_test.set_resonance(resonance1);
+            filter_test.set_type(filter_type);
+            
+            // Process some samples
+            let mut temp = vec![0.0; input_samples.len()];
+            filter_test.process(&input_samples, &mut temp);
+            
+            // Change parameters and reset
+            filter_test.set_cutoff(cutoff2);
+            filter_test.set_resonance(resonance2);
+            filter_test.reset();
+            
+            // Both filters should now produce identical output
+            let mut output_ref = vec![0.0; input_samples.len()];
+            let mut output_test = vec![0.0; input_samples.len()];
+            filter_ref.process(&input_samples, &mut output_ref);
+            filter_test.process(&input_samples, &mut output_test);
+            
+            for (i, (a, b)) in output_ref.iter().zip(output_test.iter()).enumerate() {
+                prop_assert!((a - b).abs() < 1e-6,
+                    "Outputs differ after parameter change and reset at sample {}: {} vs {}",
+                    i, a, b);
+            }
+        }
+
+        /// Test that reset clears internal state to zero.
+        #[test]
+        fn prop_reset_clears_internal_state(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 500.0f32..=5000.0f32,
+            resonance in 0.2f32..=0.8f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_samples in prop::collection::vec(-1.0f32..=1.0f32, 50..150)
+        ) {
+            let mut filter = StateVariableFilter::new();
+            filter.prepare(sample_rate).unwrap();
+            filter.set_cutoff(cutoff);
+            filter.set_resonance(resonance);
+            filter.set_type(filter_type);
+            
+            // Process some audio to populate state
+            let mut output = vec![0.0; input_samples.len()];
+            filter.process(&input_samples, &mut output);
+            
+            // Reset should clear state
+            filter.reset();
+            
+            // Process a zero input - output should be zero (or very close)
+            // since state is cleared and input is zero
+            let zero_output = filter.process_sample(0.0);
+            prop_assert!(zero_output.abs() < 1e-10,
+                "Output {} not near zero after reset with zero input", zero_output);
+        }
+
+        /// Test that sample-by-sample processing matches block processing after reset.
+        #[test]
+        fn prop_reset_sample_by_sample_matches_block(
+            sample_rate in 44100.0f32..=96000.0f32,
+            cutoff in 500.0f32..=5000.0f32,
+            resonance in 0.2f32..=0.8f32,
+            filter_type in prop_oneof![
+                Just(FilterType::Lowpass),
+                Just(FilterType::Bandpass),
+                Just(FilterType::Highpass),
+            ],
+            input_before in prop::collection::vec(-1.0f32..=1.0f32, 30..80),
+            input_after in prop::collection::vec(-0.5f32..=0.5f32, 30..80)
+        ) {
+            // Block processing
+            let mut filter1 = StateVariableFilter::new();
+            filter1.prepare(sample_rate).unwrap();
+            filter1.set_cutoff(cutoff);
+            filter1.set_resonance(resonance);
+            filter1.set_type(filter_type);
+            
+            let mut temp = vec![0.0; input_before.len()];
+            filter1.process(&input_before, &mut temp);
+            filter1.reset();
+            
+            let mut output_block = vec![0.0; input_after.len()];
+            filter1.process(&input_after, &mut output_block);
+            
+            // Sample-by-sample processing
+            let mut filter2 = StateVariableFilter::new();
+            filter2.prepare(sample_rate).unwrap();
+            filter2.set_cutoff(cutoff);
+            filter2.set_resonance(resonance);
+            filter2.set_type(filter_type);
+            
+            let mut temp2 = vec![0.0; input_before.len()];
+            filter2.process(&input_before, &mut temp2);
+            filter2.reset();
+            
+            let output_sample: Vec<f32> = input_after.iter()
+                .map(|&s| filter2.process_sample(s))
+                .collect();
+            
+            // Results should be identical
+            for (i, (block, sample)) in output_block.iter().zip(output_sample.iter()).enumerate() {
+                prop_assert!((block - sample).abs() < 1e-6,
+                    "Outputs differ at sample {} after reset: block={}, sample={}",
+                    i, block, sample);
+            }
+        }
+    }
+}
+
+/// **Feature: juce-examples-validation, Property 10: Bias addition**
+/// **Validates: Requirements 5.1**
+///
+/// For any input signal and bias value b, the output should equal input + b for all samples.
+#[cfg(feature = "processors")]
+mod bias_addition {
+    use super::*;
+    use nih_plug_dsp::processors::bias::Bias;
+
+    proptest! {
+        #![proptest_config(ProptestConfig {
+            cases: 100,
+            ..ProptestConfig::default()
+        })]
+
+        /// Test that bias adds the offset value to all samples.
+        #[test]
+        fn prop_bias_adds_offset_to_samples(
+            input in -10.0f32..=10.0f32,
+            offset in -5.0f32..=5.0f32
+        ) {
+            let mut bias = Bias::new();
+            bias.set_bias(offset);
+            
+            let output = bias.process_sample(input);
+            let expected = input + offset;
+            
+            prop_assert!((output - expected).abs() < 1e-6,
+                "Bias addition failed: input={}, offset={}, output={}, expected={}",
+                input, offset, output, expected);
+        }
+
+        /// Test that bias addition works correctly for buffers.
+        #[test]
+        fn prop_bias_adds_offset_to_buffer(
+            samples in prop::collection::vec(-10.0f32..=10.0f32, 1..512),
+            offset in -5.0f32..=5.0f32
+        ) {
+            let mut bias = Bias::new();
+            bias.set_bias(offset);
+            
+            let mut output = vec![0.0; samples.len()];
+            bias.process(&samples, &mut output);
+            
+            for (i, (&input, &out)) in samples.iter().zip(output.iter()).enumerate() {
+                let expected = input + offset;
+                prop_assert!((out - expected).abs() < 1e-6,
+                    "Bias addition failed at index {}: input={}, offset={}, output={}, expected={}",
+                    i, input, offset, out, expected);
+            }
+        }
+
+        /// Test that zero bias passes signal through unchanged.
+        #[test]
+        fn prop_zero_bias_is_identity(
+            samples in prop::collection::vec(-10.0f32..=10.0f32, 1..512)
+        ) {
+            let mut bias = Bias::new();
+            bias.set_bias(0.0);
+            
+            let mut output = vec![0.0; samples.len()];
+            bias.process(&samples, &mut output);
+            
+            for (i, (&input, &out)) in samples.iter().zip(output.iter()).enumerate() {
+                prop_assert!((out - input).abs() < 1e-6,
+                    "Zero bias should be identity at index {}: input={}, output={}",
+                    i, input, out);
+            }
+        }
+    }
+}
+
+/// **Feature: juce-examples-validation, Property 11: Bias numerical stability**
+/// **Validates: Requirements 5.3**
+///
+/// For any finite input signal and finite bias value, the output should remain finite.
+#[cfg(feature = "processors")]
+mod bias_numerical_stability {
+    use super::*;
+    use nih_plug_dsp::processors::bias::Bias;
+
+    proptest! {
+        #![proptest_config(ProptestConfig {
+            cases: 100,
+            ..ProptestConfig::default()
+        })]
+
+        /// Test that bias maintains numerical stability with finite inputs.
+        #[test]
+        fn prop_bias_maintains_finite_output(
+            input in -1e6f32..=1e6f32,
+            offset in -1e6f32..=1e6f32
+        ) {
+            // Only test with finite values
+            prop_assume!(input.is_finite());
+            prop_assume!(offset.is_finite());
+            
+            let mut bias = Bias::new();
+            bias.set_bias(offset);
+            
+            let output = bias.process_sample(input);
+            
+            prop_assert!(output.is_finite(),
+                "Bias output is not finite: input={}, offset={}, output={}",
+                input, offset, output);
+        }
+
+        /// Test that bias handles edge cases near float limits.
+        #[test]
+        fn prop_bias_handles_large_values(
+            input in -1e30f32..=1e30f32,
+            offset in -1e30f32..=1e30f32
+        ) {
+            prop_assume!(input.is_finite());
+            prop_assume!(offset.is_finite());
+            
+            let mut bias = Bias::new();
+            bias.set_bias(offset);
+            
+            let output = bias.process_sample(input);
+            
+            // Output should be finite if inputs are finite
+            prop_assert!(output.is_finite(),
+                "Bias output is not finite with large values: input={}, offset={}, output={}",
+                input, offset, output);
+        }
+
+        /// Test that bias processes buffers with numerical stability.
+        #[test]
+        fn prop_bias_buffer_stability(
+            samples in prop::collection::vec(-1e6f32..=1e6f32, 1..512),
+            offset in -1e6f32..=1e6f32
+        ) {
+            // Filter out any non-finite samples
+            let finite_samples: Vec<f32> = samples.into_iter()
+                .filter(|s| s.is_finite())
+                .collect();
+            
+            prop_assume!(!finite_samples.is_empty());
+            prop_assume!(offset.is_finite());
+            
+            let mut bias = Bias::new();
+            bias.set_bias(offset);
+            
+            let mut output = vec![0.0; finite_samples.len()];
+            bias.process(&finite_samples, &mut output);
+            
+            for (i, &out) in output.iter().enumerate() {
+                prop_assert!(out.is_finite(),
+                    "Bias output is not finite at index {}: input={}, offset={}, output={}",
+                    i, finite_samples[i], offset, out);
+            }
+        }
+    }
+}
