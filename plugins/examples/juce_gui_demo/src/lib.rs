@@ -264,135 +264,137 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                 let _ = root.add_child(next_rc.borrow().component().clone());
 
                 // register handlers by attaching closures directly to components
-                // main slider: updates UI value and notifies host via ParamSetter
                 {
-                    let params2 = Arc::clone(&params);
-                    let ctx2 = gui_context.clone();
-                    let main_for_closure = main_slider_rc.clone();
+                    // main slider: updates UI value and notifies host via ParamSetter
                     {
+                        let params2 = Arc::clone(&params);
+                        let ctx2 = gui_context.clone();
+                        let main_for_closure = main_slider_rc.clone();
+
                         let mut slider_mut = main_slider_rc.borrow_mut();
                         slider_mut.component_mut().set_mouse_handler(move |event| {
-                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
-                        match event {
-                            MouseEvent::ButtonDown { x, y, button, .. } if *button == MouseButton::Left => {
-                                let bounds = main_for_closure.borrow().bounds();
-                                let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
-                                let norm = rel.clamp(0.0, 1.0);
-                                main_for_closure.borrow_mut().set_normalized_value(norm);
-                                let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
-                                setter.begin_set_parameter(&params2.gain);
-                                setter.set_parameter_normalized(&params2.gain, norm as f32);
-                                EventResult::Handled
+                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            match event {
+                                MouseEvent::ButtonDown { x, y, button, .. } if *button == MouseButton::Left => {
+                                    let bounds = main_for_closure.borrow().bounds();
+                                    let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
+                                    let norm = rel.clamp(0.0, 1.0);
+                                    main_for_closure.borrow_mut().set_normalized_value(norm);
+                                    let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                    setter.begin_set_parameter(&params2.gain);
+                                    setter.set_parameter_normalized(&params2.gain, norm as f32);
+                                    EventResult::Handled
+                                }
+                                MouseEvent::Drag { x, y, .. } | MouseEvent::Move { x, y, .. } => {
+                                    let bounds = main_for_closure.borrow().bounds();
+                                    let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
+                                    let norm = rel.clamp(0.0, 1.0);
+                                    main_for_closure.borrow_mut().set_normalized_value(norm);
+                                    let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                    setter.set_parameter_normalized(&params2.gain, norm as f32);
+                                    EventResult::Handled
+                                }
+                                MouseEvent::ButtonUp { .. } => {
+                                    let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                    setter.end_set_parameter(&params2.gain);
+                                    EventResult::Handled
+                                }
+                                _ => EventResult::NotHandled,
                             }
-                            MouseEvent::Drag { x, y, .. } | MouseEvent::Move { x, y, .. } => {
-                                let bounds = main_for_closure.borrow().bounds();
-                                let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
-                                let norm = rel.clamp(0.0, 1.0);
-                                main_for_closure.borrow_mut().set_normalized_value(norm);
-                                let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
-                                setter.set_parameter_normalized(&params2.gain, norm as f32);
-                                EventResult::Handled
-                            }
-                            MouseEvent::ButtonUp { .. } => {
-                                let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
-                                setter.end_set_parameter(&params2.gain);
-                                EventResult::Handled
-                            }
-                            _ => EventResult::NotHandled,
-                        }
                         });
                     }
-                }
 
-                // bypass button: toggle parameter and visual state
-                {
-                    let params2 = Arc::clone(&params);
-                    let ctx2 = gui_context.clone();
-                    let btn_for_closure = bypass_rc.clone();
+                    // bypass button: toggle parameter and visual state
                     {
+                        let params2 = Arc::clone(&params);
+                        let ctx2 = gui_context.clone();
+                        let btn_for_closure = bypass_rc.clone();
+
                         let mut bmut = bypass_rc.borrow_mut();
                         bmut.component_mut().set_mouse_handler(move |event| {
-                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
-                        match event {
-                            MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
-                                let new = !params2.bypass.value();
-                                let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
-                                setter.set_parameter(&params2.bypass, new);
-                                btn_for_closure.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
-                                EventResult::Handled
+                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            match event {
+                                MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
+                                    let new = !params2.bypass.value();
+                                    let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                    setter.set_parameter(&params2.bypass, new);
+                                    btn_for_closure.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
+                                    EventResult::Handled
+                                }
+                                _ => EventResult::NotHandled,
                             }
-                            _ => EventResult::NotHandled,
-                        }
                         });
                     }
-                }
 
-                // Hello demo button: toggle label text (state stored in HelloWorldDemo struct in handler owner)
-                {
-                    let hello_btn_clone = hello.hello_btn.clone();
-                    let label_ref = hello.label.clone();
+                    // Hello demo button: toggle label text (state stored in HelloWorldDemo struct in handler owner)
                     {
+                        let hello_btn_clone = hello.hello_btn.clone();
+                        let label_ref = hello.label.clone();
+
                         let mut hb = hello_btn_clone.borrow_mut();
                         hb.component_mut().set_mouse_handler(move |event| {
-                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
-                        match event {
-                            MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
-                                // toggle label text directly here
-                                let current = label_ref.borrow().text().to_string();
-                                if current.starts_with("Hello!") {
-                                    label_ref.borrow_mut().set_text("Hello JUCE-Style World");
-                                } else {
-                                    label_ref.borrow_mut().set_text("Hello! Click again");
+                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            match event {
+                                MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
+                                    // toggle label text directly here
+                                    let current = label_ref.borrow().text().to_string();
+                                    if current.starts_with("Hello!") {
+                                        label_ref.borrow_mut().set_text("Hello JUCE-Style World");
+                                    } else {
+                                        label_ref.borrow_mut().set_text("Hello! Click again");
+                                    }
+                                    EventResult::Handled
                                 }
-                                EventResult::Handled
+                                _ => EventResult::NotHandled,
                             }
-                            _ => EventResult::NotHandled,
-                        }
                         });
                     }
-                }
 
-                // ComponentDemo controls: toggle and slider
-                {
-                    let toggle_clone = comp_demo.toggle.clone();
-                    let toggle_state = comp_demo.rect_color_toggle.clone();
+                    // ComponentDemo controls: toggle and slider
                     {
+                        let toggle_clone = comp_demo.toggle.clone();
+                        let toggle_state = comp_demo.rect_color_toggle.clone();
+
+                        // Clone an Rc for use inside the closure so we don't move 'toggle_clone'
+                        let toggle_for_closure = toggle_clone.clone();
                         let mut tmut = toggle_clone.borrow_mut();
                         tmut.component_mut().set_mouse_handler(move |event| {
-                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
-                        match event {
-                            MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
-                                // flip color toggle and update button visual
-                                let new = !*toggle_state.borrow();
-                                *toggle_state.borrow_mut() = new;
-                                toggle_clone.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
-                                EventResult::Handled
+                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            match event {
+                                MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
+                                    // flip color toggle and update button visual
+                                    let new = !*toggle_state.borrow();
+                                    *toggle_state.borrow_mut() = new;
+                                    toggle_for_closure.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
+                                    EventResult::Handled
+                                }
+                                _ => EventResult::NotHandled,
                             }
-                            _ => EventResult::NotHandled,
-                        }
                         });
                     }
-                }
 
-                {
-                    let slider_clone = comp_demo.slider.clone();
                     {
+                        let slider_clone = comp_demo.slider.clone();
+
+                        // Prepare a separate Rc clone for the closure to avoid borrowing conflicts
+                        let slider_for_closure = slider_clone.clone();
                         let mut smut = slider_clone.borrow_mut();
                         smut.component_mut().set_mouse_handler(move |event| {
-                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
-                        match event {
-                            MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => EventResult::Handled,
-                            MouseEvent::Drag { x, .. } | MouseEvent::Move { x, .. } => {
-                                let bounds = slider_clone.borrow().bounds();
-                                let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
-                                let norm = rel.clamp(0.0, 1.0);
-                                slider_clone.borrow_mut().set_normalized_value(norm);
-                                EventResult::Handled
+                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            match event {
+                                MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => EventResult::Handled,
+                                MouseEvent::Drag { x, .. } | MouseEvent::Move { x, .. } => {
+                                    let bounds = slider_for_closure.borrow().bounds();
+                                    let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
+                                    let norm = rel.clamp(0.0, 1.0);
+                                    slider_for_closure.borrow_mut().set_normalized_value(norm);
+                                    EventResult::Handled
+                                }
+                                MouseEvent::ButtonUp { .. } => EventResult::Handled,
+                                _ => EventResult::NotHandled,
                             }
-                            MouseEvent::ButtonUp { .. } => EventResult::Handled,
-                            _ => EventResult::NotHandled,
-                        }
-                    });
+                        });
+                    }
                 }
 
                 Self { gl, logical_width: width, logical_height: height, tex: None, program: None, vao: None, vbo: None, title_label: title_rc, main_slider: main_slider_rc, bypass_button: bypass_rc, widgets, hello_demo: hello, component_demo: comp_demo, prev_button: prev_rc, next_button: next_rc, root_component: root, dragging_main: false, dragging_demo_slider: false, dragging_widget: None, last_mouse: (0,0), params, gui_context, active_scene: DemoScene::Widgets }
