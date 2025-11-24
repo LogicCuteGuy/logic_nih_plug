@@ -178,27 +178,34 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
             bypass_button: Rc<RefCell<Button>>,
             // Widgets demo container
             widgets: WidgetsDemo,
+            // other demos
+            hello_demo: HelloWorldDemo,
+            component_demo: ComponentDemo,
+            // scene control buttons
+            prev_button: Rc<RefCell<Button>>,
+            next_button: Rc<RefCell<Button>>,
 
             // Root component for dispatch + mapping
             root_component: Component,
-            comp_map: HashMap<ComponentId, ControlKind>,
+            // removed old comp_map mapping; handlers are registered on components
 
             // Drag state: dragging main slider or a widget slider index
             dragging_main: bool,
+            dragging_demo_slider: bool,
             dragging_widget: Option<usize>,
             last_mouse: (i32, i32),
 
             // Bound references to plugin params and host context
             params: Arc<GuiDemoParams>,
             gui_context: Arc<dyn nih_plug::prelude::GuiContext>,
+            // active scene selector
+            active_scene: DemoScene,
         }
 
-        #[derive(Clone, Copy, Debug)]
-        enum ControlKind {
-            MainSlider,
-            BypassButton,
-            WidgetSlider(usize),
-        }
+        // ControlKind removed: handlers are attached directly to components
+
+        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+        enum DemoScene { Widgets, HelloWorld, Component }
 
         impl JuceGlHandler {
             fn new(gl: Arc<glow::Context>, width: u32, height: u32, params: Arc<GuiDemoParams>, gui_context: Arc<dyn nih_plug::prelude::GuiContext>) -> Self {
@@ -224,6 +231,17 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                 let title_rc = Rc::new(RefCell::new(title));
                 let main_slider_rc = Rc::new(RefCell::new(slider));
                 let bypass_rc = Rc::new(RefCell::new(btn));
+                // create additional demos and scene buttons
+                let hello = HelloWorldDemo::new();
+                let comp_demo = ComponentDemo::new();
+
+                let mut prev = Button::new("<");
+                let _ = prev.set_bounds(Bounds::new(10, 45, 40, 24));
+                let mut next = Button::new(">");
+                let _ = next.set_bounds(Bounds::new(350, 45, 40, 24));
+
+                let prev_rc = Rc::new(RefCell::new(prev));
+                let next_rc = Rc::new(RefCell::new(next));
 
                 // Add components to root (clone underlying Component references)
                 let _ = root.add_child(title_rc.borrow().component().clone());
@@ -238,14 +256,146 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                     let _ = root.add_child(s.component().clone());
                 }
 
-                let mut comp_map = HashMap::new();
-                comp_map.insert(main_slider_rc.borrow().component().id(), ControlKind::MainSlider);
-                comp_map.insert(bypass_rc.borrow().component().id(), ControlKind::BypassButton);
-                for (i, s) in widgets.sliders.iter().enumerate() {
-                    comp_map.insert(s.component().id(), ControlKind::WidgetSlider(i));
+                // Add demo-specific components and scene buttons
+                let _ = root.add_child(hello.hello_btn.borrow().component().clone());
+                let _ = root.add_child(comp_demo.toggle.borrow().component().clone());
+                let _ = root.add_child(comp_demo.slider.borrow().component().clone());
+                let _ = root.add_child(prev_rc.borrow().component().clone());
+                let _ = root.add_child(next_rc.borrow().component().clone());
+
+                // register handlers by attaching closures directly to components
+                // main slider: updates UI value and notifies host via ParamSetter
+                {
+                    let params2 = Arc::clone(&params);
+                    let ctx2 = gui_context.clone();
+                    let main_for_closure = main_slider_rc.clone();
+                    {
+                        let mut slider_mut = main_slider_rc.borrow_mut();
+                        slider_mut.component_mut().set_mouse_handler(move |event| {
+                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                        match event {
+                            MouseEvent::ButtonDown { x, y, button, .. } if *button == MouseButton::Left => {
+                                let bounds = main_for_closure.borrow().bounds();
+                                let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
+                                let norm = rel.clamp(0.0, 1.0);
+                                main_for_closure.borrow_mut().set_normalized_value(norm);
+                                let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                setter.begin_set_parameter(&params2.gain);
+                                setter.set_parameter_normalized(&params2.gain, norm as f32);
+                                EventResult::Handled
+                            }
+                            MouseEvent::Drag { x, y, .. } | MouseEvent::Move { x, y, .. } => {
+                                let bounds = main_for_closure.borrow().bounds();
+                                let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
+                                let norm = rel.clamp(0.0, 1.0);
+                                main_for_closure.borrow_mut().set_normalized_value(norm);
+                                let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                setter.set_parameter_normalized(&params2.gain, norm as f32);
+                                EventResult::Handled
+                            }
+                            MouseEvent::ButtonUp { .. } => {
+                                let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                setter.end_set_parameter(&params2.gain);
+                                EventResult::Handled
+                            }
+                            _ => EventResult::NotHandled,
+                        }
+                        });
+                    }
                 }
 
-                Self { gl, logical_width: width, logical_height: height, tex: None, program: None, vao: None, vbo: None, title_label: title_rc, main_slider: main_slider_rc, bypass_button: bypass_rc, widgets, root_component: root, comp_map, dragging_main: false, dragging_widget: None, last_mouse: (0,0), params, gui_context }
+                // bypass button: toggle parameter and visual state
+                {
+                    let params2 = Arc::clone(&params);
+                    let ctx2 = gui_context.clone();
+                    let btn_for_closure = bypass_rc.clone();
+                    {
+                        let mut bmut = bypass_rc.borrow_mut();
+                        bmut.component_mut().set_mouse_handler(move |event| {
+                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                        match event {
+                            MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
+                                let new = !params2.bypass.value();
+                                let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                setter.set_parameter(&params2.bypass, new);
+                                btn_for_closure.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
+                                EventResult::Handled
+                            }
+                            _ => EventResult::NotHandled,
+                        }
+                        });
+                    }
+                }
+
+                // Hello demo button: toggle label text (state stored in HelloWorldDemo struct in handler owner)
+                {
+                    let hello_btn_clone = hello.hello_btn.clone();
+                    let label_ref = hello.label.clone();
+                    {
+                        let mut hb = hello_btn_clone.borrow_mut();
+                        hb.component_mut().set_mouse_handler(move |event| {
+                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                        match event {
+                            MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
+                                // toggle label text directly here
+                                let current = label_ref.borrow().text().to_string();
+                                if current.starts_with("Hello!") {
+                                    label_ref.borrow_mut().set_text("Hello JUCE-Style World");
+                                } else {
+                                    label_ref.borrow_mut().set_text("Hello! Click again");
+                                }
+                                EventResult::Handled
+                            }
+                            _ => EventResult::NotHandled,
+                        }
+                        });
+                    }
+                }
+
+                // ComponentDemo controls: toggle and slider
+                {
+                    let toggle_clone = comp_demo.toggle.clone();
+                    let toggle_state = comp_demo.rect_color_toggle.clone();
+                    {
+                        let mut tmut = toggle_clone.borrow_mut();
+                        tmut.component_mut().set_mouse_handler(move |event| {
+                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                        match event {
+                            MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
+                                // flip color toggle and update button visual
+                                let new = !*toggle_state.borrow();
+                                *toggle_state.borrow_mut() = new;
+                                toggle_clone.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
+                                EventResult::Handled
+                            }
+                            _ => EventResult::NotHandled,
+                        }
+                        });
+                    }
+                }
+
+                {
+                    let slider_clone = comp_demo.slider.clone();
+                    {
+                        let mut smut = slider_clone.borrow_mut();
+                        smut.component_mut().set_mouse_handler(move |event| {
+                        use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                        match event {
+                            MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => EventResult::Handled,
+                            MouseEvent::Drag { x, .. } | MouseEvent::Move { x, .. } => {
+                                let bounds = slider_clone.borrow().bounds();
+                                let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
+                                let norm = rel.clamp(0.0, 1.0);
+                                slider_clone.borrow_mut().set_normalized_value(norm);
+                                EventResult::Handled
+                            }
+                            MouseEvent::ButtonUp { .. } => EventResult::Handled,
+                            _ => EventResult::NotHandled,
+                        }
+                    });
+                }
+
+                Self { gl, logical_width: width, logical_height: height, tex: None, program: None, vao: None, vbo: None, title_label: title_rc, main_slider: main_slider_rc, bypass_button: bypass_rc, widgets, hello_demo: hello, component_demo: comp_demo, prev_button: prev_rc, next_button: next_rc, root_component: root, dragging_main: false, dragging_demo_slider: false, dragging_widget: None, last_mouse: (0,0), params, gui_context, active_scene: DemoScene::Widgets }
             }
 
             fn find_component_at(&self, comp: &Component, x: i32, y: i32) -> Option<ComponentId> {
@@ -277,6 +427,78 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
         struct WidgetsDemo {
             sliders: Vec<Slider>,
             labels: Vec<Label>,
+        }
+
+        /// Very small Hello World demo with a toggle button
+        struct HelloWorldDemo {
+            label: Rc<RefCell<Label>>,
+            hello_btn: Rc<RefCell<Button>>,
+            greeting_on: bool,
+        }
+
+        impl HelloWorldDemo {
+            fn new() -> Self {
+                let mut label = Label::new("Hello JUCE-Style World");
+                let _ = label.set_bounds(Bounds::new(10, 70, 380, 30));
+                label.set_alignment(TextAlignment::Center);
+
+                let mut btn = Button::new("Say Hello");
+                let _ = btn.set_bounds(Bounds::new(160, 110, 80, 28));
+
+                Self { label: Rc::new(RefCell::new(label)), hello_btn: Rc::new(RefCell::new(btn)), greeting_on: false }
+            }
+
+            fn render(&self, graphics: &mut nih_plug_graphics::Graphics, font: Option<&nih_plug_graphics::Font>) {
+                if let Some(f) = font {
+                    let _ = self.label.borrow().render(graphics, f);
+                }
+                let _ = self.hello_btn.borrow().render(graphics);
+            }
+        }
+
+        /// Small component demo showing a toggle and a slider controlling a rectangle.
+        struct ComponentDemo {
+            title: Rc<RefCell<Label>>,
+            toggle: Rc<RefCell<Button>>,
+            slider: Rc<RefCell<Slider>>,
+            rect_color_toggle: Rc<RefCell<bool>>,
+        }
+
+        impl ComponentDemo {
+            fn new() -> Self {
+                let mut title = Label::new("Component Demo");
+                let _ = title.set_bounds(Bounds::new(10, 10, 380, 30));
+                title.set_alignment(TextAlignment::Center);
+                title.set_font_size(18);
+
+                let mut toggle = Button::new("Toggle Color");
+                let _ = toggle.set_bounds(Bounds::new(20, 60, 120, 32));
+
+                let mut slider = Slider::new(SliderOrientation::Horizontal);
+                let _ = slider.set_bounds(Bounds::new(160, 60, 220, 32));
+                let _ = slider.set_range(10.0, 200.0);
+                slider.set_value(80.0);
+
+                Self { title: Rc::new(RefCell::new(title)), toggle: Rc::new(RefCell::new(toggle)), slider: Rc::new(RefCell::new(slider)), rect_color_toggle: Rc::new(RefCell::new(false)) }
+            }
+
+            fn render(&self, graphics: &mut nih_plug_graphics::Graphics, font: Option<&nih_plug_graphics::Font>) {
+                if let Some(f) = font {
+                    let _ = self.title.borrow().render(graphics, f);
+                }
+
+                // Render a rectangle whose width is controlled by slider and color toggled
+                let w = self.slider.borrow().value() as i32;
+                let h = 80i32;
+                let x = 20i32;
+                let y = 110i32;
+
+                graphics.set_color(if *self.rect_color_toggle.borrow() { nih_plug_graphics::Color::rgb(180, 60, 60) } else { nih_plug_graphics::Color::rgb(60, 120, 180) });
+                graphics.fill_rect(x, y, w.abs() as u32, h as u32);
+
+                let _ = self.toggle.borrow().render(graphics);
+                let _ = self.slider.borrow().render(graphics);
+            }
         }
 
         impl WidgetsDemo {
@@ -359,12 +581,18 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                     graphics.draw_text("JUCE GUI Demo", (self.logical_width as i32) / 2, 30, f, 24.0);
                 }
 
-                // Render slider and button using their persistent instances
+                // Render common controls
                 let _ = self.main_slider.borrow().render(&mut graphics);
                 let _ = self.bypass_button.borrow().render(&mut graphics);
+                let _ = self.prev_button.borrow().render(&mut graphics);
+                let _ = self.next_button.borrow().render(&mut graphics);
 
-                // Render widgets demo area
-                let _ = self.widgets.render(&mut graphics, maybe_font.as_ref());
+                // Render the currently active demo scene
+                match self.active_scene {
+                    DemoScene::Widgets => { let _ = self.widgets.render(&mut graphics, maybe_font.as_ref()); }
+                    DemoScene::HelloWorld => { self.hello_demo.render(&mut graphics, maybe_font.as_ref()); }
+                    DemoScene::Component => { self.component_demo.render(&mut graphics, maybe_font.as_ref()); }
+                }
 
                 // Upload to GL and render full-screen quad (same as GlHandler)
                 let gl_ctx = window.gl_context().expect("no gl ctx");
@@ -469,45 +697,87 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                                 let setter = nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
                                 setter.set_parameter_normalized(&self.params.gain, norm as f32);
                             }
+                            if self.dragging_demo_slider {
+                                // Update demo slider while dragging
+                                let bounds = self.component_demo.slider.borrow().bounds();
+                                let rel = (x - bounds.x) as f64 / (bounds.width as f64);
+                                let norm = rel.clamp(0.0, 1.0);
+                                self.component_demo.slider.borrow_mut().set_normalized_value(norm);
+                            }
+                            // If not currently dragging anything, dispatch a Move event to components (for hover/preview)
+                            if !self.dragging_main && !self.dragging_demo_slider && self.dragging_widget.is_none() {
+                                use nih_plug_gui::input::MouseEvent;
+                                let ev = MouseEvent::Move { x, y, modifiers: nih_plug_gui::input::Modifiers::none() };
+                                let _ = self.root_component.dispatch_mouse_event(&ev);
+                            }
                         }
                         baseview::MouseEvent::ButtonPressed { button, .. } => {
                             if button == baseview::MouseButton::Left {
                                 // Hit test based on last known cursor position
                                 let (mx, my) = self.last_mouse;
-                                // Use component tree hit test to see what we clicked
+                                // Use component tree hit-test to find what was clicked
                                 if let Some(comp_id) = self.find_component_at(&self.root_component, mx, my) {
-                                    if let Some(kind) = self.comp_map.get(&comp_id) {
-                                            match *kind {
-                                            ControlKind::MainSlider => {
-                                                self.dragging_main = true;
-                                                let bounds = self.main_slider.borrow().bounds();
-                                                let rel = (mx - bounds.x) as f64 / (bounds.width as f64);
-                                                let norm = rel.clamp(0.0, 1.0);
-                                                self.main_slider.borrow_mut().set_normalized_value(norm);
-                                                let setter = nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
-                                                setter.begin_set_parameter(&self.params.gain);
-                                                setter.set_parameter_normalized(&self.params.gain, norm as f32);
-                                                return baseview::EventStatus::Captured;
-                                            }
-                                            ControlKind::BypassButton => {
-                                                let new = !self.params.bypass.value();
-                                                let setter = nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
-                                                setter.set_parameter(&self.params.bypass, new);
-                                                // update visual state
-                                                self.bypass_button.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
-                                                return baseview::EventStatus::Captured;
-                                            }
-                                            ControlKind::WidgetSlider(idx) => {
-                                                self.dragging_widget = Some(idx);
+                                    use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                                    // dispatch ButtonDown to the component tree -> handlers attached to components will run
+                                    let ev = MouseEvent::ButtonDown { x: mx, y: my, button: nih_plug_gui::input::MouseButton::Left, modifiers: nih_plug_gui::input::Modifiers::none() };
+                                    let result = self.root_component.dispatch_mouse_event(&ev);
+
+                                    // if handled, set dragging state appropriately (we still need to track drags)
+                                    if result == EventResult::Handled {
+                                        // main slider
+                                        if comp_id == self.main_slider.borrow().component().id() {
+                                            self.dragging_main = true;
+                                            let bounds = self.main_slider.borrow().bounds();
+                                            let rel = (mx - bounds.x) as f64 / (bounds.width as f64);
+                                            let norm = rel.clamp(0.0, 1.0);
+                                            self.main_slider.borrow_mut().set_normalized_value(norm);
+                                            let setter = nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
+                                            setter.begin_set_parameter(&self.params.gain);
+                                            setter.set_parameter_normalized(&self.params.gain, norm as f32);
+                                            return baseview::EventStatus::Captured;
+                                        }
+
+                                        // widget slider? find index
+                                        for (i, s) in self.widgets.sliders.iter().enumerate() {
+                                            if comp_id == s.component().id() {
+                                                self.dragging_widget = Some(i);
                                                 return baseview::EventStatus::Captured;
                                             }
                                         }
+
+                                        // component demo slider
+                                        if comp_id == self.component_demo.slider.borrow().component().id() {
+                                            self.dragging_demo_slider = true;
+                                            let bounds = self.component_demo.slider.borrow().bounds();
+                                            let rel = (mx - bounds.x) as f64 / (bounds.width as f64);
+                                            let norm = rel.clamp(0.0, 1.0);
+                                            self.component_demo.slider.borrow_mut().set_normalized_value(norm);
+                                            return baseview::EventStatus::Captured;
+                                        }
+
+                                        // prev / next scene buttons
+                                        if comp_id == self.prev_button.borrow().component().id() {
+                                            self.active_scene = match self.active_scene { DemoScene::Widgets => DemoScene::Component, DemoScene::HelloWorld => DemoScene::Widgets, DemoScene::Component => DemoScene::HelloWorld };
+                                            return baseview::EventStatus::Captured;
+                                        }
+                                        if comp_id == self.next_button.borrow().component().id() {
+                                            self.active_scene = match self.active_scene { DemoScene::Widgets => DemoScene::HelloWorld, DemoScene::HelloWorld => DemoScene::Component, DemoScene::Component => DemoScene::Widgets };
+                                            return baseview::EventStatus::Captured;
+                                        }
+
+                                        // bypass and other control handlers will be executed by dispatch already
+                                        return baseview::EventStatus::Captured;
                                     }
                                 }
                             }
                         }
                         baseview::MouseEvent::ButtonReleased { button, .. } => {
                             if button == baseview::MouseButton::Left {
+                                // dispatch ButtonUp to the component tree first
+                                use nih_plug_gui::input::{MouseEvent};
+                                let ev_up = MouseEvent::ButtonUp { x: self.last_mouse.0, y: self.last_mouse.1, button: nih_plug_gui::input::MouseButton::Left, modifiers: nih_plug_gui::input::Modifiers::none() };
+                                let _ = self.root_component.dispatch_mouse_event(&ev_up);
+
                                 if let Some(idx) = self.dragging_widget {
                                     // update the widget slider value
                                     let mx = self.last_mouse.0;
@@ -516,9 +786,12 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                                     let norm = rel.clamp(0.0, 1.0);
                                     self.widgets.set_slider_value(idx, norm * 100.0);
                                     return baseview::EventStatus::Captured;
+                                } else if self.dragging_demo_slider {
+                                    // finished dragging the demo slider
+                                    self.dragging_demo_slider = false;
+                                    return baseview::EventStatus::Captured;
                                 } else if self.dragging_main {
-                                    let setter = nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
-                                    setter.end_set_parameter(&self.params.gain);
+                                    // main slider handler will receive ButtonUp via dispatch and call end_set_parameter
                                 }
                                 self.dragging_main = false;
                                 self.dragging_widget = None;

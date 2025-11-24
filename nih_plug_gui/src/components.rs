@@ -79,6 +79,9 @@ struct ComponentData {
     enabled: bool,
     parent: Option<Weak<RefCell<ComponentData>>>,
     children: Vec<Rc<RefCell<ComponentData>>>,
+    // Optional per-component handlers for input events (allows controls to register behavior)
+    mouse_handler: Option<Box<dyn FnMut(&crate::input::MouseEvent) -> EventResult>>,
+    keyboard_handler: Option<Box<dyn FnMut(&crate::input::KeyboardEvent) -> EventResult>>,
 }
 
 /// A GUI component that can be displayed and interacted with.
@@ -122,6 +125,8 @@ impl Component {
                 enabled: true,
                 parent: None,
                 children: Vec::new(),
+                mouse_handler: None,
+                keyboard_handler: None,
             })),
         }
     }
@@ -337,7 +342,12 @@ impl Component {
     /// assert_eq!(result, EventResult::NotHandled);
     /// ```
     pub fn handle_mouse_event(&mut self, event: &MouseEvent) -> EventResult {
-        let _ = event;
+        // If a handler closure has been registered, call it
+        if let Some(handler) = self.data.borrow_mut().mouse_handler.as_mut() {
+            return handler(event);
+        }
+
+        // Default: not handled
         EventResult::NotHandled
     }
 
@@ -363,8 +373,37 @@ impl Component {
     /// assert_eq!(result, EventResult::NotHandled);
     /// ```
     pub fn handle_keyboard_event(&mut self, event: &KeyboardEvent) -> EventResult {
-        let _ = event;
+        if let Some(handler) = self.data.borrow_mut().keyboard_handler.as_mut() {
+            return handler(event);
+        }
+
         EventResult::NotHandled
+    }
+
+    /// Register a mouse event handler closure for this component.
+    pub fn set_mouse_handler<F>(&mut self, f: F)
+    where
+        F: FnMut(&MouseEvent) -> EventResult + 'static,
+    {
+        self.data.borrow_mut().mouse_handler = Some(Box::new(f));
+    }
+
+    /// Remove the component's mouse handler.
+    pub fn clear_mouse_handler(&mut self) {
+        self.data.borrow_mut().mouse_handler = None;
+    }
+
+    /// Register a keyboard event handler closure for this component.
+    pub fn set_keyboard_handler<F>(&mut self, f: F)
+    where
+        F: FnMut(&KeyboardEvent) -> EventResult + 'static,
+    {
+        self.data.borrow_mut().keyboard_handler = Some(Box::new(f));
+    }
+
+    /// Remove the component's keyboard handler.
+    pub fn clear_keyboard_handler(&mut self) {
+        self.data.borrow_mut().keyboard_handler = None;
     }
 
     /// Dispatch a mouse event to this component and its children.
