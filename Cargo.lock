@@ -3394,6 +3394,7 @@ dependencies = [
  "nih_plug",
  "nih_plug_graphics",
  "nih_plug_gui",
+ "raw-window-handle 0.5.2",
 ]
 
 [[package]]
