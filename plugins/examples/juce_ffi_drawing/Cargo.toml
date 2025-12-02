@@ -1,0 +1,15 @@
+[package]
+name = "juce_ffi_drawing"
+version = "0.1.0"
+edition = "2021"
+authors = ["NIH-plug Contributors"]
+license = "ISC"
+
+description = "Example demonstrating JUCE FFI custom drawing with Graphics context, colors, fonts, and paths"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+nih_plug = { path = "../../../", features = ["standalone"] }
+nih_plug_juce = { path = "../../../nih_plug_juce" }
