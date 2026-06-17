@@ -111,7 +111,7 @@ simd = []
 # compatibility.
 zstd = ["dep:zstd"]
 
-# Only relevant when generating docs, adds the `doc_auto_cfg` nightly feature
+# Only relevant when generating docs, adds the `doc_cfg` nightly feature
 docs = []
 
 [dependencies]
