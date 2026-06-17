@@ -86,7 +86,10 @@ impl Default for FilterParams {
                 },
             )
             .with_smoother(SmoothingStyle::Logarithmic(50.0))
-            .with_unit(" Hz")
+            // NB: `v2s_f32_hz_then_khz` already appends the unit (Hz / kHz),
+            // so we deliberately don't call `.with_unit(" Hz")` here. Doing both
+            // produced "20.00 kHz Hz" -> 0.0 -> "20.00 Hz Hz" and broke the
+            // string-to-value roundtrip (clap-validator `param-conversions`).
             .with_value_to_string(formatters::v2s_f32_hz_then_khz(2))
             .with_string_to_value(formatters::s2v_f32_hz_then_khz()),
 
