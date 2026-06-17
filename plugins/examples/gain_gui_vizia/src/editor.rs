@@ -1,8 +1,8 @@
 use atomic_float::AtomicF32;
-use nih_plug::prelude::{util, Editor};
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::widgets::*;
-use nih_plug_vizia::{assets, create_vizia_editor, ViziaState, ViziaTheming};
+use logic_nih_plug::prelude::{util, Editor};
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::widgets::*;
+use logic_nih_plug_vizia::{assets, create_vizia_editor, ViziaState, ViziaTheming};
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::Duration;

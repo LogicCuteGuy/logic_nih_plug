@@ -24,7 +24,7 @@ cargo xtask bundle juce_gui_demo --release
 
 ## Usage
 
-This plugin demonstrates the basic usage of the `nih_plug_gui` crate's component system. While the plugin itself uses standard nih-plug parameter automation, the code includes an example function `create_example_gui()` that shows how to:
+This plugin demonstrates the basic usage of the `logic_nih_plug_gui` crate's component system. While the plugin itself uses standard nih-plug parameter automation, the code includes an example function `create_example_gui()` that shows how to:
 
 1. Create and configure GUI components
 2. Set up component hierarchies

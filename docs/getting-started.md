@@ -26,7 +26,7 @@ Slow (every plugin compiles). Use the per-crate build for day-to-day work.
 cargo test --locked --workspace --features "simd,standalone,zstd"
 ```
 
-> Never run `cargo test --all-features` — `nih_plug_iced` has mutually
+> Never run `cargo test --all-features` — `logic_nih_plug_iced` has mutually
 > exclusive features. The `--features "simd,standalone,zstd"` set is what CI
 > uses; see [.github/workflows/build.yml](../.github/workflows/build.yml).
 
@@ -52,7 +52,7 @@ From [AGENTS.md §5](../AGENTS.md):
 2. `initialize()` is the only place that may allocate heavily.
 3. Cross-thread = `Arc<AtomicF32>`, `parking_lot::Mutex` (try_lock), or crossbeam channels.
 4. Params need stable `#[id = "…"]` and `#[persist = "…"]` attrs.
-5. Use `nih_log!` / `nih_dbg!` from `nih_plug::debug`, not `println!` / `dbg!`.
+5. Use `nih_log!` / `nih_dbg!` from `logic_nih_plug::debug`, not `println!` / `dbg!`.
 
 ## Next steps
 

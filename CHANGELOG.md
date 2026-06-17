@@ -14,11 +14,11 @@ state is to list breaking changes.
 
 ### Breaking changes
 
-- `nih_plug_egui` now uses egui 0.31.
+- `logic_nih_plug_egui` now uses egui 0.31.
 
 ### Added
 
-- `nih_plug_egui` has a new `ResizableWindow` widget that can be used to resize
+- `logic_nih_plug_egui` has a new `ResizableWindow` widget that can be used to resize
   the plugin's editor.
 
 ### Changed
@@ -29,13 +29,13 @@ state is to list breaking changes.
 
 ### Fixed
 
-- Fixed a warning about future name clashes when compiling `nih_plug`.
+- Fixed a warning about future name clashes when compiling `logic_nih_plug`.
 
 ## [2024-12-23]
 
 ### Added
 
-- `nih_plug_vizia`'s `ParamSlider` has a new style that always shows the offset
+- `logic_nih_plug_vizia`'s `ParamSlider` has a new style that always shows the offset
   relative to the center of the slider.
 
 ## [2024-08-18]
@@ -49,8 +49,8 @@ state is to list breaking changes.
 
 ### Breaking changes
 
-- `nih_plug_egui` has been updated from egui 0.26.1 to egui 0.27.2.
-- `nih_plug_vizia` has been updated to the latest version with some a additional
+- `logic_nih_plug_egui` has been updated from egui 0.26.1 to egui 0.27.2.
+- `logic_nih_plug_vizia` has been updated to the latest version with some a additional
   patches. This includes a workaround for the problem where opening multiple
   instances of a plugin's GUI on Windows or macOS would result in crashes.
 
@@ -78,7 +78,7 @@ state is to list breaking changes.
 
 ### Added
 
-- `nih_plug_xtask` now detects and uses non-standard `target` directory
+- `logic_nih_plug_xtask` now detects and uses non-standard `target` directory
   locations if overridden through Cargo's settings.
 
 ## [2024-03-18]
@@ -93,19 +93,19 @@ state is to list breaking changes.
 
 ### Fixed
 
-- Fixed `nih_plug_egui` panicking due to cursor icons not yet being implemented in baseview for MacOS and Windows.
+- Fixed `logic_nih_plug_egui` panicking due to cursor icons not yet being implemented in baseview for MacOS and Windows.
 
 ## [2024-02-22]
 
 ### Breaking changes
 
-- `nih_plug_egui` has been updated from egui 0.22.0 to using egui 0.26.1.
+- `logic_nih_plug_egui` has been updated from egui 0.22.0 to using egui 0.26.1.
 
 ## [2023-12-30]
 
 ### Breaking changes
 
-- `nih_plug_vizia` has been updated to the latest Vizia version. Vizia's styling
+- `logic_nih_plug_vizia` has been updated to the latest Vizia version. Vizia's styling
   system has changed a lot since the last update, so plugin GUIs and stylesheets
   may require small changes before they behave the same again. A summary of the
   most important changes can be found in Vizia PR
@@ -123,7 +123,7 @@ state is to list breaking changes.
 
 ### Added
 
-- Added initial RISC-V support to `nih_plug_xtask`.
+- Added initial RISC-V support to `logic_nih_plug_xtask`.
   ([#95](https://github.com/robbert-vdh/nih-plug/pull/95)).
 
 ### Changed
@@ -136,7 +136,7 @@ state is to list breaking changes.
 - `nih_debug_assert*!()` failures are now promoted to a warning instead of a
   debug message. This makes the non-fatal debug assertion failures easier to
   spot.
-- The minimum scale factor in `nih_plug_vizia` has changed from 0.25 to 0.5.
+- The minimum scale factor in `logic_nih_plug_vizia` has changed from 0.25 to 0.5.
   Vizia rounds things to single pixels, and below 0.5 scaling single pixel
   borders would disappear when not using a HiDPI setup.
 
@@ -315,14 +315,14 @@ state is to list breaking changes.
   the debug and trace message levels.
 - The logger now filters out the `Mapped XXXX font faces in YYYms.` messages
   from cosmic text in release builds as this is unnecessary noise for end users.
-- `nih_plug_vizia`: `ParamButton`'s active color was made much lighter to make
+- `logic_nih_plug_vizia`: `ParamButton`'s active color was made much lighter to make
   the text more readable, and the hover state has been fixed.
 
 ## [2023-03-18]
 
 ### Added
 
-- `nih_plug_vizia`: Added a `GuiContextEvent::Resize` event. The plugin can emit
+- `logic_nih_plug_vizia`: Added a `GuiContextEvent::Resize` event. The plugin can emit
   this to trigger a resize to its current size, as specified by its
   `ViziaState`'s size callback. This can be used to declaratively resize a
   plugin GUI and it removes some potential surface for making mistakes in the
@@ -423,8 +423,8 @@ This document is now also used to keep track of non-breaking changes.
 - The Vizia dependency has been updated. This updated version uses a new text
   rendering engine, so there are a couple breaking changes:
   - The names for some of Vizia's fonts have changed. The constants and font
-    registration functions in `nih_plug_vizia::assets` and
-    `nih_plug_vizia::vizia_assets` still have the same name, but all uses of the
+    registration functions in `logic_nih_plug_vizia::assets` and
+    `logic_nih_plug_vizia::vizia_assets` still have the same name, but all uses of the
     `font` CSS property and `.font()` view modifier will have to be changed.
   - Metrics for rendered text have change slightly. Most notably the height and
     vertical positioning of text is slightly different, so you may have to
@@ -501,28 +501,28 @@ This document is now also used to keep track of non-breaking changes.
 
 ### Breaking changes
 
-- `nih_plug_vizia::create_vizia_editor_without_theme()` has been removed, and
-  `nih_plug_vizia::create_vizia_editor()` has gained a new argument to specify
+- `logic_nih_plug_vizia::create_vizia_editor_without_theme()` has been removed, and
+  `logic_nih_plug_vizia::create_vizia_editor()` has gained a new argument to specify
   what amount of theming to apply. This can now also be used to completely
   disable all theming include Vizia's built-in theme.
-- `nih_plug_vizia::create_vizia_editor()` no longer registers any fonts by
+- `logic_nih_plug_vizia::create_vizia_editor()` no longer registers any fonts by
   default. Even when those fonts are not used, they will still be embedded in
   the binary, increasing its size by several megabytes. Instead, you can now
   register individual fonts by calling the
-  `nih_plug_vizia::assets::register_*()` functions. This means that you _must_
-  call `nih_plug_vizia::assets::register_noto_sans_light()` for the default
+  `logic_nih_plug_vizia::assets::register_*()` functions. This means that you _must_
+  call `logic_nih_plug_vizia::assets::register_noto_sans_light()` for the default
   theming to work. All of the plugins in this repo also use
-  `nih_plug_vizia::assets::register_noto_sans_thin()` as a title font.
+  `logic_nih_plug_vizia::assets::register_noto_sans_thin()` as a title font.
 - Additionally, the Vizia fork has been updated to not register _any_ default
   fonts for the same reason. If you previously relied on Vizia's default Roboto
-  font, then you must now call `nih_plug_vizia::vizia_assets::register_roboto()`
+  font, then you must now call `logic_nih_plug_vizia::vizia_assets::register_roboto()`
   at the start of your process function.
 
 ## [2022-10-23]
 
 ### Breaking changes
 
-- `nih_plug_vizia` has been updated. Widgets with custom drawing code will need
+- `logic_nih_plug_vizia` has been updated. Widgets with custom drawing code will need
   to be updated because of changes in Vizia itself.
 
 ## [2022-10-22]
@@ -530,11 +530,11 @@ This document is now also used to keep track of non-breaking changes.
 ### Breaking changes
 
 - The `Editor` trait and the `ParentWindowHandle` struct have been moved from
-  `nih_plug::plugin` to a new `nih_plug::editor` module. If you only use the
+  `logic_nih_plug::plugin` to a new `logic_nih_plug::editor` module. If you only use the
   prelude module then you won't need to change anything.
-- The `nih_plug::context` module has been split up into
-  `nih_plug::context::init`, `nih_plug::context::process`, and
-  `nih_plug::context::gui` to make it clearer which structs go with which
+- The `logic_nih_plug::context` module has been split up into
+  `logic_nih_plug::context::init`, `logic_nih_plug::context::process`, and
+  `logic_nih_plug::context::gui` to make it clearer which structs go with which
   context. You again don't have to change anything if you use the prelude.
 - NIH-plug has gained support for asynchronously running background tasks in a
   simple, type-safe, and realtime-safe way. This sadly does mean that every
@@ -557,14 +557,14 @@ This document is now also used to keep track of non-breaking changes.
 
 ### Breaking changes
 
-- Some items have been moved out of `nih_plug::param::internals`. The main
-  `Params` trait is now located under `nih_plug::param`, and the
+- Some items have been moved out of `logic_nih_plug::param::internals`. The main
+  `Params` trait is now located under `logic_nih_plug::param`, and the
   `PersistentTrait` trait, implementations, and helper functions are now part of
-  a new `nih_plug::param::persist` module. Code importing the `Params` trait
+  a new `logic_nih_plug::param::persist` module. Code importing the `Params` trait
   through the prelude module doesn't need to be changed.
-- The `nih_plug::param` module has been renamed to `nih_plug::params`. Code that
+- The `logic_nih_plug::param` module has been renamed to `logic_nih_plug::params`. Code that
   only uses the prelude module doesn't need to be changed.
-- The `create_egui_editor()` function from `nih_plug_egui` now also takes a
+- The `create_egui_editor()` function from `logic_nih_plug_egui` now also takes a
   build closure to apply initialization logic to the egui context.
 - `Editor` and the editor handle returned by `Editor::spawn` now only require
   `Send` and no longer need `Sync`. This is not a breaking change, but it might
@@ -580,16 +580,16 @@ This document is now also used to keep track of non-breaking changes.
   required custom `Params` implementations to have multiple almost identical
   copies of a parameter struct. The current version supports both fields with
   unique parameter ID prefixes, and arrays of parameter objects. See the
-  [`Params`](https://nih-plug.robbertvanderhelm.nl/nih_plug/param/internals/trait.Params.html)
+  [`Params`](https://nih-plug.robbertvanderhelm.nl/logic_nih_plug/param/internals/trait.Params.html)
   trait for more information on the new syntax.
 
 ## [2022-09-22]
 
 ### Breaking changes
 
-- `nih_plug_vizia` has been updated. Custom widgets will need to be updated
+- `logic_nih_plug_vizia` has been updated. Custom widgets will need to be updated
   because of changes Vizia itself.
-- `nih_plug_egui` has been updated from egui 0.17 to egui 0.19.
+- `logic_nih_plug_egui` has been updated from egui 0.17 to egui 0.19.
 
 ## [2022-09-06]
 

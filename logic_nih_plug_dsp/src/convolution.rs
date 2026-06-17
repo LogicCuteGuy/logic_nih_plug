@@ -17,7 +17,7 @@ use std::sync::Arc;
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::convolution::Convolution;
+/// use logic_nih_plug_dsp::convolution::Convolution;
 ///
 /// let mut conv = Convolution::new(44100.0, 512);
 ///
@@ -78,7 +78,7 @@ impl Convolution {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::convolution::Convolution;
+    /// use logic_nih_plug_dsp::convolution::Convolution;
     ///
     /// let conv = Convolution::new(44100.0, 512);
     /// ```
@@ -136,7 +136,7 @@ impl Convolution {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::convolution::Convolution;
+    /// use logic_nih_plug_dsp::convolution::Convolution;
     ///
     /// let mut conv = Convolution::new(44100.0, 512);
     /// let ir = vec![1.0, 0.5, 0.25, 0.125];
@@ -198,7 +198,7 @@ impl Convolution {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::convolution::Convolution;
+    /// use logic_nih_plug_dsp::convolution::Convolution;
     ///
     /// let mut conv = Convolution::new(44100.0, 512);
     /// let ir = vec![1.0, 0.5, 0.25];

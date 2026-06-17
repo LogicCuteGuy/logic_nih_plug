@@ -3,7 +3,7 @@
 //! This example shows how to use SmoothedValue to smoothly interpolate
 //! parameter changes over time, avoiding clicks and discontinuities.
 
-use nih_plug_dsp::smoothing::SmoothedValue;
+use logic_nih_plug_dsp::smoothing::SmoothedValue;
 
 fn main() {
     println!("SmoothedValue Demo\n");

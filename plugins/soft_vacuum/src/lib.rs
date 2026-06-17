@@ -18,7 +18,7 @@ use std::f32::consts::PI;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 
 mod hard_vacuum;
 mod oversampling;

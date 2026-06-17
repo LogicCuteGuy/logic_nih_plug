@@ -85,7 +85,7 @@ impl Lv2Category {
 /// # Example
 ///
 /// ```ignore
-/// use nih_plug::prelude::*;
+/// use logic_nih_plug::prelude::*;
 ///
 /// struct MyPlugin {
 ///     params: Arc<MyParams>,

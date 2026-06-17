@@ -1,4 +1,4 @@
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 use std::f32::consts;
 use std::sync::Arc;
 

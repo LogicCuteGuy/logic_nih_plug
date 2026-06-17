@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use atomic_float::AtomicF32;
-use nih_plug::debug::*;
-use nih_plug::prelude::{Editor, Plugin};
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::widgets::*;
-use nih_plug_vizia::{assets, create_vizia_editor, ViziaState, ViziaTheming};
+use logic_nih_plug::debug::*;
+use logic_nih_plug::prelude::{Editor, Plugin};
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::widgets::*;
+use logic_nih_plug_vizia::{assets, create_vizia_editor, ViziaState, ViziaTheming};
 use std::sync::{Arc, Mutex};
 
 use self::button::SafeModeButton;

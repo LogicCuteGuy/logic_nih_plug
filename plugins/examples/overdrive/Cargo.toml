@@ -11,5 +11,5 @@ description = "Example plugin demonstrating processor chain composition with ove
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-nih_plug = { path = "../../../", features = ["standalone"] }
-nih_plug_dsp = { path = "../../../nih_plug_dsp", features = ["processors"] }
+logic_nih_plug = { path = "../../../", features = ["standalone"] }
+logic_nih_plug_dsp = { path = "../../../logic_nih_plug_dsp", features = ["processors"] }

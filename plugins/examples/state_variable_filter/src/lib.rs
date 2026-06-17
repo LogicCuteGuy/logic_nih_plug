@@ -1,12 +1,12 @@
 //! # State Variable Filter Example
 //!
-//! This example demonstrates the state variable filter (TPT) from nih_plug_dsp
-//! with real-time frequency response visualization using nih_plug_gui.
+//! This example demonstrates the state variable filter (TPT) from logic_nih_plug_dsp
+//! with real-time frequency response visualization using logic_nih_plug_gui.
 
 use atomic_float::AtomicF32;
 use crossbeam::atomic::AtomicCell;
-use nih_plug::prelude::*;
-use nih_plug_dsp::state_variable::StateVariableFilter;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_dsp::state_variable::StateVariableFilter;
 use std::sync::Arc;
 
 mod editor;
@@ -22,12 +22,12 @@ pub enum FilterType {
     Highpass,
 }
 
-impl From<FilterType> for nih_plug_dsp::state_variable::FilterType {
+impl From<FilterType> for logic_nih_plug_dsp::state_variable::FilterType {
     fn from(ft: FilterType) -> Self {
         match ft {
-            FilterType::Lowpass => nih_plug_dsp::state_variable::FilterType::Lowpass,
-            FilterType::Bandpass => nih_plug_dsp::state_variable::FilterType::Bandpass,
-            FilterType::Highpass => nih_plug_dsp::state_variable::FilterType::Highpass,
+            FilterType::Lowpass => logic_nih_plug_dsp::state_variable::FilterType::Lowpass,
+            FilterType::Bandpass => logic_nih_plug_dsp::state_variable::FilterType::Bandpass,
+            FilterType::Highpass => logic_nih_plug_dsp::state_variable::FilterType::Highpass,
         }
     }
 }
@@ -204,7 +204,7 @@ impl Plugin for StateVariableFilterPlugin {
 impl StateVariableFilterPlugin {
     /// Updates filter parameters from the parameter values
     fn update_filter_parameters(&mut self, _sample_rate: f32) {
-        let filter_type: nih_plug_dsp::state_variable::FilterType =
+        let filter_type: logic_nih_plug_dsp::state_variable::FilterType =
             self.params.filter_type.value().into();
         let cutoff = self.params.cutoff.value();
         let resonance = self.params.resonance.value();
@@ -222,7 +222,7 @@ impl StateVariableFilterPlugin {
     fn update_frequency_response(&self, sample_rate: f32) {
         let cutoff = self.params.cutoff.value();
         let resonance = self.params.resonance.value();
-        let filter_type: nih_plug_dsp::state_variable::FilterType =
+        let filter_type: logic_nih_plug_dsp::state_variable::FilterType =
             self.params.filter_type.value().into();
 
         // Calculate frequency response at 128 logarithmically-spaced points
@@ -246,7 +246,7 @@ fn calculate_svf_magnitude_db(
     cutoff: f32,
     resonance: f32,
     sample_rate: f32,
-    filter_type: nih_plug_dsp::state_variable::FilterType,
+    filter_type: logic_nih_plug_dsp::state_variable::FilterType,
 ) -> f32 {
     use std::f32::consts::PI;
 
@@ -256,19 +256,19 @@ fn calculate_svf_magnitude_db(
 
     // Simplified magnitude calculation for each filter type
     let magnitude_squared = match filter_type {
-        nih_plug_dsp::state_variable::FilterType::Lowpass => {
+        logic_nih_plug_dsp::state_variable::FilterType::Lowpass => {
             // Lowpass: H(z) ≈ g² / (1 + g(g+k) + ...)
             let denominator = 1.0 + g * g + g * k;
             let numerator = g * g;
             numerator / denominator.max(1e-10)
         }
-        nih_plug_dsp::state_variable::FilterType::Bandpass => {
+        logic_nih_plug_dsp::state_variable::FilterType::Bandpass => {
             // Bandpass: H(z) ≈ g / (1 + g(g+k) + ...)
             let denominator = 1.0 + g * g + g * k;
             let numerator = g;
             numerator / denominator.max(1e-10)
         }
-        nih_plug_dsp::state_variable::FilterType::Highpass => {
+        logic_nih_plug_dsp::state_variable::FilterType::Highpass => {
             // Highpass: H(z) ≈ 1 / (1 + g(g+k) + ...)
             let denominator = 1.0 + g * g + g * k;
             1.0 / denominator.max(1e-10)

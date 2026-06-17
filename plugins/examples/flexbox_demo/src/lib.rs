@@ -1,11 +1,11 @@
 //! # FlexBox Layout Demo
 //!
-//! This example demonstrates the FlexBox layout system from nih_plug_gui
+//! This example demonstrates the FlexBox layout system from logic_nih_plug_gui
 //! with interactive controls for all FlexBox properties and visual feedback.
 
 use crossbeam::atomic::AtomicCell;
-use nih_plug::prelude::*;
-use nih_plug_gui::layout::flexbox::*;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_gui::layout::flexbox::*;
 use std::sync::Arc;
 
 mod editor;

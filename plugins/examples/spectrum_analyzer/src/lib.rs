@@ -1,12 +1,12 @@
 //! # Spectrum Analyzer Example
 //!
-//! This example demonstrates real-time spectrum analysis using FFT from nih_plug_dsp
-//! with spectrogram display and color mapping using nih_plug_gui.
+//! This example demonstrates real-time spectrum analysis using FFT from logic_nih_plug_dsp
+//! with spectrogram display and color mapping using logic_nih_plug_gui.
 
 use atomic_float::AtomicF32;
 use crossbeam::atomic::AtomicCell;
-use nih_plug::prelude::*;
-use nih_plug_dsp::analysis::FFT;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_dsp::analysis::FFT;
 use num_complex::Complex;
 use std::sync::Arc;
 

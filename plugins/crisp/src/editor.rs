@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug::prelude::Editor;
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::widgets::*;
-use nih_plug_vizia::{assets, create_vizia_editor, ViziaState, ViziaTheming};
+use logic_nih_plug::prelude::Editor;
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::widgets::*;
+use logic_nih_plug_vizia::{assets, create_vizia_editor, ViziaState, ViziaTheming};
 use std::sync::Arc;
 
 use crate::CrispParams;

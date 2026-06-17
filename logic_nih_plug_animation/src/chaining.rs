@@ -6,9 +6,9 @@
 //! # Examples
 //!
 //! ```
-//! use nih_plug_animation::{Animation, AnimationState};
-//! use nih_plug_animation::chaining::AnimationSequence;
-//! use nih_plug_animation::easing::linear;
+//! use logic_nih_plug_animation::{Animation, AnimationState};
+//! use logic_nih_plug_animation::chaining::AnimationSequence;
+//! use logic_nih_plug_animation::easing::linear;
 //!
 //! let anim1 = Animation::new(0.0, 50.0, 1.0, linear);
 //! let anim2 = Animation::new(50.0, 100.0, 1.0, linear);
@@ -27,9 +27,9 @@ use crate::{Animation, AnimationState};
 /// # Examples
 ///
 /// ```
-/// use nih_plug_animation::{Animation, AnimationState};
-/// use nih_plug_animation::chaining::AnimationSequence;
-/// use nih_plug_animation::easing::linear;
+/// use logic_nih_plug_animation::{Animation, AnimationState};
+/// use logic_nih_plug_animation::chaining::AnimationSequence;
+/// use logic_nih_plug_animation::easing::linear;
 ///
 /// let mut sequence = AnimationSequence::new();
 /// sequence.add(Animation::new(0.0, 50.0, 1.0, linear));

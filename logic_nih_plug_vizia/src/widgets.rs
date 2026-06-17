@@ -6,8 +6,8 @@
 //! to copy the widgets and modify them to your personal taste.
 
 use crossbeam::atomic::AtomicCell;
-use nih_plug::debug::*;
-use nih_plug::prelude::{GuiContext, Param, ParamPtr};
+use logic_nih_plug::debug::*;
+use logic_nih_plug::prelude::{GuiContext, Param, ParamPtr};
 use std::sync::Arc;
 use vizia::prelude::*;
 
@@ -37,7 +37,7 @@ pub fn register_theme(cx: &mut Context) {
 
 /// An event that updates a parameter's value. Since NIH-plug manages the parameters, interacting
 /// with parameter values with VIZIA works a little different from updating any other state. These
-/// events are automatically handled by `nih_plug_vizia`.
+/// events are automatically handled by `logic_nih_plug_vizia`.
 ///
 /// Call the [`upcast()`][Self::upcast()] method to be able to emit this event through an
 /// [`EventContext`][EventContext].
@@ -80,9 +80,9 @@ pub enum GuiContextEvent {
     /// ```
     /// # use std::sync::Arc;
     /// # use std::sync::atomic::{AtomicBool, Ordering};
-    /// # use nih_plug_vizia::ViziaState;
-    /// # use nih_plug_vizia::vizia::prelude::*;
-    /// # use nih_plug_vizia::widgets::GuiContextEvent;
+    /// # use logic_nih_plug_vizia::ViziaState;
+    /// # use logic_nih_plug_vizia::vizia::prelude::*;
+    /// # use logic_nih_plug_vizia::widgets::GuiContextEvent;
     /// // Assuming there is some kind of state variable passed to the editor, likely stored as a
     /// // `#[persist]` field in the `Params` struct:
     /// let window_state = Arc::new(AtomicBool::new(false));

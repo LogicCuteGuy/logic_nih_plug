@@ -3,7 +3,7 @@
 //! These tests verify correctness properties for FIR filters and window functions.
 
 use proptest::prelude::*;
-use nih_plug_dsp::fir::{FIRFilter, FilterDesign, WindowFunction};
+use logic_nih_plug_dsp::fir::{FIRFilter, FilterDesign, WindowFunction};
 use std::f32::consts::PI;
 
 /// **Feature: juce-examples-validation, Property 4: Window function diversity**

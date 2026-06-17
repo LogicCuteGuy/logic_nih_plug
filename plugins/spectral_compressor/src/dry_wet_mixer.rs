@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug::prelude::Buffer;
+use logic_nih_plug::prelude::Buffer;
 
 /// A simple dry-wet mixer with latency compensation that operates on entire buffers.
 pub struct DryWetMixer {

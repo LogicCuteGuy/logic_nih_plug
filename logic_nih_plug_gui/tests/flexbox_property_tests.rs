@@ -3,7 +3,7 @@
 //! These tests verify correctness properties of the FlexBox layout system
 //! using property-based testing with proptest.
 
-use nih_plug_gui::layout::flexbox::{
+use logic_nih_plug_gui::layout::flexbox::{
     AlignItems, AlignSelf, FlexBox, FlexDirection, FlexItem, FlexWrap, JustifyContent,
 };
 use proptest::prelude::*;

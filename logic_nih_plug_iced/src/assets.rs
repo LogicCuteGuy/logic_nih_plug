@@ -1,4 +1,4 @@
-//! Binary assets for use with `nih_plug_iced`.
+//! Binary assets for use with `logic_nih_plug_iced`.
 
 use crate::Font;
 

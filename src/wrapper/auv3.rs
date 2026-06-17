@@ -46,7 +46,7 @@ pub use descriptor::Auv3ComponentDescription;
 /// # Example
 ///
 /// ```ignore
-/// use nih_plug::prelude::*;
+/// use logic_nih_plug::prelude::*;
 ///
 /// struct MyPlugin {
 ///     params: Arc<MyParams>,

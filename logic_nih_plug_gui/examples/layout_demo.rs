@@ -3,9 +3,9 @@
 //! This example shows how to use the layout management system to automatically
 //! position and size components.
 
-use nih_plug_gui::components::{Bounds, Component};
-use nih_plug_gui::controls::{Button, Label, Slider, SliderOrientation};
-use nih_plug_gui::layout::{
+use logic_nih_plug_gui::components::{Bounds, Component};
+use logic_nih_plug_gui::controls::{Button, Label, Slider, SliderOrientation};
+use logic_nih_plug_gui::layout::{
     AbsoluteLayout, FlexAlign, FlexDirection, FlexLayout, GridLayout, SizeConstraint,
 };
 

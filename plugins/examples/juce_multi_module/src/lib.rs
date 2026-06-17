@@ -4,13 +4,13 @@
 //! in a single plugin. It combines DSP, data structures, audio formats, animation,
 //! and cryptography modules to create a feature-rich synthesizer plugin.
 
-use nih_plug::prelude::*;
-use nih_plug_animation::easing::ease_in_out_quad;
-use nih_plug_crypto::{HashAlgorithm, Hasher};
-use nih_plug_data::valuetree::{Value, ValueTree};
-use nih_plug_dsp::envelopes::Envelope;
-use nih_plug_dsp::filters::IIRFilter;
-use nih_plug_dsp::oscillators::{Oscillator, Waveform};
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_animation::easing::ease_in_out_quad;
+use logic_nih_plug_crypto::{HashAlgorithm, Hasher};
+use logic_nih_plug_data::valuetree::{Value, ValueTree};
+use logic_nih_plug_dsp::envelopes::Envelope;
+use logic_nih_plug_dsp::filters::IIRFilter;
+use logic_nih_plug_dsp::oscillators::{Oscillator, Waveform};
 use std::sync::Arc;
 
 /// An advanced synthesizer plugin demonstrating multiple ported JUCE modules

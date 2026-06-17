@@ -2,7 +2,7 @@
 //!
 //! These tests verify correctness properties across many randomly generated inputs.
 
-use nih_plug_dsp::analysis::FFT;
+use logic_nih_plug_dsp::analysis::FFT;
 use num_complex::Complex;
 use proptest::prelude::*;
 

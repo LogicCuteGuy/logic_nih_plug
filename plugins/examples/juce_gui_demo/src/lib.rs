@@ -3,10 +3,10 @@
 //! This example demonstrates using the ported JUCE GUI components.
 //! It shows how to create a simple plugin interface with buttons, sliders, and labels.
 
-use nih_plug::prelude::*;
-use nih_plug_gui::components::{Bounds, Component, ComponentId};
-use nih_plug_gui::controls::{Button, Label, Slider, SliderOrientation, TextAlignment};
-use nih_plug_gui::lookandfeel::{DefaultLookAndFeel, Theme};
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_gui::components::{Bounds, Component, ComponentId};
+use logic_nih_plug_gui::controls::{Button, Label, Slider, SliderOrientation, TextAlignment};
+use logic_nih_plug_gui::lookandfeel::{DefaultLookAndFeel, Theme};
 use std::sync::Arc;
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -124,9 +124,9 @@ struct JuceGuiEditor {
     scaling_factor: AtomicCell<Option<f32>>,
 }
 
-impl nih_plug::prelude::Editor for JuceGuiEditor {
-    fn spawn(&self, _parent: nih_plug::editor::ParentWindowHandle, context: Arc<dyn nih_plug::prelude::GuiContext>) -> Box<dyn std::any::Any + Send> {
-        // Spawn a simple softbuffer window and render a placeholder UI using nih_plug_graphics
+impl logic_nih_plug::prelude::Editor for JuceGuiEditor {
+    fn spawn(&self, _parent: logic_nih_plug::editor::ParentWindowHandle, context: Arc<dyn logic_nih_plug::prelude::GuiContext>) -> Box<dyn std::any::Any + Send> {
+        // Spawn a simple softbuffer window and render a placeholder UI using logic_nih_plug_graphics
         let params = Arc::clone(&self.params);
 
         // Try GL window first: draw into a Graphics buffer which is uploaded to GL every frame.
@@ -137,7 +137,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
         // Open a custom parented baseview window with a persistent GL-backed handler
         // that keeps the JUCE-like component tree in the window thread. This is closer to
         // how a real JUCE editor would keep components around and route events to them.
-        struct ParentWindowHandleAdapter(nih_plug::editor::ParentWindowHandle);
+        struct ParentWindowHandleAdapter(logic_nih_plug::editor::ParentWindowHandle);
 
         unsafe impl raw_window_handle::HasRawWindowHandle for ParentWindowHandleAdapter {
             fn raw_window_handle(&self) -> raw_window_handle::RawWindowHandle {
@@ -197,7 +197,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
 
             // Bound references to plugin params and host context
             params: Arc<GuiDemoParams>,
-            gui_context: Arc<dyn nih_plug::prelude::GuiContext>,
+            gui_context: Arc<dyn logic_nih_plug::prelude::GuiContext>,
             // active scene selector
             active_scene: DemoScene,
         }
@@ -208,7 +208,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
         enum DemoScene { Widgets, HelloWorld, Component }
 
         impl JuceGlHandler {
-            fn new(gl: Arc<glow::Context>, width: u32, height: u32, params: Arc<GuiDemoParams>, gui_context: Arc<dyn nih_plug::prelude::GuiContext>) -> Self {
+            fn new(gl: Arc<glow::Context>, width: u32, height: u32, params: Arc<GuiDemoParams>, gui_context: Arc<dyn logic_nih_plug::prelude::GuiContext>) -> Self {
                 // Initialize controls with bounds and values
                 let mut slider = Slider::new(SliderOrientation::Horizontal);
                 let _ = slider.set_range(0.0, 1.0);
@@ -217,7 +217,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
 
                 let mut btn = Button::new("Bypass");
                 let _ = btn.set_bounds(Bounds::new(150, 150, 100, 40));
-                btn.set_button_state(if params.bypass.value() { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
+                btn.set_button_state(if params.bypass.value() { logic_nih_plug_gui::controls::ButtonState::Pressed } else { logic_nih_plug_gui::controls::ButtonState::Normal });
 
                 let mut title = Label::new("JUCE GUI Demo");
                 let _ = title.set_bounds(Bounds::new(10, 10, 380, 30));
@@ -273,14 +273,14 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
 
                         let mut slider_mut = main_slider_rc.borrow_mut();
                         slider_mut.component_mut().set_mouse_handler(move |event| {
-                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            use logic_nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
                             match event {
                                 MouseEvent::ButtonDown { x, y, button, .. } if *button == MouseButton::Left => {
                                     let bounds = main_for_closure.borrow().bounds();
                                     let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
                                     let norm = rel.clamp(0.0, 1.0);
                                     main_for_closure.borrow_mut().set_normalized_value(norm);
-                                    let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                    let setter = logic_nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
                                     setter.begin_set_parameter(&params2.gain);
                                     setter.set_parameter_normalized(&params2.gain, norm as f32);
                                     EventResult::Handled
@@ -290,12 +290,12 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                                     let rel = (*x - bounds.x) as f64 / (bounds.width as f64);
                                     let norm = rel.clamp(0.0, 1.0);
                                     main_for_closure.borrow_mut().set_normalized_value(norm);
-                                    let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                    let setter = logic_nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
                                     setter.set_parameter_normalized(&params2.gain, norm as f32);
                                     EventResult::Handled
                                 }
                                 MouseEvent::ButtonUp { .. } => {
-                                    let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                    let setter = logic_nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
                                     setter.end_set_parameter(&params2.gain);
                                     EventResult::Handled
                                 }
@@ -312,13 +312,13 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
 
                         let mut bmut = bypass_rc.borrow_mut();
                         bmut.component_mut().set_mouse_handler(move |event| {
-                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            use logic_nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
                             match event {
                                 MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
                                     let new = !params2.bypass.value();
-                                    let setter = nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
+                                    let setter = logic_nih_plug::prelude::ParamSetter::new(ctx2.as_ref());
                                     setter.set_parameter(&params2.bypass, new);
-                                    btn_for_closure.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
+                                    btn_for_closure.borrow_mut().set_button_state(if new { logic_nih_plug_gui::controls::ButtonState::Pressed } else { logic_nih_plug_gui::controls::ButtonState::Normal });
                                     EventResult::Handled
                                 }
                                 _ => EventResult::NotHandled,
@@ -333,7 +333,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
 
                         let mut hb = hello_btn_clone.borrow_mut();
                         hb.component_mut().set_mouse_handler(move |event| {
-                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            use logic_nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
                             match event {
                                 MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
                                     // toggle label text directly here
@@ -359,13 +359,13 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                         let toggle_for_closure = toggle_clone.clone();
                         let mut tmut = toggle_clone.borrow_mut();
                         tmut.component_mut().set_mouse_handler(move |event| {
-                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            use logic_nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
                             match event {
                                 MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => {
                                     // flip color toggle and update button visual
                                     let new = !*toggle_state.borrow();
                                     *toggle_state.borrow_mut() = new;
-                                    toggle_for_closure.borrow_mut().set_button_state(if new { nih_plug_gui::controls::ButtonState::Pressed } else { nih_plug_gui::controls::ButtonState::Normal });
+                                    toggle_for_closure.borrow_mut().set_button_state(if new { logic_nih_plug_gui::controls::ButtonState::Pressed } else { logic_nih_plug_gui::controls::ButtonState::Normal });
                                     EventResult::Handled
                                 }
                                 _ => EventResult::NotHandled,
@@ -380,7 +380,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                         let slider_for_closure = slider_clone.clone();
                         let mut smut = slider_clone.borrow_mut();
                         smut.component_mut().set_mouse_handler(move |event| {
-                            use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                            use logic_nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
                             match event {
                                 MouseEvent::ButtonDown { button, .. } if *button == MouseButton::Left => EventResult::Handled,
                                 MouseEvent::Drag { x, .. } | MouseEvent::Move { x, .. } => {
@@ -450,7 +450,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                 Self { label: Rc::new(RefCell::new(label)), hello_btn: Rc::new(RefCell::new(btn)), greeting_on: false }
             }
 
-            fn render(&self, graphics: &mut nih_plug_graphics::Graphics, font: Option<&nih_plug_graphics::Font>) {
+            fn render(&self, graphics: &mut logic_nih_plug_graphics::Graphics, font: Option<&logic_nih_plug_graphics::Font>) {
                 if let Some(f) = font {
                     let _ = self.label.borrow().render(graphics, f);
                 }
@@ -484,7 +484,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                 Self { title: Rc::new(RefCell::new(title)), toggle: Rc::new(RefCell::new(toggle)), slider: Rc::new(RefCell::new(slider)), rect_color_toggle: Rc::new(RefCell::new(false)) }
             }
 
-            fn render(&self, graphics: &mut nih_plug_graphics::Graphics, font: Option<&nih_plug_graphics::Font>) {
+            fn render(&self, graphics: &mut logic_nih_plug_graphics::Graphics, font: Option<&logic_nih_plug_graphics::Font>) {
                 if let Some(f) = font {
                     let _ = self.title.borrow().render(graphics, f);
                 }
@@ -495,7 +495,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                 let x = 20i32;
                 let y = 110i32;
 
-                graphics.set_color(if *self.rect_color_toggle.borrow() { nih_plug_graphics::Color::rgb(180, 60, 60) } else { nih_plug_graphics::Color::rgb(60, 120, 180) });
+                graphics.set_color(if *self.rect_color_toggle.borrow() { logic_nih_plug_graphics::Color::rgb(180, 60, 60) } else { logic_nih_plug_graphics::Color::rgb(60, 120, 180) });
                 graphics.fill_rect(x, y, w.abs() as u32, h as u32);
 
                 let _ = self.toggle.borrow().render(graphics);
@@ -531,7 +531,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                 Self { sliders, labels }
             }
 
-            fn render(&self, graphics: &mut nih_plug_graphics::Graphics, font: Option<&nih_plug_graphics::Font>) {
+            fn render(&self, graphics: &mut logic_nih_plug_graphics::Graphics, font: Option<&logic_nih_plug_graphics::Font>) {
                 for s in &self.sliders {
                     let _ = s.render(graphics);
                 }
@@ -561,7 +561,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
         impl baseview::WindowHandler for JuceGlHandler {
             fn on_frame(&mut self, window: &mut baseview::Window) {
                 // Create graphics buffer and ask each retained component to render into it
-                use nih_plug_graphics::Graphics;
+                use logic_nih_plug_graphics::Graphics;
 
                 let mut graphics = match Graphics::new(self.logical_width, self.logical_height) {
                     Ok(g) => g,
@@ -569,17 +569,17 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                 };
 
                 // Clear background
-                graphics.set_color(nih_plug_graphics::Color::rgb(24, 24, 24));
+                graphics.set_color(logic_nih_plug_graphics::Color::rgb(24, 24, 24));
                 graphics.clear();
 
                 // Title (try to load font once and reuse for labels)
-                let maybe_font = match nih_plug_graphics::text::Font::from_bytes(include_bytes!("../../../../nih_plug_graphics/tests/test_font.ttf"), nih_plug_graphics::text::FontSettings::default()) {
+                let maybe_font = match logic_nih_plug_graphics::text::Font::from_bytes(include_bytes!("../../../../logic_nih_plug_graphics/tests/test_font.ttf"), logic_nih_plug_graphics::text::FontSettings::default()) {
                     Ok(f) => Some(f),
                     Err(_) => None,
                 };
 
                 if let Some(f) = maybe_font.as_ref() {
-                    graphics.set_color(nih_plug_graphics::Color::rgb(220, 220, 220));
+                    graphics.set_color(logic_nih_plug_graphics::Color::rgb(220, 220, 220));
                     graphics.draw_text("JUCE GUI Demo", (self.logical_width as i32) / 2, 30, f, 24.0);
                 }
 
@@ -696,7 +696,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                                 let rel = (x - bounds.x) as f64 / (bounds.width as f64);
                                 let norm = rel.clamp(0.0, 1.0);
                                 self.main_slider.borrow_mut().set_normalized_value(norm);
-                                let setter = nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
+                                let setter = logic_nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
                                 setter.set_parameter_normalized(&self.params.gain, norm as f32);
                             }
                             if self.dragging_demo_slider {
@@ -708,8 +708,8 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                             }
                             // If not currently dragging anything, dispatch a Move event to components (for hover/preview)
                             if !self.dragging_main && !self.dragging_demo_slider && self.dragging_widget.is_none() {
-                                use nih_plug_gui::input::MouseEvent;
-                                let ev = MouseEvent::Move { x, y, modifiers: nih_plug_gui::input::Modifiers::none() };
+                                use logic_nih_plug_gui::input::MouseEvent;
+                                let ev = MouseEvent::Move { x, y, modifiers: logic_nih_plug_gui::input::Modifiers::none() };
                                 let _ = self.root_component.dispatch_mouse_event(&ev);
                             }
                         }
@@ -719,9 +719,9 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                                 let (mx, my) = self.last_mouse;
                                 // Use component tree hit-test to find what was clicked
                                 if let Some(comp_id) = self.find_component_at(&self.root_component, mx, my) {
-                                    use nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
+                                    use logic_nih_plug_gui::input::{MouseEvent, MouseButton, EventResult};
                                     // dispatch ButtonDown to the component tree -> handlers attached to components will run
-                                    let ev = MouseEvent::ButtonDown { x: mx, y: my, button: nih_plug_gui::input::MouseButton::Left, modifiers: nih_plug_gui::input::Modifiers::none() };
+                                    let ev = MouseEvent::ButtonDown { x: mx, y: my, button: logic_nih_plug_gui::input::MouseButton::Left, modifiers: logic_nih_plug_gui::input::Modifiers::none() };
                                     let result = self.root_component.dispatch_mouse_event(&ev);
 
                                     // if handled, set dragging state appropriately (we still need to track drags)
@@ -733,7 +733,7 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                                             let rel = (mx - bounds.x) as f64 / (bounds.width as f64);
                                             let norm = rel.clamp(0.0, 1.0);
                                             self.main_slider.borrow_mut().set_normalized_value(norm);
-                                            let setter = nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
+                                            let setter = logic_nih_plug::prelude::ParamSetter::new(self.gui_context.as_ref());
                                             setter.begin_set_parameter(&self.params.gain);
                                             setter.set_parameter_normalized(&self.params.gain, norm as f32);
                                             return baseview::EventStatus::Captured;
@@ -776,8 +776,8 @@ impl nih_plug::prelude::Editor for JuceGuiEditor {
                         baseview::MouseEvent::ButtonReleased { button, .. } => {
                             if button == baseview::MouseButton::Left {
                                 // dispatch ButtonUp to the component tree first
-                                use nih_plug_gui::input::{MouseEvent};
-                                let ev_up = MouseEvent::ButtonUp { x: self.last_mouse.0, y: self.last_mouse.1, button: nih_plug_gui::input::MouseButton::Left, modifiers: nih_plug_gui::input::Modifiers::none() };
+                                use logic_nih_plug_gui::input::{MouseEvent};
+                                let ev_up = MouseEvent::ButtonUp { x: self.last_mouse.0, y: self.last_mouse.1, button: logic_nih_plug_gui::input::MouseButton::Left, modifiers: logic_nih_plug_gui::input::Modifiers::none() };
                                 let _ = self.root_component.dispatch_mouse_event(&ev_up);
 
                                 if let Some(idx) = self.dragging_widget {
@@ -889,7 +889,7 @@ nih_export_vst3!(JuceGuiDemo);
 /// Note: This is a demonstration of the component API. Full GUI integration
 /// with nih-plug would require additional editor implementation.
 #[allow(dead_code)]
-fn create_example_gui() -> Result<Component, nih_plug_gui::GuiError> {
+fn create_example_gui() -> Result<Component, logic_nih_plug_gui::GuiError> {
     // Create main container
     let mut main_component = Component::new("main");
     main_component.set_bounds(Bounds::new(0, 0, 400, 300))?;
@@ -923,7 +923,7 @@ fn create_example_gui() -> Result<Component, nih_plug_gui::GuiError> {
     // 1. Add components to the main component
     // 2. Set up event handlers for user interaction
     // 3. Connect to plugin parameters
-    // 4. Implement rendering using nih_plug_graphics
+    // 4. Implement rendering using logic_nih_plug_graphics
 
     Ok(main_component)
 }

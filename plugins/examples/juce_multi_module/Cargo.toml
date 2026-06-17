@@ -9,9 +9,9 @@ license = "ISC"
 crate-type = ["cdylib"]
 
 [dependencies]
-nih_plug = { path = "../../../" }
-nih_plug_dsp = { path = "../../../nih_plug_dsp", features = ["filters", "oscillators", "envelopes", "smoothing"] }
-nih_plug_data = { path = "../../../nih_plug_data" }
-nih_plug_audio_formats = { path = "../../../nih_plug_audio_formats" }
-nih_plug_animation = { path = "../../../nih_plug_animation" }
-nih_plug_crypto = { path = "../../../nih_plug_crypto" }
+logic_nih_plug = { path = "../../../" }
+logic_nih_plug_dsp = { path = "../../../logic_nih_plug_dsp", features = ["filters", "oscillators", "envelopes", "smoothing"] }
+logic_nih_plug_data = { path = "../../../logic_nih_plug_data" }
+logic_nih_plug_audio_formats = { path = "../../../logic_nih_plug_audio_formats" }
+logic_nih_plug_animation = { path = "../../../logic_nih_plug_animation" }
+logic_nih_plug_crypto = { path = "../../../logic_nih_plug_crypto" }

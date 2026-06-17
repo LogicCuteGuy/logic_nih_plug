@@ -8,7 +8,7 @@
 //! ## Reading an AIFF file
 //!
 //! ```no_run
-//! use nih_plug_audio_formats::aiff::AiffReader;
+//! use logic_nih_plug_audio_formats::aiff::AiffReader;
 //!
 //! let mut reader = AiffReader::open("audio.aiff").unwrap();
 //! let samples = reader.read_all().unwrap();
@@ -18,7 +18,7 @@
 //! ## Writing an AIFF file
 //!
 //! ```no_run
-//! use nih_plug_audio_formats::aiff::AiffWriter;
+//! use logic_nih_plug_audio_formats::aiff::AiffWriter;
 //!
 //! let left = vec![0.0, 0.5, 1.0, 0.5, 0.0];
 //! let right = vec![0.0, -0.5, -1.0, -0.5, 0.0];
@@ -155,7 +155,7 @@ impl AiffReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::aiff::AiffReader;
+    /// use logic_nih_plug_audio_formats::aiff::AiffReader;
     ///
     /// let reader = AiffReader::open("audio.aiff").unwrap();
     /// ```
@@ -256,7 +256,7 @@ impl AiffReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::aiff::AiffReader;
+    /// use logic_nih_plug_audio_formats::aiff::AiffReader;
     ///
     /// let reader = AiffReader::open("audio.aiff").unwrap();
     /// let metadata = reader.metadata();
@@ -298,7 +298,7 @@ impl AiffReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::aiff::AiffReader;
+    /// use logic_nih_plug_audio_formats::aiff::AiffReader;
     ///
     /// let mut reader = AiffReader::open("audio.aiff").unwrap();
     /// let samples = reader.read_all().unwrap();
@@ -393,7 +393,7 @@ impl AiffWriter {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::aiff::AiffWriter;
+    /// use logic_nih_plug_audio_formats::aiff::AiffWriter;
     ///
     /// let writer = AiffWriter::create("output.aiff", 44100.0, 2, 16).unwrap();
     /// ```
@@ -481,7 +481,7 @@ impl AiffWriter {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::aiff::AiffWriter;
+    /// use logic_nih_plug_audio_formats::aiff::AiffWriter;
     ///
     /// let left = vec![0.0, 0.5, 1.0];
     /// let right = vec![0.0, -0.5, -1.0];
@@ -555,7 +555,7 @@ impl AiffWriter {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::aiff::AiffWriter;
+    /// use logic_nih_plug_audio_formats::aiff::AiffWriter;
     ///
     /// let mut writer = AiffWriter::create("output.aiff", 44100.0, 2, 16).unwrap();
     /// // ... write samples ...

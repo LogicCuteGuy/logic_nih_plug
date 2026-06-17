@@ -1,6 +1,6 @@
 # FlexBox Layout Demo
 
-This example demonstrates the FlexBox layout system from `nih_plug_gui` with interactive controls for all FlexBox properties.
+This example demonstrates the FlexBox layout system from `logic_nih_plug_gui` with interactive controls for all FlexBox properties.
 
 ## Features
 

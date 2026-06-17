@@ -4,7 +4,7 @@ use baseview::{WindowOpenOptions, WindowScalePolicy};
 use crossbeam::atomic::AtomicCell;
 use crossbeam::channel;
 pub use iced_baseview::*;
-use nih_plug::prelude::{Editor, GuiContext, ParentWindowHandle};
+use logic_nih_plug::prelude::{Editor, GuiContext, ParentWindowHandle};
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -27,7 +27,7 @@ pub(crate) struct IcedEditorWrapper<E: IcedEditor> {
 
 /// This version of `baseview` uses a different version of `raw_window_handle than NIH-plug, so we
 /// need to adapt it ourselves.
-struct ParentWindowHandleAdapter(nih_plug::editor::ParentWindowHandle);
+struct ParentWindowHandleAdapter(logic_nih_plug::editor::ParentWindowHandle);
 
 unsafe impl HasRawWindowHandle for ParentWindowHandleAdapter {
     fn raw_window_handle(&self) -> RawWindowHandle {

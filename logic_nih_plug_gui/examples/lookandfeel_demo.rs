@@ -3,10 +3,10 @@
 //! This example shows how to use themes and custom LookAndFeel implementations
 //! to customize the appearance of UI components.
 
-use nih_plug_gui::components::Bounds;
-use nih_plug_gui::controls::{Button, ButtonState, Label, Slider, SliderOrientation, TextAlignment};
-use nih_plug_gui::lookandfeel::{ColorScheme, DefaultLookAndFeel, LookAndFeel, Theme};
-use nih_plug_graphics::Color;
+use logic_nih_plug_gui::components::Bounds;
+use logic_nih_plug_gui::controls::{Button, ButtonState, Label, Slider, SliderOrientation, TextAlignment};
+use logic_nih_plug_gui::lookandfeel::{ColorScheme, DefaultLookAndFeel, LookAndFeel, Theme};
+use logic_nih_plug_graphics::Color;
 
 // Custom LookAndFeel implementation with custom colors
 struct CustomLookAndFeel {

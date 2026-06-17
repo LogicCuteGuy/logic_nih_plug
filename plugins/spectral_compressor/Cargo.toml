@@ -10,8 +10,8 @@ homepage = "https://github.com/robbert-vdh/nih-plug/tree/master/plugins/spectral
 crate-type = ["lib", "cdylib"]
 
 [dependencies]
-nih_plug = { path = "../../", features = ["assert_process_allocs", "standalone"] }
-nih_plug_vizia = { path = "../../nih_plug_vizia" }
+logic_nih_plug = { path = "../../", features = ["assert_process_allocs", "standalone"] }
+logic_nih_plug_vizia = { path = "../../logic_nih_plug_vizia" }
 
 realfft = "3.0"
 

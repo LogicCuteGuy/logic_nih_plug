@@ -5,7 +5,7 @@
 //! # Examples
 //!
 //! ```
-//! use nih_plug_dsp::oscillators::{Oscillator, Waveform};
+//! use logic_nih_plug_dsp::oscillators::{Oscillator, Waveform};
 //!
 //! let mut osc = Oscillator::new(44100.0);
 //! osc.set_frequency(440.0);
@@ -61,7 +61,7 @@ impl Oscillator {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::oscillators::Oscillator;
+    /// use logic_nih_plug_dsp::oscillators::Oscillator;
     ///
     /// let osc = Oscillator::new(44100.0);
     /// ```
@@ -86,7 +86,7 @@ impl Oscillator {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::oscillators::Oscillator;
+    /// use logic_nih_plug_dsp::oscillators::Oscillator;
     ///
     /// let mut osc = Oscillator::new(44100.0);
     /// osc.set_frequency(440.0);
@@ -106,7 +106,7 @@ impl Oscillator {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::oscillators::{Oscillator, Waveform};
+    /// use logic_nih_plug_dsp::oscillators::{Oscillator, Waveform};
     ///
     /// let mut osc = Oscillator::new(44100.0);
     /// osc.set_waveform(Waveform::Saw);
@@ -143,7 +143,7 @@ impl Oscillator {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::oscillators::Oscillator;
+    /// use logic_nih_plug_dsp::oscillators::Oscillator;
     ///
     /// let mut osc = Oscillator::new(44100.0);
     /// osc.set_frequency(440.0);
@@ -164,7 +164,7 @@ impl Oscillator {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::oscillators::Oscillator;
+    /// use logic_nih_plug_dsp::oscillators::Oscillator;
     ///
     /// let mut osc = Oscillator::new(44100.0);
     /// osc.set_frequency(440.0);
@@ -199,7 +199,7 @@ impl Oscillator {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::oscillators::Oscillator;
+    /// use logic_nih_plug_dsp::oscillators::Oscillator;
     ///
     /// let mut osc = Oscillator::new(44100.0);
     /// osc.set_frequency(440.0);

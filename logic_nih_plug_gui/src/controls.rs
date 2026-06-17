@@ -9,7 +9,7 @@ use crate::error::{GuiError, Result};
 use crate::lookandfeel::LookAndFeel;
 
 #[cfg(any(feature = "graphics", feature = "text"))]
-use nih_plug_graphics::{Color, Graphics};
+use logic_nih_plug_graphics::{Color, Graphics};
 
 /// Button state.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,8 +31,8 @@ pub enum ButtonState {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_gui::controls::Button;
-/// use nih_plug_gui::components::Bounds;
+/// use logic_nih_plug_gui::controls::Button;
+/// use logic_nih_plug_gui::components::Bounds;
 ///
 /// let mut button = Button::new("Click Me");
 /// button.set_bounds(Bounds::new(10, 10, 100, 30)).unwrap();
@@ -180,7 +180,7 @@ impl Button {
     ///
     /// This method requires the `text` feature to be enabled.
     #[cfg(feature = "text")]
-    pub fn render_with_text(&self, graphics: &mut Graphics, font: &nih_plug_graphics::Font) -> Result<()> {
+    pub fn render_with_text(&self, graphics: &mut Graphics, font: &logic_nih_plug_graphics::Font) -> Result<()> {
         // First render the button background and border
         self.render(graphics)?;
 
@@ -239,7 +239,7 @@ impl Button {
     pub fn render_with_lookandfeel_and_text(
         &self,
         graphics: &mut Graphics,
-        font: &nih_plug_graphics::Font,
+        font: &logic_nih_plug_graphics::Font,
         laf: &dyn LookAndFeel,
     ) -> Result<()> {
         // First render the button background and border with LookAndFeel
@@ -278,8 +278,8 @@ pub enum SliderOrientation {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_gui::controls::{Slider, SliderOrientation};
-/// use nih_plug_gui::components::Bounds;
+/// use logic_nih_plug_gui::controls::{Slider, SliderOrientation};
+/// use logic_nih_plug_gui::components::Bounds;
 ///
 /// let mut slider = Slider::new(SliderOrientation::Horizontal);
 /// slider.set_bounds(Bounds::new(10, 10, 200, 30)).unwrap();
@@ -539,8 +539,8 @@ pub enum TextAlignment {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_gui::controls::{Label, TextAlignment};
-/// use nih_plug_gui::components::Bounds;
+/// use logic_nih_plug_gui::controls::{Label, TextAlignment};
+/// use logic_nih_plug_gui::components::Bounds;
 ///
 /// let mut label = Label::new("Hello, World!");
 /// label.set_bounds(Bounds::new(10, 10, 200, 30)).unwrap();
@@ -631,7 +631,7 @@ impl Label {
     ///
     /// This method requires the `text` feature to be enabled and a Font to be provided.
     #[cfg(feature = "text")]
-    pub fn render(&self, graphics: &mut Graphics, font: &nih_plug_graphics::Font) -> Result<()> {
+    pub fn render(&self, graphics: &mut Graphics, font: &logic_nih_plug_graphics::Font) -> Result<()> {
         let bounds = self.bounds();
 
         if self.text.is_empty() {
@@ -660,7 +660,7 @@ impl Label {
     pub fn render_with_lookandfeel(
         &self,
         graphics: &mut Graphics,
-        font: &nih_plug_graphics::Font,
+        font: &logic_nih_plug_graphics::Font,
         laf: &dyn LookAndFeel,
     ) -> Result<()> {
         let bounds = self.bounds();

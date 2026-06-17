@@ -1,7 +1,7 @@
 # Bundling & Distribution
 
 `cargo xtask` is the bundler. The shim binary is at [xtask/src/main.rs](../xtask/src/main.rs)
-and calls [nih_plug_xtask](../nih_plug_xtask/). The `.cargo/config.toml` alias
+and calls [logic_nih_plug_xtask](../logic_nih_plug_xtask/). The `.cargo/config.toml` alias
 pins it to release mode so `serde` is only built once.
 
 ## Common commands
@@ -38,7 +38,7 @@ crates and the multi-format example.
 
 ## `cargo-nih-plug` subcommand
 
-[cargo_nih_plug/](../cargo_nih_plug/) wraps the same engine as a global
+[cargo_logic_nih_plug/](../cargo_logic_nih_plug/) wraps the same engine as a global
 `cargo nih-plug` subcommand for use outside this repo.
 
 ```shell
@@ -47,7 +47,7 @@ cargo nih-plug bundle my_plugin --release
 ```
 
 For in-repo work, prefer the bundled `cargo xtask` — it's pinned to the right
-`nih_plug_xtask` version.
+`logic_nih_plug_xtask` version.
 
 ## CI
 

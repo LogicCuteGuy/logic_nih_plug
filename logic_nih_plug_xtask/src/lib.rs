@@ -156,7 +156,7 @@ pub fn main_with_args(command_name: &str, args: impl IntoIterator<Item = String>
 /// either `CARGO_MANIFEST_DIR` or the current directory, and finds the leftmost one containing a
 /// `Cargo.toml` file.
 pub fn chdir_workspace_root() -> Result<()> {
-    // This is either the directory of the xtask binary when using `nih_plug_xtask` normally, or any
+    // This is either the directory of the xtask binary when using `logic_nih_plug_xtask` normally, or any
     // random project when using it through `cargo nih-plug`.
     let project_dir = std::env::var("CARGO_MANIFEST_DIR")
         .map(PathBuf::from)

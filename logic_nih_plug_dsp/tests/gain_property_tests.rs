@@ -14,7 +14,7 @@ use proptest::prelude::*;
 /// (within 0.01 dB).
 mod decibel_conversion_accuracy {
     use super::*;
-    use nih_plug_dsp::processors::gain::{db_to_linear, linear_to_db};
+    use logic_nih_plug_dsp::processors::gain::{db_to_linear, linear_to_db};
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -143,7 +143,7 @@ mod decibel_conversion_accuracy {
 /// for all samples (after smoothing settles).
 mod gain_application {
     use super::*;
-    use nih_plug_dsp::processors::gain::Gain;
+    use logic_nih_plug_dsp::processors::gain::Gain;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -310,7 +310,7 @@ mod gain_application {
 /// larger than the smoothing step size.
 mod gain_smoothing_continuity {
     use super::*;
-    use nih_plug_dsp::processors::gain::Gain;
+    use logic_nih_plug_dsp::processors::gain::Gain;
 
     proptest! {
         #![proptest_config(ProptestConfig {

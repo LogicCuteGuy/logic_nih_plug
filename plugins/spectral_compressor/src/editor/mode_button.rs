@@ -17,8 +17,8 @@
 use std::sync::Arc;
 
 use crossbeam::atomic::AtomicCell;
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::widgets::GuiContextEvent;
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::widgets::GuiContextEvent;
 
 use super::EditorMode;
 

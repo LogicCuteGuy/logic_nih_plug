@@ -1,6 +1,6 @@
 # UI Controls Implementation
 
-This document describes the UI controls implemented for the nih_plug_gui crate.
+This document describes the UI controls implemented for the logic_nih_plug_gui crate.
 
 ## Overview
 
@@ -29,8 +29,8 @@ A clickable button component that displays text and responds to clicks.
 
 ### Example
 ```rust
-use nih_plug_gui::controls::Button;
-use nih_plug_gui::components::Bounds;
+use logic_nih_plug_gui::controls::Button;
+use logic_nih_plug_gui::components::Bounds;
 
 let mut button = Button::new("Click Me");
 button.set_bounds(Bounds::new(10, 10, 100, 30)).unwrap();
@@ -54,8 +54,8 @@ A value selection component that allows users to select a numeric value within a
 
 ### Example
 ```rust
-use nih_plug_gui::controls::{Slider, SliderOrientation};
-use nih_plug_gui::components::Bounds;
+use logic_nih_plug_gui::controls::{Slider, SliderOrientation};
+use logic_nih_plug_gui::components::Bounds;
 
 let mut slider = Slider::new(SliderOrientation::Horizontal);
 slider.set_bounds(Bounds::new(10, 10, 200, 30)).unwrap();
@@ -79,8 +79,8 @@ A text display component with configurable alignment and font size.
 
 ### Example
 ```rust
-use nih_plug_gui::controls::{Label, TextAlignment};
-use nih_plug_gui::components::Bounds;
+use logic_nih_plug_gui::controls::{Label, TextAlignment};
+use logic_nih_plug_gui::components::Bounds;
 
 let mut label = Label::new("Hello, World!");
 label.set_bounds(Bounds::new(10, 10, 200, 30)).unwrap();
@@ -114,7 +114,7 @@ Example with rendering:
 ```rust
 #[cfg(feature = "text")]
 {
-    use nih_plug_graphics::{Graphics, Font, FontSettings};
+    use logic_nih_plug_graphics::{Graphics, Font, FontSettings};
     
     let mut graphics = Graphics::new(800, 600).unwrap();
     let font_data = include_bytes!("path/to/font.ttf");
@@ -138,7 +138,7 @@ All controls have comprehensive unit and integration tests covering:
 
 Run tests with:
 ```bash
-cargo test -p nih_plug_gui --all-features
+cargo test -p logic_nih_plug_gui --all-features
 ```
 
 ## Requirements Satisfied

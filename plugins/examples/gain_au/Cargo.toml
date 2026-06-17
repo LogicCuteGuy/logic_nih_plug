@@ -9,4 +9,4 @@ license = "ISC"
 crate-type = ["cdylib"]
 
 [dependencies]
-nih_plug = { path = "../../../", features = ["au"] }
+logic_nih_plug = { path = "../../../", features = ["au"] }

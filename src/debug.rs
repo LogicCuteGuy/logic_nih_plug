@@ -7,7 +7,7 @@
 
 // NOTE: Exporting macros in Rust is a bit weird. `#[macro_export]` causes them to be exported to
 //       the crate root, but that makes it difficult to include just the macros without using
-//       `#[macro_use] extern crate nih_plug;`. That's why the macros are also re-exported from this
+//       `#[macro_use] extern crate logic_nih_plug;`. That's why the macros are also re-exported from this
 //       module.
 
 /// Write something to the logger. This defaults to STDERR unless the user is running Windows and a

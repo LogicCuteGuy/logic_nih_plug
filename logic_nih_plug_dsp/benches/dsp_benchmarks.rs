@@ -4,19 +4,19 @@
 //! to ensure they meet performance requirements.
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use nih_plug_dsp::filters::IIRFilter;
-use nih_plug_dsp::oscillators::{Oscillator, Waveform};
-use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
-use nih_plug_dsp::fir::{FIRFilter, FilterDesign, WindowFunction};
-use nih_plug_dsp::analysis::fft::FFT;
-use nih_plug_dsp::processors::Processor;
-use nih_plug_dsp::processors::chain::ProcessorChain;
-use nih_plug_dsp::processors::gain::Gain;
-use nih_plug_dsp::processors::bias::Bias;
-use nih_plug_dsp::processors::waveshaper::{WaveShaper, transfer_functions};
+use logic_nih_plug_dsp::filters::IIRFilter;
+use logic_nih_plug_dsp::oscillators::{Oscillator, Waveform};
+use logic_nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+use logic_nih_plug_dsp::fir::{FIRFilter, FilterDesign, WindowFunction};
+use logic_nih_plug_dsp::analysis::fft::FFT;
+use logic_nih_plug_dsp::processors::Processor;
+use logic_nih_plug_dsp::processors::chain::ProcessorChain;
+use logic_nih_plug_dsp::processors::gain::Gain;
+use logic_nih_plug_dsp::processors::bias::Bias;
+use logic_nih_plug_dsp::processors::waveshaper::{WaveShaper, transfer_functions};
 
 #[cfg(feature = "simd")]
-use nih_plug_dsp::simd::optimizations::{SimdStateVariableFilter, SimdFIRFilter};
+use logic_nih_plug_dsp::simd::optimizations::{SimdStateVariableFilter, SimdFIRFilter};
 
 // Benchmark IIR filter processing at different buffer sizes
 fn bench_iir_filter_processing(c: &mut Criterion) {

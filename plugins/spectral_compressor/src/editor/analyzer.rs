@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use atomic_float::AtomicF32;
-use nih_plug::nih_debug_assert;
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::vizia::vg;
+use logic_nih_plug::nih_debug_assert;
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::vizia::vg;
 use std::sync::atomic::Ordering;
 use std::sync::{Arc, Mutex};
 
@@ -160,7 +160,7 @@ fn draw_spectrum(
     // +20 dB or higher.
     let magnitude_height = |magnitude: f32| {
         nih_debug_assert!(magnitude >= 0.0);
-        let magnitude_db = nih_plug::util::gain_to_db(magnitude);
+        let magnitude_db = logic_nih_plug::util::gain_to_db(magnitude);
         db_to_unclamped_t(magnitude_db).clamp(0.0, 1.0)
     };
 

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug::debug::*;
+use logic_nih_plug::debug::*;
 
 /// The kernel used in `Lanczos3Oversampler`. Specified here as a constant since it is a constant.
 /// Precomputed since compile-time floating point arithmetic is still unstable.

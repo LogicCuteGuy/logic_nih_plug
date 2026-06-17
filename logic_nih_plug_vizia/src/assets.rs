@@ -1,4 +1,4 @@
-//! Binary assets for use with `nih_plug_vizia`. These fonts first need to be registered using their
+//! Binary assets for use with `logic_nih_plug_vizia`. These fonts first need to be registered using their
 //! associated registration function.
 
 use vizia::prelude::*;

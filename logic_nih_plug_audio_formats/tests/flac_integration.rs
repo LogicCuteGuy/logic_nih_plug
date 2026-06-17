@@ -2,8 +2,8 @@
 
 #![cfg(feature = "flac")]
 
-use nih_plug_audio_formats::flac::FlacReader;
-use nih_plug_audio_formats::AudioFormatError;
+use logic_nih_plug_audio_formats::flac::FlacReader;
+use logic_nih_plug_audio_formats::AudioFormatError;
 
 #[test]
 fn test_flac_file_not_found() {

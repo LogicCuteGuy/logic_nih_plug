@@ -16,10 +16,10 @@
 
 use atomic_float::AtomicF32;
 use crossbeam::atomic::AtomicCell;
-use nih_plug::prelude::*;
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::widgets::*;
-use nih_plug_vizia::{assets, create_vizia_editor, ViziaState, ViziaTheming};
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::widgets::*;
+use logic_nih_plug_vizia::{assets, create_vizia_editor, ViziaState, ViziaTheming};
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
 

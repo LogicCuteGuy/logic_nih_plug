@@ -11,7 +11,7 @@ use std::sync::Arc;
 use self::internals::ParamPtr;
 
 // The proc-macro for deriving `Params`
-pub use nih_plug_derive::Params;
+pub use logic_nih_plug_derive::Params;
 
 // Parameter types
 mod boolean;

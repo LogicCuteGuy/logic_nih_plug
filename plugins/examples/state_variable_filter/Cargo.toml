@@ -11,10 +11,10 @@ description = "Example plugin demonstrating state variable filter with real-time
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-nih_plug = { path = "../../../", features = ["standalone"] }
-nih_plug_dsp = { path = "../../../nih_plug_dsp", features = ["filters"] }
-nih_plug_gui = { path = "../../../nih_plug_gui", features = ["gl-editor"] }
-nih_plug_graphics = { path = "../../../nih_plug_graphics" }
+logic_nih_plug = { path = "../../../", features = ["standalone"] }
+logic_nih_plug_dsp = { path = "../../../logic_nih_plug_dsp", features = ["filters"] }
+logic_nih_plug_gui = { path = "../../../logic_nih_plug_gui", features = ["gl-editor"] }
+logic_nih_plug_graphics = { path = "../../../logic_nih_plug_graphics" }
 
 atomic_float = "0.1"
 crossbeam = "0.8"

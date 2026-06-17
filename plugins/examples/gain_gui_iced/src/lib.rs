@@ -1,6 +1,6 @@
 use atomic_float::AtomicF32;
-use nih_plug::prelude::*;
-use nih_plug_iced::IcedState;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_iced::IcedState;
 use std::sync::Arc;
 
 mod editor;

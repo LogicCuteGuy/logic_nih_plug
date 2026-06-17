@@ -1,6 +1,6 @@
 //! Integration tests for AIFF file format support
 
-use nih_plug_audio_formats::aiff::{AiffReader, AiffWriter};
+use logic_nih_plug_audio_formats::aiff::{AiffReader, AiffWriter};
 use std::fs;
 
 #[test]

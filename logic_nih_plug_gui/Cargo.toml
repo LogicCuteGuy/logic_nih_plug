@@ -1,5 +1,5 @@
 [package]
-name = "nih_plug_gui"
+name = "logic_nih_plug_gui"
 version = "0.0.0"
 edition = "2021"
 rust-version = "1.80"
@@ -14,8 +14,8 @@ repository = "https://github.com/robbert-vdh/nih-plug"
 default = ["components"]
 components = []
 layout = []
-graphics = ["nih_plug_graphics/primitives"]
-text = ["nih_plug_graphics/text", "graphics"]
+graphics = ["logic_nih_plug_graphics/primitives"]
+text = ["logic_nih_plug_graphics/text", "graphics"]
 full = ["components", "layout", "graphics", "text"]
 
 # Optional helper that opens a softbuffer-backed window and runs a draw callback. This
@@ -26,7 +26,7 @@ softbuffer-editor = ["baseview", "softbuffer", "raw-window-handle", "raw-window-
 gl-editor = ["baseview", "glow", "raw-window-handle"]
 
 [dependencies]
-nih_plug_graphics = { path = "../nih_plug_graphics" }
+logic_nih_plug_graphics = { path = "../logic_nih_plug_graphics" }
 thiserror = "1.0"
 baseview = { git = "https://github.com/RustAudio/baseview.git", rev = "9a0b42c09d712777b2edb4c5e0cb6baf21e988f0", optional = true, features = ["opengl"] }
 softbuffer = { version = "0.4", optional = true }

@@ -2,8 +2,8 @@
 
 use baseview::{WindowHandle, WindowScalePolicy};
 use crossbeam::atomic::AtomicCell;
-use nih_plug::debug::*;
-use nih_plug::prelude::{Editor, GuiContext, ParentWindowHandle};
+use logic_nih_plug::debug::*;
+use logic_nih_plug::prelude::{Editor, GuiContext, ParentWindowHandle};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use vizia::context::backend::TextConfig;

@@ -9,5 +9,5 @@ license = "ISC"
 crate-type = ["cdylib"]
 
 [dependencies]
-nih_plug = { path = "../../../" }
-nih_plug_dsp = { path = "../../../nih_plug_dsp", features = ["filters", "oscillators", "smoothing"] }
+logic_nih_plug = { path = "../../../" }
+logic_nih_plug_dsp = { path = "../../../logic_nih_plug_dsp", features = ["filters", "oscillators", "smoothing"] }

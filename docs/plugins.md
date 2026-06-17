@@ -26,7 +26,7 @@ cargo xtask bundle <name> --release
 - **Oversampling + smoothing** → `soft_vacuum`
 - **Parameter callbacks** → `safety_limiter`
 - **GUI integration** → `examples/gain_gui_egui`
-- **SIMD DSP** → `diopser` (uses `nih_plug_dsp` `simd` feature, nightly only)
+- **SIMD DSP** → `diopser` (uses `logic_nih_plug_dsp` `simd` feature, nightly only)
 - **FFT-heavy** → `spectral_compressor`
 
 ## Examples
@@ -41,7 +41,7 @@ cargo xtask bundle <name> --release
 - [midi_inverter](../plugins/examples/midi_inverter/), [sysex](../plugins/examples/sysex/), [poly_mod_synth](../plugins/examples/poly_mod_synth/)
 - [stft](../plugins/examples/stft/), [spectrum_analyzer](../plugins/examples/spectrum_analyzer/)
 - [state_variable_filter](../plugins/examples/state_variable_filter/), [juce_dsp_filter](../plugins/examples/juce_dsp_filter/)
-- [flexbox_demo](../plugins/examples/flexbox_demo/) — `nih_plug_gui` FlexBox port
+- [flexbox_demo](../plugins/examples/flexbox_demo/) — `logic_nih_plug_gui` FlexBox port
 
 See [FORMAT_EXAMPLES.md](../plugins/examples/FORMAT_EXAMPLES.md) and
 [JUCE_EXAMPLES.md](../plugins/examples/JUCE_EXAMPLES.md).

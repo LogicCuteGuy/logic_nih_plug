@@ -9,9 +9,9 @@ license = "ISC"
 crate-type = ["cdylib"]
 
 [dependencies]
-nih_plug = { path = "../../../" }
-nih_plug_gui = { path = "../../../nih_plug_gui", features = ["components", "softbuffer-editor", "gl-editor", "graphics", "text"] }
-nih_plug_graphics = { path = "../../../nih_plug_graphics" }
+logic_nih_plug = { path = "../../../" }
+logic_nih_plug_gui = { path = "../../../logic_nih_plug_gui", features = ["components", "softbuffer-editor", "gl-editor", "graphics", "text"] }
+logic_nih_plug_graphics = { path = "../../../logic_nih_plug_graphics" }
 crossbeam = "0.8"
 glow = "0.16"
 baseview = { git = "https://github.com/RustAudio/baseview.git", rev = "9a0b42c09d712777b2edb4c5e0cb6baf21e988f0", features = ["opengl"] }

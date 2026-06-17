@@ -5,7 +5,7 @@ use egui_baseview::egui::{
     self, emath, vec2, Key, Response, Sense, Stroke, TextEdit, TextStyle, Ui, Vec2, Widget,
     WidgetText,
 };
-use nih_plug::prelude::{Param, ParamSetter};
+use logic_nih_plug::prelude::{Param, ParamSetter};
 use parking_lot::Mutex;
 
 use super::util;

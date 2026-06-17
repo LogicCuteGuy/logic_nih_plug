@@ -14,7 +14,7 @@ use super::Processor;
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::processors::waveshaper::{WaveShaper, transfer_functions};
+/// use logic_nih_plug_dsp::processors::waveshaper::{WaveShaper, transfer_functions};
 ///
 /// // Create a wave shaper with tanh saturation
 /// let shaper = WaveShaper::new(transfer_functions::tanh);
@@ -43,7 +43,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::waveshaper::WaveShaper;
+    /// use logic_nih_plug_dsp::processors::waveshaper::WaveShaper;
     ///
     /// let shaper = WaveShaper::new(|x| x.tanh());
     /// ```
@@ -64,7 +64,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::waveshaper::WaveShaper;
+    /// use logic_nih_plug_dsp::processors::waveshaper::WaveShaper;
     ///
     /// let shaper = WaveShaper::new(|x| x.tanh());
     /// let output = shaper.process_sample(0.5);
@@ -99,7 +99,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::waveshaper::WaveShaper;
+    /// use logic_nih_plug_dsp::processors::waveshaper::WaveShaper;
     ///
     /// let shaper = WaveShaper::new(|x| x.tanh());
     /// let input = vec![0.0, 0.5, 1.0];
@@ -146,7 +146,7 @@ pub mod transfer_functions {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::waveshaper::transfer_functions::tanh;
+    /// use logic_nih_plug_dsp::processors::waveshaper::transfer_functions::tanh;
     ///
     /// let output = tanh(0.5);
     /// ```
@@ -163,7 +163,7 @@ pub mod transfer_functions {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::waveshaper::transfer_functions::tanh_approx;
+    /// use logic_nih_plug_dsp::processors::waveshaper::transfer_functions::tanh_approx;
     ///
     /// let output = tanh_approx(0.5);
     /// ```
@@ -184,7 +184,7 @@ pub mod transfer_functions {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::waveshaper::transfer_functions::hard_clip;
+    /// use logic_nih_plug_dsp::processors::waveshaper::transfer_functions::hard_clip;
     ///
     /// let output = hard_clip(1.5); // Returns 1.0
     /// ```
@@ -200,7 +200,7 @@ pub mod transfer_functions {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::waveshaper::transfer_functions::soft_clip;
+    /// use logic_nih_plug_dsp::processors::waveshaper::transfer_functions::soft_clip;
     ///
     /// let output = soft_clip(0.5);
     /// ```

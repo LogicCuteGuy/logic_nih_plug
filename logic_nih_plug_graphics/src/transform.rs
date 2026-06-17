@@ -21,7 +21,7 @@
 /// # Examples
 ///
 /// ```
-/// use nih_plug_graphics::Transform;
+/// use logic_nih_plug_graphics::Transform;
 ///
 /// // Create an identity transform
 /// let transform = Transform::identity();
@@ -60,7 +60,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let transform = Transform::identity();
     /// let (x, y) = transform.apply(10.0, 20.0);
@@ -89,7 +89,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let transform = Transform::translation(10.0, 20.0);
     /// let (x, y) = transform.apply(5.0, 5.0);
@@ -117,7 +117,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// // Rotate 90 degrees counter-clockwise
     /// let transform = Transform::rotation(std::f32::consts::PI / 2.0);
@@ -150,7 +150,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// // Rotate 90 degrees around point (10, 10)
     /// let transform = Transform::rotation_around(std::f32::consts::PI / 2.0, 10.0, 10.0);
@@ -178,7 +178,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let transform = Transform::uniform_scale(2.0);
     /// let (x, y) = transform.apply(10.0, 20.0);
@@ -200,7 +200,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let transform = Transform::scale(2.0, 3.0);
     /// let (x, y) = transform.apply(10.0, 20.0);
@@ -231,7 +231,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let transform = Transform::scale_around(2.0, 2.0, 10.0, 10.0);
     /// ```
@@ -261,7 +261,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let transform = Transform::translation(10.0, 20.0);
     /// let (x, y) = transform.apply(5.0, 5.0);
@@ -306,7 +306,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let translate = Transform::translation(10.0, 0.0);
     /// let scale = Transform::scale(2.0, 2.0);
@@ -374,7 +374,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let transform = Transform::translation(10.0, 20.0);
     /// let inverse = transform.inverse().unwrap();
@@ -417,7 +417,7 @@ impl Transform {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Transform;
+    /// use logic_nih_plug_graphics::Transform;
     ///
     /// let identity = Transform::identity();
     /// assert!(identity.is_identity());

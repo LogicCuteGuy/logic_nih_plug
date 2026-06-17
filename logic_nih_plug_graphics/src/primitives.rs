@@ -16,7 +16,7 @@ use crate::{Color, GraphicsError, Transform};
 /// # Examples
 ///
 /// ```
-/// use nih_plug_graphics::{Graphics, Color};
+/// use logic_nih_plug_graphics::{Graphics, Color};
 ///
 /// let mut graphics = Graphics::new(800, 600).unwrap();
 /// graphics.set_color(Color::rgb(255, 0, 0));
@@ -47,7 +47,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Graphics;
+    /// use logic_nih_plug_graphics::Graphics;
     ///
     /// let graphics = Graphics::new(800, 600).unwrap();
     /// assert_eq!(graphics.width(), 800);
@@ -95,7 +95,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(255, 0, 0));
@@ -119,7 +119,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Graphics;
+    /// use logic_nih_plug_graphics::Graphics;
     ///
     /// let graphics = Graphics::new(800, 600).unwrap();
     /// let bytes = graphics.as_bytes();
@@ -144,7 +144,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(255, 255, 255));
@@ -229,7 +229,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(255, 0, 0));
@@ -263,7 +263,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(0, 255, 0));
@@ -309,7 +309,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(0, 0, 255));
@@ -358,9 +358,9 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     /// #[cfg(feature = "text")]
-    /// use nih_plug_graphics::{Font, FontSettings};
+    /// use logic_nih_plug_graphics::{Font, FontSettings};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(255, 255, 255));
@@ -428,7 +428,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Transform};
+    /// use logic_nih_plug_graphics::{Graphics, Transform};
     ///
     /// let graphics = Graphics::new(800, 600).unwrap();
     /// let transform = graphics.get_transform();
@@ -450,7 +450,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Transform};
+    /// use logic_nih_plug_graphics::{Graphics, Transform};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// let transform = Transform::translation(10.0, 20.0);
@@ -465,7 +465,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Transform};
+    /// use logic_nih_plug_graphics::{Graphics, Transform};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.translate(10.0, 20.0);
@@ -486,7 +486,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(255, 0, 0));
@@ -506,7 +506,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(0, 255, 0));
@@ -527,7 +527,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(0, 0, 255));
@@ -546,7 +546,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::{Graphics, Color};
+    /// use logic_nih_plug_graphics::{Graphics, Color};
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.set_color(Color::rgb(255, 0, 0));
@@ -574,7 +574,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Graphics;
+    /// use logic_nih_plug_graphics::Graphics;
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.save_transform();
@@ -597,7 +597,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Graphics;
+    /// use logic_nih_plug_graphics::Graphics;
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// assert!(!graphics.try_restore_transform());
@@ -631,7 +631,7 @@ impl Graphics {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::Graphics;
+    /// use logic_nih_plug_graphics::Graphics;
     ///
     /// let mut graphics = Graphics::new(800, 600).unwrap();
     /// graphics.translate(10.0, 20.0);

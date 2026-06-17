@@ -1,4 +1,4 @@
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 
 use gain_gui_egui::Gain;
 

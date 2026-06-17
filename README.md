@@ -147,8 +147,8 @@ Scroll down for more information on the underlying plugin framework.
   [Zstandard](https://en.wikipedia.org/wiki/Zstd).
 - Comes with adapters for popular Rust GUI frameworks as well as some basic
   widgets for them that integrate with NIH-plug's parameter system. Currently
-  there's support for [egui](nih_plug_egui), [iced](nih_plug_iced) and
-  [VIZIA](nih_plug_vizia).
+  there's support for [egui](logic_nih_plug_egui), [iced](logic_nih_plug_iced) and
+  [VIZIA](logic_nih_plug_vizia).
   - A simple and safe API for state saving and restoring from the editor is
     provided by the framework if you want to do your own internal preset
     management.
@@ -169,8 +169,8 @@ Scroll down for more information on the underlying plugin framework.
   detects which plugin targets your plugin exposes and creates the correct
   plugin bundles for your target operating system and architecture, with
   cross-compilation support. The cargo subcommand can easily be added to [your
-  own project](https://github.com/robbert-vdh/nih-plug/tree/master/nih_plug_xtask)
-  as an alias or [globally](https://github.com/robbert-vdh/nih-plug/tree/master/cargo_nih_plug)
+  own project](https://github.com/robbert-vdh/nih-plug/tree/master/logic_nih_plug_xtask)
+  as an alias or [globally](https://github.com/robbert-vdh/nih-plug/tree/master/cargo_logic_nih_plug)
   as a regular cargo subcommand.
 - Tested on Linux and Windows, with limited testing on macOS. Windows support
   has mostly been tested through Wine with
@@ -252,15 +252,15 @@ without any C++ dependencies. These modules are designed to integrate seamlessly
 with nih-plug while maintaining compatibility with JUCE's design patterns.
 
 **Available Modules:**
-- `nih_plug_dsp` - Digital signal processing (filters, oscillators, envelopes, convolution)
-- `nih_plug_audio_formats` - Audio file I/O (WAV, AIFF, FLAC, OGG)
-- `nih_plug_data` - Data structures (ValueTree, UndoManager)
-- `nih_plug_graphics` - 2D graphics primitives
-- `nih_plug_gui` - GUI components and layout
-- `nih_plug_osc` - Open Sound Control networking
-- `nih_plug_crypto` - Cryptography utilities
-- `nih_plug_animation` - Animation and easing functions
-- `nih_plug_midi_ci` - MIDI Capability Inquiry (MIDI 2.0)
+- `logic_nih_plug_dsp` - Digital signal processing (filters, oscillators, envelopes, convolution)
+- `logic_nih_plug_audio_formats` - Audio file I/O (WAV, AIFF, FLAC, OGG)
+- `logic_nih_plug_data` - Data structures (ValueTree, UndoManager)
+- `logic_nih_plug_graphics` - 2D graphics primitives
+- `logic_nih_plug_gui` - GUI components and layout
+- `logic_nih_plug_osc` - Open Sound Control networking
+- `logic_nih_plug_crypto` - Cryptography utilities
+- `logic_nih_plug_animation` - Animation and easing functions
+- `logic_nih_plug_midi_ci` - MIDI Capability Inquiry (MIDI 2.0)
 
 **Documentation:**
 - 📚 [Documentation Index](DOCUMENTATION_INDEX.md) - **Complete documentation guide**
@@ -272,7 +272,7 @@ with nih-plug while maintaining compatibility with JUCE's design patterns.
 
 **Quick Example:**
 ```rust
-use nih_plug_dsp::filters::IIRFilter;
+use logic_nih_plug_dsp::filters::IIRFilter;
 
 let mut filter = IIRFilter::new();
 filter.set_coefficients(&[1.0, 0.5], &[1.0, -0.5])?;

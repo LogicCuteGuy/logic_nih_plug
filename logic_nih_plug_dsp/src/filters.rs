@@ -14,7 +14,7 @@ use crate::error::DspError;
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::filters::IIRFilter;
+/// use logic_nih_plug_dsp::filters::IIRFilter;
 ///
 /// let mut filter = IIRFilter::new();
 /// // Set coefficients for a simple first-order filter
@@ -79,7 +79,7 @@ impl IIRFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::filters::IIRFilter;
+    /// use logic_nih_plug_dsp::filters::IIRFilter;
     ///
     /// let mut filter = IIRFilter::new();
     ///
@@ -135,7 +135,7 @@ impl IIRFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::filters::IIRFilter;
+    /// use logic_nih_plug_dsp::filters::IIRFilter;
     ///
     /// let mut filter = IIRFilter::new();
     /// filter.set_coefficients(&[1.0, 0.5], &[1.0, -0.5]).unwrap();
@@ -182,7 +182,7 @@ impl IIRFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::filters::IIRFilter;
+    /// use logic_nih_plug_dsp::filters::IIRFilter;
     ///
     /// let mut filter = IIRFilter::new();
     /// filter.set_coefficients(&[1.0, 0.5], &[1.0, -0.5]).unwrap();
@@ -218,7 +218,7 @@ impl IIRFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::filters::IIRFilter;
+    /// use logic_nih_plug_dsp::filters::IIRFilter;
     ///
     /// let mut filter = IIRFilter::new();
     /// filter.set_coefficients(&[1.0, 0.5], &[1.0, -0.5]).unwrap();

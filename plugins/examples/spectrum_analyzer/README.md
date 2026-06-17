@@ -1,6 +1,6 @@
 # Spectrum Analyzer Example
 
-This example demonstrates real-time spectrum analysis using FFT from `nih_plug_dsp`. It features:
+This example demonstrates real-time spectrum analysis using FFT from `logic_nih_plug_dsp`. It features:
 
 - **Real-time FFT Analysis**: Uses the FFT module for frequency-domain analysis
 - **Spectrogram Display**: Visual representation of frequency content over time with color mapping

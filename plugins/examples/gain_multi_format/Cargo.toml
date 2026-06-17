@@ -9,4 +9,4 @@ license = "ISC"
 crate-type = ["cdylib"]
 
 [dependencies]
-nih_plug = { path = "../../../", features = ["vst2", "vst3", "au", "auv3", "lv2"] }
+logic_nih_plug = { path = "../../../", features = ["vst2", "vst3", "au", "auv3", "lv2"] }

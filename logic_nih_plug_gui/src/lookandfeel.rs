@@ -7,8 +7,8 @@
 //! # Examples
 //!
 //! ```
-//! use nih_plug_gui::lookandfeel::{LookAndFeel, Theme, DefaultLookAndFeel};
-//! use nih_plug_gui::controls::ButtonState;
+//! use logic_nih_plug_gui::lookandfeel::{LookAndFeel, Theme, DefaultLookAndFeel};
+//! use logic_nih_plug_gui::controls::ButtonState;
 //!
 //! // Use the default look and feel
 //! let laf = DefaultLookAndFeel::new();
@@ -20,7 +20,7 @@
 //! ```
 
 use crate::controls::ButtonState;
-use nih_plug_graphics::Color;
+use logic_nih_plug_graphics::Color;
 
 /// Predefined color themes for UI components.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -100,9 +100,9 @@ impl ColorScheme {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_gui::lookandfeel::{LookAndFeel, ColorScheme, Theme};
-/// use nih_plug_gui::controls::ButtonState;
-/// use nih_plug_graphics::Color;
+/// use logic_nih_plug_gui::lookandfeel::{LookAndFeel, ColorScheme, Theme};
+/// use logic_nih_plug_gui::controls::ButtonState;
+/// use logic_nih_plug_graphics::Color;
 ///
 /// struct CustomLookAndFeel {
 ///     colors: ColorScheme,
@@ -227,7 +227,7 @@ pub trait LookAndFeel {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_gui::lookandfeel::{DefaultLookAndFeel, Theme};
+/// use logic_nih_plug_gui::lookandfeel::{DefaultLookAndFeel, Theme};
 ///
 /// // Create with default (light) theme
 /// let laf = DefaultLookAndFeel::new();

@@ -3,9 +3,9 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
-use nih_plug::prelude::Param;
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::widgets::ParamEvent;
+use logic_nih_plug::prelude::Param;
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::widgets::ParamEvent;
 
 use crate::params::{self, DiopserParams};
 

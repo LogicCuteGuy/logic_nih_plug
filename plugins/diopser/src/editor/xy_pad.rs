@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug::prelude::{FloatRange, Param};
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::widgets::param_base::ParamWidgetBase;
-use nih_plug_vizia::widgets::util::{self, ModifiersExt};
+use logic_nih_plug::prelude::{FloatRange, Param};
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::widgets::param_base::ParamWidgetBase;
+use logic_nih_plug_vizia::widgets::util::{self, ModifiersExt};
 
 use crate::params;
 
@@ -97,7 +97,7 @@ enum XyPadEvent {
 
 impl XyPad {
     /// Creates a new [`XyPad`] for the given parameter. See
-    /// [`ParamSlider`][nih_plug_vizia::widgets::ParamSlider] for more information on this
+    /// [`ParamSlider`][logic_nih_plug_vizia::widgets::ParamSlider] for more information on this
     /// function's arguments.
     ///
     /// The x-parameter's range is restricted when safe mode is enabled. See `RestrictedParamSlider`
@@ -317,9 +317,9 @@ impl XyPad {
         if snap_to_whole_notes {
             let x_freq = self.frequency_range.unnormalize(x_value);
 
-            let fractional_note = nih_plug::util::freq_to_midi_note(x_freq);
+            let fractional_note = logic_nih_plug::util::freq_to_midi_note(x_freq);
             let note = fractional_note.round();
-            let note_freq = nih_plug::util::f32_midi_note_to_freq(note);
+            let note_freq = logic_nih_plug::util::f32_midi_note_to_freq(note);
 
             x_value = self.frequency_range.normalize(note_freq);
         }

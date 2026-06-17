@@ -3,7 +3,7 @@
 //! These tests verify correctness properties for wave shapers.
 
 use proptest::prelude::*;
-use nih_plug_dsp::processors::waveshaper::{WaveShaper, transfer_functions};
+use logic_nih_plug_dsp::processors::waveshaper::{WaveShaper, transfer_functions};
 
 /// **Feature: juce-examples-validation, Property 8: Transfer function application**
 /// **Validates: Requirements 3.2**

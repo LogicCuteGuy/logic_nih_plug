@@ -44,9 +44,9 @@ pub trait Processor: Send {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::processors::chain::{Processor, ProcessorChain};
-/// use nih_plug_dsp::processors::gain::Gain;
-/// use nih_plug_dsp::processors::bias::Bias;
+/// use logic_nih_plug_dsp::processors::chain::{Processor, ProcessorChain};
+/// use logic_nih_plug_dsp::processors::gain::Gain;
+/// use logic_nih_plug_dsp::processors::bias::Bias;
 ///
 /// let mut chain = ProcessorChain::new();
 ///
@@ -75,7 +75,7 @@ impl ProcessorChain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::chain::ProcessorChain;
+    /// use logic_nih_plug_dsp::processors::chain::ProcessorChain;
     ///
     /// let chain = ProcessorChain::new();
     /// ```
@@ -95,8 +95,8 @@ impl ProcessorChain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::chain::ProcessorChain;
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::chain::ProcessorChain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut chain = ProcessorChain::new();
     /// let gain = Gain::new();
@@ -119,8 +119,8 @@ impl ProcessorChain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::chain::ProcessorChain;
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::chain::ProcessorChain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut chain = ProcessorChain::new();
     /// chain.add(Gain::new());
@@ -145,8 +145,8 @@ impl ProcessorChain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::chain::ProcessorChain;
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::chain::ProcessorChain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut chain = ProcessorChain::new();
     /// chain.add(Gain::new());
@@ -166,8 +166,8 @@ impl ProcessorChain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::chain::ProcessorChain;
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::chain::ProcessorChain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut chain = ProcessorChain::new();
     /// assert_eq!(chain.len(), 0);
@@ -184,7 +184,7 @@ impl ProcessorChain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::chain::ProcessorChain;
+    /// use logic_nih_plug_dsp::processors::chain::ProcessorChain;
     ///
     /// let chain = ProcessorChain::new();
     /// assert!(chain.is_empty());

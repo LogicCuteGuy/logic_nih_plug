@@ -23,7 +23,7 @@ cargo xtask bundle juce_dsp_filter --release
 
 ## Usage
 
-This plugin demonstrates the basic usage of the `nih_plug_dsp` crate's filter module. The filter coefficients are calculated using the ported JUCE algorithms and applied to the audio stream in real-time.
+This plugin demonstrates the basic usage of the `logic_nih_plug_dsp` crate's filter module. The filter coefficients are calculated using the ported JUCE algorithms and applied to the audio stream in real-time.
 
 The plugin showcases:
 - Initializing DSP components with sample rate

@@ -9,7 +9,7 @@
 //! ## Reading a FLAC file
 //!
 //! ```no_run
-//! use nih_plug_audio_formats::flac::FlacReader;
+//! use logic_nih_plug_audio_formats::flac::FlacReader;
 //!
 //! let mut reader = FlacReader::open("audio.flac").unwrap();
 //! let samples = reader.read_all().unwrap();
@@ -48,7 +48,7 @@ impl FlacReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::flac::FlacReader;
+    /// use logic_nih_plug_audio_formats::flac::FlacReader;
     ///
     /// let reader = FlacReader::open("audio.flac").unwrap();
     /// ```
@@ -97,7 +97,7 @@ impl FlacReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::flac::FlacReader;
+    /// use logic_nih_plug_audio_formats::flac::FlacReader;
     ///
     /// let reader = FlacReader::open("audio.flac").unwrap();
     /// let metadata = reader.metadata();
@@ -139,7 +139,7 @@ impl FlacReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::flac::FlacReader;
+    /// use logic_nih_plug_audio_formats::flac::FlacReader;
     ///
     /// let mut reader = FlacReader::open("audio.flac").unwrap();
     /// let samples = reader.read_all().unwrap();

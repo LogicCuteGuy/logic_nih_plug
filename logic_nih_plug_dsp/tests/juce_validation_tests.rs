@@ -10,13 +10,13 @@
 
 #[cfg(all(feature = "analysis", feature = "processors"))]
 mod validation_tests {
-    use nih_plug_dsp::analysis::fft::FFT;
-    use nih_plug_dsp::fir::{FIRFilter, FilterDesign, WindowFunction};
-    use nih_plug_dsp::processors::{
+    use logic_nih_plug_dsp::analysis::fft::FFT;
+    use logic_nih_plug_dsp::fir::{FIRFilter, FilterDesign, WindowFunction};
+    use logic_nih_plug_dsp::processors::{
         bias::Bias, chain::ProcessorChain, dc_filter::DCFilter, gain::Gain,
         waveshaper::WaveShaper, Processor,
     };
-    use nih_plug_dsp::state_variable::{FilterType, StateVariableFilter};
+    use logic_nih_plug_dsp::state_variable::{FilterType, StateVariableFilter};
     use std::f32::consts::PI;
 
     /// Tolerance for floating-point comparisons

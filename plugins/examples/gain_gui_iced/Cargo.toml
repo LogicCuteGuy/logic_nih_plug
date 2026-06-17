@@ -11,7 +11,7 @@ description = "A simple gain plugin with an iced GUI"
 crate-type = ["cdylib"]
 
 [dependencies]
-nih_plug = { path = "../../../", features = ["assert_process_allocs"] }
-nih_plug_iced = { path = "../../../nih_plug_iced" }
+logic_nih_plug = { path = "../../../", features = ["assert_process_allocs"] }
+logic_nih_plug_iced = { path = "../../../logic_nih_plug_iced" }
 
 atomic_float = "0.1"

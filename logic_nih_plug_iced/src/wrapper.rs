@@ -1,8 +1,8 @@
 //! An [`Application`] wrapper around an [`IcedEditor`] to bridge between `iced_baseview` and
-//! `nih_plug_iced`.
+//! `logic_nih_plug_iced`.
 
 use crossbeam::channel;
-use nih_plug::prelude::GuiContext;
+use logic_nih_plug::prelude::GuiContext;
 use std::sync::Arc;
 
 use crate::futures::FutureExt;

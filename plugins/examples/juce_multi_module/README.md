@@ -4,25 +4,25 @@ This advanced example demonstrates using multiple ported JUCE modules together i
 
 ## Modules Used
 
-### DSP Module (`nih_plug_dsp`)
+### DSP Module (`logic_nih_plug_dsp`)
 - **Oscillators**: Generates sine, saw, square, and triangle waveforms
 - **Filters**: IIR low-pass filter for tone shaping
 - **Envelopes**: ADSR envelope for amplitude control
 - **Smoothing**: Parameter smoothing for glitch-free changes
 
-### Data Module (`nih_plug_data`)
+### Data Module (`logic_nih_plug_data`)
 - **ValueTree**: Hierarchical preset storage
 - **Serialization**: XML-based preset save/load capability
 
-### Animation Module (`nih_plug_animation`)
+### Animation Module (`logic_nih_plug_animation`)
 - **Easing Functions**: Smooth filter cutoff modulation
 - **Animation Curves**: InOutQuad easing for natural movement
 
-### Crypto Module (`nih_plug_crypto`)
+### Crypto Module (`logic_nih_plug_crypto`)
 - **Hashing**: SHA-256 hash generation for preset verification
 - **Integrity**: Ensures preset data hasn't been corrupted
 
-### Audio Formats Module (`nih_plug_audio_formats`)
+### Audio Formats Module (`logic_nih_plug_audio_formats`)
 - Demonstrates integration capability for future impulse response loading
 
 ## Features
@@ -112,8 +112,8 @@ This example teaches:
 ## Future Enhancements
 
 Potential additions to explore:
-- Load impulse responses using `nih_plug_audio_formats`
-- Add GUI using `nih_plug_gui` components
+- Load impulse responses using `logic_nih_plug_audio_formats`
+- Add GUI using `logic_nih_plug_gui` components
 - Implement preset browser with ValueTree
 - Add more complex modulation routing
-- Integrate OSC control using `nih_plug_osc`
+- Integrate OSC control using `logic_nih_plug_osc`

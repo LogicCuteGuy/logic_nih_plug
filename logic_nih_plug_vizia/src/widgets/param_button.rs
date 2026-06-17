@@ -1,12 +1,12 @@
 //! A toggleable button that integrates with NIH-plug's [`Param`] types.
 
-use nih_plug::prelude::Param;
+use logic_nih_plug::prelude::Param;
 use vizia::prelude::*;
 
 use super::param_base::ParamWidgetBase;
 
 /// A toggleable button that integrates with NIH-plug's [`Param`] types. Only makes sense with
-/// [`BoolParam`][nih_plug::prelude::BoolParam]s. Clicking on the button will toggle between the
+/// [`BoolParam`][logic_nih_plug::prelude::BoolParam]s. Clicking on the button will toggle between the
 /// parameter's minimum and maximum value. The `:checked` pseudoclass indicates whether or not the
 /// button is currently pressed.
 #[derive(Lens)]

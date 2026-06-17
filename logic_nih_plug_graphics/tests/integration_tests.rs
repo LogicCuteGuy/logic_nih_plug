@@ -1,4 +1,4 @@
-use nih_plug_graphics::{Color, Graphics, GraphicsError};
+use logic_nih_plug_graphics::{Color, Graphics, GraphicsError};
 
 #[test]
 fn test_graphics_creation() {
@@ -190,7 +190,7 @@ fn test_color_with_alpha() {
 
 #[cfg(feature = "images")]
 mod image_tests {
-    use nih_plug_graphics::{Image, GraphicsError};
+    use logic_nih_plug_graphics::{Image, GraphicsError};
 
     #[test]
     fn test_image_from_rgba8() {
@@ -520,7 +520,7 @@ fn test_restore_transform_panic() {
 #[cfg(feature = "text")]
 mod text_tests {
     use super::*;
-    use nih_plug_graphics::{Font, FontSettings};
+    use logic_nih_plug_graphics::{Font, FontSettings};
 
     fn load_test_font() -> Font {
         let font_data = include_bytes!("test_font.ttf");

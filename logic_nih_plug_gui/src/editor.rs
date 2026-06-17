@@ -2,7 +2,7 @@
 //!
 //! This module is feature gated behind `softbuffer-editor` and intentionally provides a
 //! minimal API so examples and small plugins can spawn a simple window and render
-//! using `nih_plug_graphics::Graphics` without duplicating baseview/softbuffer plumbing.
+//! using `logic_nih_plug_graphics::Graphics` without duplicating baseview/softbuffer plumbing.
 #![cfg(feature = "softbuffer-editor")]
 
 use std::sync::{Arc, Mutex};
@@ -17,7 +17,7 @@ use raw_window_handle_06 as raw_window_handle_06;
 use softbuffer::Surface;
 
 use crate::components::Bounds;
-use nih_plug_graphics::Graphics;
+use logic_nih_plug_graphics::Graphics;
 
 /// A handle to a softbuffer-backed window. The provided draw closure is called on every
 /// frame with a mutable `Graphics` context. The closure receives the logical size (width, height)
@@ -254,7 +254,7 @@ fn baseview_window_to_surface_target(window: &baseview::Window<'_>) -> Softbuffe
 
 // Public helpers for rendering components into a Graphics buffer. These are intentionally
 // simple: they iterate children and call render methods on known control types. This will not
-// cover all possible component content, but it eases adopting nih_plug_gui with the softbuffer
+// cover all possible component content, but it eases adopting logic_nih_plug_gui with the softbuffer
 // helper.
 use crate::controls::{Button, Label, Slider};
 
@@ -270,7 +270,7 @@ pub fn render_controls_sample(graphics: &mut Graphics, items: &[&dyn std::any::A
         } else if let Some(l) = any.downcast_ref::<Label>() {
             // Labels require a font for nice text when using `text` feature; use simple render
             #[cfg(not(feature = "text"))]
-            let _ = l.render(graphics, &nih_plug_graphics::Font::from_bytes(include_bytes!("../../nih_plug_graphics/tests/test_font.ttf"), nih_plug_graphics::text::FontSettings::default()).unwrap());
+            let _ = l.render(graphics, &logic_nih_plug_graphics::Font::from_bytes(include_bytes!("../../logic_nih_plug_graphics/tests/test_font.ttf"), logic_nih_plug_graphics::text::FontSettings::default()).unwrap());
             #[cfg(not(feature = "text"))]
             {
                 // fallback: do nothing

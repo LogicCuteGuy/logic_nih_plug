@@ -16,10 +16,10 @@
 
 //! A modified version of the regular `ParamSlider` that works with Diopser's safe mode.
 
-use nih_plug::prelude::Param;
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::widgets::param_base::ParamWidgetBase;
-use nih_plug_vizia::widgets::util::{self, ModifiersExt};
+use logic_nih_plug::prelude::Param;
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::widgets::param_base::ParamWidgetBase;
+use logic_nih_plug_vizia::widgets::util::{self, ModifiersExt};
 
 /// When shift+dragging a parameter, one pixel dragged corresponds to this much change in the
 /// normalized parameter.

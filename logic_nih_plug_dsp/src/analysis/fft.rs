@@ -6,7 +6,7 @@
 //! # Examples
 //!
 //! ```
-//! use nih_plug_dsp::analysis::FFT;
+//! use logic_nih_plug_dsp::analysis::FFT;
 //!
 //! // Create an FFT processor for 1024-point transforms
 //! let fft = FFT::new(1024).unwrap();
@@ -66,7 +66,7 @@ impl FFT {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::analysis::FFT;
+    /// use logic_nih_plug_dsp::analysis::FFT;
     ///
     /// let fft = FFT::new(1024).unwrap();
     /// assert_eq!(fft.size(), 1024);
@@ -116,7 +116,7 @@ impl FFT {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::analysis::FFT;
+    /// use logic_nih_plug_dsp::analysis::FFT;
     /// use num_complex::Complex;
     ///
     /// let fft = FFT::new(1024).unwrap();
@@ -163,7 +163,7 @@ impl FFT {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::analysis::FFT;
+    /// use logic_nih_plug_dsp::analysis::FFT;
     /// use num_complex::Complex;
     ///
     /// let fft = FFT::new(1024).unwrap();
@@ -214,7 +214,7 @@ impl FFT {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::analysis::FFT;
+    /// use logic_nih_plug_dsp::analysis::FFT;
     ///
     /// let fft = FFT::new(1024).unwrap();
     /// let input = vec![0.0; 1024];

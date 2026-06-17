@@ -4,7 +4,7 @@
 use std::sync::Arc;
 
 use egui_baseview::egui::{self, TextStyle, Ui, Vec2};
-use nih_plug::prelude::{Param, ParamFlags, ParamPtr, ParamSetter, Params};
+use logic_nih_plug::prelude::{Param, ParamFlags, ParamPtr, ParamSetter, Params};
 
 use super::ParamSlider;
 

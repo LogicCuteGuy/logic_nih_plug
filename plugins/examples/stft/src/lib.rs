@@ -1,4 +1,4 @@
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 use realfft::num_complex::Complex32;
 use realfft::{ComplexToReal, RealFftPlanner, RealToComplex};
 use std::f32;

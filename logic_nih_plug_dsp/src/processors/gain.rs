@@ -13,7 +13,7 @@ use super::Processor;
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::processors::gain::Gain;
+/// use logic_nih_plug_dsp::processors::gain::Gain;
 ///
 /// let mut gain = Gain::new();
 /// gain.prepare(44100.0, 512);
@@ -40,7 +40,7 @@ impl Gain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let gain = Gain::new();
     /// ```
@@ -64,7 +64,7 @@ impl Gain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut gain = Gain::new();
     /// gain.set_gain_db(6.0);  // +6 dB gain
@@ -83,7 +83,7 @@ impl Gain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut gain = Gain::new();
     /// gain.set_gain_linear(2.0);  // 2x gain
@@ -124,7 +124,7 @@ impl Gain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut gain = Gain::new();
     /// gain.set_smoothing_time(10.0, 44100.0); // 10ms smoothing
@@ -155,7 +155,7 @@ impl Gain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut gain = Gain::new();
     /// gain.prepare(44100.0, 512);
@@ -179,7 +179,7 @@ impl Gain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut gain = Gain::new();
     /// gain.prepare(44100.0, 512);
@@ -209,7 +209,7 @@ impl Gain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut gain = Gain::new();
     /// gain.prepare(44100.0, 512);
@@ -239,7 +239,7 @@ impl Gain {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::gain::Gain;
+    /// use logic_nih_plug_dsp::processors::gain::Gain;
     ///
     /// let mut gain = Gain::new();
     /// gain.set_gain_db(6.0);
@@ -285,7 +285,7 @@ impl Processor for Gain {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::processors::gain::db_to_linear;
+/// use logic_nih_plug_dsp::processors::gain::db_to_linear;
 ///
 /// let linear = db_to_linear(6.0);
 /// assert!((linear - 1.995).abs() < 0.01);
@@ -309,7 +309,7 @@ pub fn db_to_linear(db: f32) -> f32 {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::processors::gain::linear_to_db;
+/// use logic_nih_plug_dsp::processors::gain::linear_to_db;
 ///
 /// let db = linear_to_db(2.0);
 /// assert!((db - 6.02).abs() < 0.01);

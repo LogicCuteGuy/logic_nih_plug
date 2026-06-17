@@ -8,7 +8,7 @@ This directory contains example plugins demonstrating the ported JUCE modules in
 
 **Location**: `plugins/examples/juce_dsp_filter/`
 
-A simple audio filter plugin demonstrating the `nih_plug_dsp` module.
+A simple audio filter plugin demonstrating the `logic_nih_plug_dsp` module.
 
 **Features**:
 - IIR filter implementation
@@ -18,7 +18,7 @@ A simple audio filter plugin demonstrating the `nih_plug_dsp` module.
 - Coefficient calculation using bilinear transform
 
 **Modules Used**:
-- `nih_plug_dsp` (filters)
+- `logic_nih_plug_dsp` (filters)
 
 **Build**:
 ```bash
@@ -29,7 +29,7 @@ cargo xtask bundle juce_dsp_filter --release
 
 **Location**: `plugins/examples/juce_gui_demo/`
 
-A plugin demonstrating the `nih_plug_gui` component system.
+A plugin demonstrating the `logic_nih_plug_gui` component system.
 
 **Features**:
 - Component hierarchy management
@@ -38,8 +38,8 @@ A plugin demonstrating the `nih_plug_gui` component system.
 - Bounds-based layout
 
 **Modules Used**:
-- `nih_plug_gui` (components)
-- `nih_plug_graphics` (color, primitives)
+- `logic_nih_plug_gui` (components)
+- `logic_nih_plug_graphics` (color, primitives)
 
 **Build**:
 ```bash
@@ -63,11 +63,11 @@ An advanced synthesizer plugin demonstrating multiple ported JUCE modules workin
 - Multiple waveform types (sine, saw, square, triangle)
 
 **Modules Used**:
-- `nih_plug_dsp` (oscillators, filters, envelopes, smoothing)
-- `nih_plug_data` (ValueTree for preset storage)
-- `nih_plug_animation` (easing functions)
-- `nih_plug_crypto` (SHA-256 hashing)
-- `nih_plug_audio_formats` (for future IR loading)
+- `logic_nih_plug_dsp` (oscillators, filters, envelopes, smoothing)
+- `logic_nih_plug_data` (ValueTree for preset storage)
+- `logic_nih_plug_animation` (easing functions)
+- `logic_nih_plug_crypto` (SHA-256 hashing)
+- `logic_nih_plug_audio_formats` (for future IR loading)
 
 **Build**:
 ```bash

@@ -1,6 +1,6 @@
 # LookAndFeel Customization Guide
 
-The LookAndFeel system provides a flexible way to customize the appearance of UI components in nih_plug_gui. It's inspired by JUCE's LookAndFeel system and allows you to create consistent visual themes across your plugin interfaces.
+The LookAndFeel system provides a flexible way to customize the appearance of UI components in logic_nih_plug_gui. It's inspired by JUCE's LookAndFeel system and allows you to create consistent visual themes across your plugin interfaces.
 
 ## Overview
 
@@ -16,9 +16,9 @@ The LookAndFeel system consists of:
 ### Using Built-in Themes
 
 ```rust
-use nih_plug_gui::lookandfeel::{DefaultLookAndFeel, Theme};
-use nih_plug_gui::controls::Button;
-use nih_plug_gui::components::Bounds;
+use logic_nih_plug_gui::lookandfeel::{DefaultLookAndFeel, Theme};
+use logic_nih_plug_gui::controls::Button;
+use logic_nih_plug_gui::components::Bounds;
 
 // Create a button
 let mut button = Button::new("Click Me");
@@ -54,9 +54,9 @@ laf.set_theme(Theme::HighContrast);
 You can create your own LookAndFeel by implementing the `LookAndFeel` trait:
 
 ```rust
-use nih_plug_gui::lookandfeel::{LookAndFeel, ColorScheme};
-use nih_plug_gui::controls::ButtonState;
-use nih_plug_graphics::Color;
+use logic_nih_plug_gui::lookandfeel::{LookAndFeel, ColorScheme};
+use logic_nih_plug_gui::controls::ButtonState;
+use logic_nih_plug_graphics::Color;
 
 struct MyCustomLookAndFeel {
     colors: ColorScheme,
@@ -125,9 +125,9 @@ Components provide methods to render with a LookAndFeel:
 ### Button
 
 ```rust
-use nih_plug_gui::controls::Button;
-use nih_plug_gui::lookandfeel::DefaultLookAndFeel;
-use nih_plug_graphics::Graphics;
+use logic_nih_plug_gui::controls::Button;
+use logic_nih_plug_gui::lookandfeel::DefaultLookAndFeel;
+use logic_nih_plug_graphics::Graphics;
 
 let button = Button::new("Click Me");
 let laf = DefaultLookAndFeel::new();
@@ -140,7 +140,7 @@ button.render_with_lookandfeel(&mut graphics, &laf).unwrap();
 // Render with text and LookAndFeel (requires text feature)
 #[cfg(feature = "text")]
 {
-    use nih_plug_graphics::Font;
+    use logic_nih_plug_graphics::Font;
     let font = Font::from_bytes(include_bytes!("font.ttf")).unwrap();
     button.render_with_lookandfeel_and_text(&mut graphics, &font, &laf).unwrap();
 }
@@ -149,15 +149,15 @@ button.render_with_lookandfeel(&mut graphics, &laf).unwrap();
 ### Slider
 
 ```rust
-use nih_plug_gui::controls::{Slider, SliderOrientation};
-use nih_plug_gui::lookandfeel::DefaultLookAndFeel;
+use logic_nih_plug_gui::controls::{Slider, SliderOrientation};
+use logic_nih_plug_gui::lookandfeel::DefaultLookAndFeel;
 
 let slider = Slider::new(SliderOrientation::Horizontal);
 let laf = DefaultLookAndFeel::new();
 
 #[cfg(feature = "graphics")]
 {
-    use nih_plug_graphics::Graphics;
+    use logic_nih_plug_graphics::Graphics;
     let mut graphics = Graphics::new(800, 600);
     slider.render_with_lookandfeel(&mut graphics, &laf).unwrap();
 }
@@ -166,15 +166,15 @@ let laf = DefaultLookAndFeel::new();
 ### Label
 
 ```rust
-use nih_plug_gui::controls::Label;
-use nih_plug_gui::lookandfeel::DefaultLookAndFeel;
+use logic_nih_plug_gui::controls::Label;
+use logic_nih_plug_gui::lookandfeel::DefaultLookAndFeel;
 
 let label = Label::new("Hello, World!");
 let laf = DefaultLookAndFeel::new();
 
 #[cfg(feature = "text")]
 {
-    use nih_plug_graphics::{Graphics, Font};
+    use logic_nih_plug_graphics::{Graphics, Font};
     let mut graphics = Graphics::new(800, 600);
     let font = Font::from_bytes(include_bytes!("font.ttf")).unwrap();
     label.render_with_lookandfeel(&mut graphics, &font, &laf).unwrap();
@@ -230,5 +230,5 @@ The LookAndFeel system is available when the `components` feature is enabled (wh
 
 ```toml
 [dependencies]
-nih_plug_gui = { version = "0.0.0", features = ["components", "graphics", "text"] }
+logic_nih_plug_gui = { version = "0.0.0", features = ["components", "graphics", "text"] }
 ```

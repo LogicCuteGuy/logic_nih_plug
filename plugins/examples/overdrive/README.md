@@ -1,6 +1,6 @@
 # Overdrive Effect Example
 
-This example demonstrates processor chain composition by creating an overdrive effect using the `nih_plug_dsp` processor chain system.
+This example demonstrates processor chain composition by creating an overdrive effect using the `logic_nih_plug_dsp` processor chain system.
 
 ## Signal Chain
 

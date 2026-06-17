@@ -1,4 +1,4 @@
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 use rand::Rng;
 use rand_pcg::Pcg32;
 use std::sync::Arc;

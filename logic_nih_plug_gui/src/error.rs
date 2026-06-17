@@ -27,7 +27,7 @@ pub enum GuiError {
 
     /// Graphics error
     #[error("Graphics error: {0}")]
-    GraphicsError(#[from] nih_plug_graphics::GraphicsError),
+    GraphicsError(#[from] logic_nih_plug_graphics::GraphicsError),
 
     /// Invalid range (min >= max)
     #[error("Invalid range: min={0}, max={1}")]

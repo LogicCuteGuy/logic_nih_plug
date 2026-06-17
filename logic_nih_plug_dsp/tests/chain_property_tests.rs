@@ -14,9 +14,9 @@ use proptest::prelude::*;
 /// should produce the same output as applying each processor sequentially.
 mod chain_composition {
     use super::*;
-    use nih_plug_dsp::processors::chain::{Processor, ProcessorChain};
-    use nih_plug_dsp::processors::gain::Gain;
-    use nih_plug_dsp::processors::bias::Bias;
+    use logic_nih_plug_dsp::processors::chain::{Processor, ProcessorChain};
+    use logic_nih_plug_dsp::processors::gain::Gain;
+    use logic_nih_plug_dsp::processors::bias::Bias;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -297,9 +297,9 @@ mod chain_composition {
 /// in the chain should be in prepared state.
 mod chain_preparation {
     use super::*;
-    use nih_plug_dsp::processors::chain::{Processor, ProcessorChain};
-    use nih_plug_dsp::processors::gain::Gain;
-    use nih_plug_dsp::processors::bias::Bias;
+    use logic_nih_plug_dsp::processors::chain::{Processor, ProcessorChain};
+    use logic_nih_plug_dsp::processors::gain::Gain;
+    use logic_nih_plug_dsp::processors::bias::Bias;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -405,8 +405,8 @@ mod chain_preparation {
 /// should be in reset state.
 mod chain_reset {
     use super::*;
-    use nih_plug_dsp::processors::chain::{Processor, ProcessorChain};
-    use nih_plug_dsp::processors::gain::Gain;
+    use logic_nih_plug_dsp::processors::chain::{Processor, ProcessorChain};
+    use logic_nih_plug_dsp::processors::gain::Gain;
 
     proptest! {
         #![proptest_config(ProptestConfig {

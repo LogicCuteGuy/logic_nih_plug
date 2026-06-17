@@ -15,7 +15,7 @@ use proptest::prop_oneof;
 /// precision limits.
 mod buffer_processing_preserves_data {
     use super::*;
-    use nih_plug_dsp::util::*;
+    use logic_nih_plug_dsp::util::*;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -219,7 +219,7 @@ mod buffer_processing_preserves_data {
 /// depends on all previous inputs.
 mod filter_state_persistence {
     use super::*;
-    use nih_plug_dsp::filters::IIRFilter;
+    use logic_nih_plug_dsp::filters::IIRFilter;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -334,7 +334,7 @@ mod filter_state_persistence {
 /// produce the same state as a freshly constructed instance.
 mod filter_reset_restores_initial_state {
     use super::*;
-    use nih_plug_dsp::filters::IIRFilter;
+    use logic_nih_plug_dsp::filters::IIRFilter;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -471,7 +471,7 @@ mod filter_reset_restores_initial_state {
 /// than producing undefined behavior.
 mod filter_coefficient_validation {
     use super::*;
-    use nih_plug_dsp::filters::IIRFilter;
+    use logic_nih_plug_dsp::filters::IIRFilter;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -620,7 +620,7 @@ mod filter_coefficient_validation {
 /// phase continuity without clicks or discontinuities.
 mod oscillator_phase_continuity {
     use super::*;
-    use nih_plug_dsp::oscillators::{Oscillator, Waveform};
+    use logic_nih_plug_dsp::oscillators::{Oscillator, Waveform};
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -875,7 +875,7 @@ mod oscillator_phase_continuity {
 /// constructed instance.
 mod oscillator_reset_restores_initial_state {
     use super::*;
-    use nih_plug_dsp::oscillators::{Oscillator, Waveform};
+    use logic_nih_plug_dsp::oscillators::{Oscillator, Waveform};
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -1150,7 +1150,7 @@ mod oscillator_reset_restores_initial_state {
 /// expected filter response.
 mod filter_type_switching_continuity {
     use super::*;
-    use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+    use logic_nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -1306,7 +1306,7 @@ mod filter_type_switching_continuity {
 /// output should remain finite and not produce NaN or infinity.
 mod tpt_filter_stability {
     use super::*;
-    use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+    use logic_nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -1545,7 +1545,7 @@ mod tpt_filter_stability {
 /// filter with the same parameters.
 mod filter_reset_preserves_coefficients {
     use super::*;
-    use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+    use logic_nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -1814,7 +1814,7 @@ mod filter_reset_preserves_coefficients {
 #[cfg(feature = "processors")]
 mod bias_addition {
     use super::*;
-    use nih_plug_dsp::processors::bias::Bias;
+    use logic_nih_plug_dsp::processors::bias::Bias;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -1886,7 +1886,7 @@ mod bias_addition {
 #[cfg(feature = "processors")]
 mod bias_numerical_stability {
     use super::*;
-    use nih_plug_dsp::processors::bias::Bias;
+    use logic_nih_plug_dsp::processors::bias::Bias;
 
     proptest! {
         #![proptest_config(ProptestConfig {

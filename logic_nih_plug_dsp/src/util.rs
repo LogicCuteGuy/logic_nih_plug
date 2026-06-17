@@ -18,7 +18,7 @@ use crate::error::DspError;
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::validate_sample_rate;
+/// use logic_nih_plug_dsp::util::validate_sample_rate;
 ///
 /// assert!(validate_sample_rate(44100.0).is_ok());
 /// assert!(validate_sample_rate(48000.0).is_ok());
@@ -45,7 +45,7 @@ pub fn validate_sample_rate(sample_rate: f32) -> Result<(), DspError> {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::validate_buffer_size;
+/// use logic_nih_plug_dsp::util::validate_buffer_size;
 ///
 /// assert!(validate_buffer_size(512).is_ok());
 /// assert!(validate_buffer_size(1024).is_ok());
@@ -72,7 +72,7 @@ pub fn validate_buffer_size(buffer_size: usize) -> Result<(), DspError> {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::frequency_to_phase_increment;
+/// use logic_nih_plug_dsp::util::frequency_to_phase_increment;
 ///
 /// // 440 Hz at 44100 Hz sample rate
 /// let phase_inc = frequency_to_phase_increment(440.0, 44100.0);
@@ -97,7 +97,7 @@ pub fn frequency_to_phase_increment(frequency: f32, sample_rate: f32) -> f32 {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::phase_increment_to_frequency;
+/// use logic_nih_plug_dsp::util::phase_increment_to_frequency;
 ///
 /// let freq = phase_increment_to_frequency(0.00997, 44100.0);
 /// assert!((freq - 440.0).abs() < 1.0);
@@ -116,7 +116,7 @@ pub fn phase_increment_to_frequency(phase_increment: f32, sample_rate: f32) -> f
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::clear_buffer;
+/// use logic_nih_plug_dsp::util::clear_buffer;
 ///
 /// let mut buffer = vec![1.0, 2.0, 3.0];
 /// clear_buffer(&mut buffer);
@@ -141,7 +141,7 @@ pub fn clear_buffer(buffer: &mut [f32]) {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::copy_buffer;
+/// use logic_nih_plug_dsp::util::copy_buffer;
 ///
 /// let src = vec![1.0, 2.0, 3.0];
 /// let mut dst = vec![0.0, 0.0, 0.0];
@@ -172,7 +172,7 @@ pub fn copy_buffer(src: &[f32], dst: &mut [f32]) {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::add_buffer;
+/// use logic_nih_plug_dsp::util::add_buffer;
 ///
 /// let src = vec![1.0, 2.0, 3.0];
 /// let mut dst = vec![1.0, 1.0, 1.0];
@@ -201,7 +201,7 @@ pub fn add_buffer(src: &[f32], dst: &mut [f32]) {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::scale_buffer;
+/// use logic_nih_plug_dsp::util::scale_buffer;
 ///
 /// let mut buffer = vec![1.0, 2.0, 3.0];
 /// scale_buffer(&mut buffer, 2.0);
@@ -229,7 +229,7 @@ pub fn scale_buffer(buffer: &mut [f32], gain: f32) {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::lerp;
+/// use logic_nih_plug_dsp::util::lerp;
 ///
 /// assert_eq!(lerp(0.0, 10.0, 0.0), 0.0);
 /// assert_eq!(lerp(0.0, 10.0, 0.5), 5.0);
@@ -255,7 +255,7 @@ pub fn lerp(a: f32, b: f32, t: f32) -> f32 {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::util::clamp;
+/// use logic_nih_plug_dsp::util::clamp;
 ///
 /// assert_eq!(clamp(5.0, 0.0, 10.0), 5.0);
 /// assert_eq!(clamp(-5.0, 0.0, 10.0), 0.0);

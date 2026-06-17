@@ -1,4 +1,4 @@
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 use std::sync::Arc;
 
 /// A simple gain plugin demonstrating AUv3 export

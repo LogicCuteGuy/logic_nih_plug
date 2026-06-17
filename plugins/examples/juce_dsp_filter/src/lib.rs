@@ -1,10 +1,10 @@
 //! # JUCE DSP Filter Example
 //!
 //! This example demonstrates using the ported JUCE DSP modules for audio filtering.
-//! It implements a simple low-pass filter plugin using the IIR filter from nih_plug_dsp.
+//! It implements a simple low-pass filter plugin using the IIR filter from logic_nih_plug_dsp.
 
-use nih_plug::prelude::*;
-use nih_plug_dsp::filters::IIRFilter;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_dsp::filters::IIRFilter;
 use std::sync::Arc;
 
 /// A simple filter plugin demonstrating the ported JUCE DSP filter module

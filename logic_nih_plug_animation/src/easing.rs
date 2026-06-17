@@ -6,7 +6,7 @@
 //! # Examples
 //!
 //! ```
-//! use nih_plug_animation::easing::{EasingFunction, ease_in_out_cubic};
+//! use logic_nih_plug_animation::easing::{EasingFunction, ease_in_out_cubic};
 //!
 //! let t = 0.5; // Halfway through animation
 //! let eased = ease_in_out_cubic(t);

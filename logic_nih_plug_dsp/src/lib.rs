@@ -1,4 +1,4 @@
-//! # nih_plug_dsp
+//! # logic_nih_plug_dsp
 //!
 //! Digital signal processing algorithms ported from JUCE.
 //!

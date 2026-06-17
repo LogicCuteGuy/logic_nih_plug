@@ -2,8 +2,8 @@
 
 use baseview::{gl::GlConfig, WindowHandle, WindowOpenOptions, WindowScalePolicy};
 use crossbeam::atomic::AtomicCell;
-use nih_plug::params::persist::PersistentField;
-use nih_plug::prelude::*;
+use logic_nih_plug::params::persist::PersistentField;
+use logic_nih_plug::prelude::*;
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
 use serde::{Deserialize, Serialize};
 use std::sync::{
@@ -189,7 +189,7 @@ impl baseview::WindowHandler for CustomGlWindow {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CustomGlEditorState {
     /// The window's size in logical pixels before applying `scale_factor`.
-    #[serde(with = "nih_plug::params::persist::serialize_atomic_cell")]
+    #[serde(with = "logic_nih_plug::params::persist::serialize_atomic_cell")]
     size: AtomicCell<(u32, u32)>,
     /// Whether the editor's window is currently open.
     #[serde(skip)]
@@ -345,7 +345,7 @@ impl Drop for CustomGlEditorHandle {
 
 /// This version of `baseview` uses a different version of `raw_window_handle than NIH-plug, so we
 /// need to adapt it ourselves.
-struct ParentWindowHandleAdapter(nih_plug::editor::ParentWindowHandle);
+struct ParentWindowHandleAdapter(logic_nih_plug::editor::ParentWindowHandle);
 
 unsafe impl HasRawWindowHandle for ParentWindowHandleAdapter {
     fn raw_window_handle(&self) -> RawWindowHandle {

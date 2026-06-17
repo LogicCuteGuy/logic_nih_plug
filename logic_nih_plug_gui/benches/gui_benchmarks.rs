@@ -4,7 +4,7 @@
 //! to ensure they meet performance requirements.
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use nih_plug_gui::layout::flexbox::{
+use logic_nih_plug_gui::layout::flexbox::{
     FlexBox, FlexDirection, FlexWrap, JustifyContent, AlignItems, AlignContent, AlignSelf,
     FlexItem, Margin,
 };

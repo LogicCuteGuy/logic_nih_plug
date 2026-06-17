@@ -1,5 +1,5 @@
 [package]
-name = "nih_plug_vizia"
+name = "logic_nih_plug_vizia"
 version = "0.0.0"
 edition = "2021"
 authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
@@ -8,7 +8,7 @@ license = "ISC"
 description = "An adapter to use VIZIA GUIs with NIH-plug"
 
 [dependencies]
-nih_plug = { path = "..", default-features = false }
+logic_nih_plug = { path = "..", default-features = false }
 nih_plug_assets = { git = "https://github.com/robbert-vdh/nih_plug_assets.git" }
 
 baseview = { git = "https://github.com/RustAudio/baseview.git", rev = "2c1b1a7b0fef1a29a5150a6a8f6fef6a0cbab8c4" }

@@ -232,7 +232,7 @@ impl<const N: usize> FirCoefficients<N> {
         // linear-phase FIR filter. We can apply the window function here, and then fianlly
         // normalize it so that the the final FIR filter kernel sums to 1.
 
-        // Adopted from `nih_plug::util::window`. We only end up applying the right half of the
+        // Adopted from `logic_nih_plug::util::window`. We only end up applying the right half of the
         // window, starting at the top of the window.
         let blackman_scale_1 = (2.0 * f32::consts::PI) / (N - 1) as f32;
         let blackman_scale_2 = blackman_scale_1 * 2.0;

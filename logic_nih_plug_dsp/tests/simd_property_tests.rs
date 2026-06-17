@@ -8,13 +8,13 @@
 use proptest::prelude::*;
 
 #[cfg(feature = "simd")]
-use nih_plug_dsp::simd::optimizations::{
+use logic_nih_plug_dsp::simd::optimizations::{
     SimdStateVariableFilter, SimdFIRFilter, interleave_channels, deinterleave_channels,
 };
 #[cfg(feature = "simd")]
-use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+use logic_nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
 #[cfg(feature = "simd")]
-use nih_plug_dsp::fir::{FIRFilter, FilterDesign, WindowFunction};
+use logic_nih_plug_dsp::fir::{FIRFilter, FilterDesign, WindowFunction};
 
 /// Floating-point comparison tolerance for SIMD vs scalar equivalence.
 /// SIMD operations may have slightly different rounding behavior.

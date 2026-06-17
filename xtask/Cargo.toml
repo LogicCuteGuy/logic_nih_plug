@@ -7,4 +7,4 @@ description = "A helper for compiling and bundling plugins, can be invoked in th
 license = "ISC"
 
 [dependencies]
-nih_plug_xtask = { path = "../nih_plug_xtask" }
+logic_nih_plug_xtask = { path = "../logic_nih_plug_xtask" }

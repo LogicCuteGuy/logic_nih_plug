@@ -1,4 +1,4 @@
-# nih_plug_animation
+# logic_nih_plug_animation
 
 Animation utilities ported from JUCE for the nih-plug framework.
 
@@ -11,7 +11,7 @@ This crate provides a complete animation system with the following capabilities:
 The `Animation` struct provides smooth value interpolation between start and end values over a specified duration:
 
 ```rust
-use nih_plug_animation::{Animation, easing::ease_in_out_cubic};
+use logic_nih_plug_animation::{Animation, easing::ease_in_out_cubic};
 
 let mut anim = Animation::new(0.0, 100.0, 1.0, ease_in_out_cubic);
 anim.start();
@@ -38,7 +38,7 @@ Over 30 easing functions are provided for different animation styles:
 - **Bounce**: `ease_in_bounce`, `ease_out_bounce`, `ease_in_out_bounce`
 
 ```rust
-use nih_plug_animation::easing::*;
+use logic_nih_plug_animation::easing::*;
 
 // Try different easing functions
 let anim1 = Animation::new(0.0, 100.0, 1.0, ease_out_bounce);
@@ -50,7 +50,7 @@ let anim2 = Animation::new(0.0, 100.0, 1.0, ease_in_out_elastic);
 The `AnimationSequence` struct allows you to chain multiple animations to play sequentially:
 
 ```rust
-use nih_plug_animation::chaining::AnimationSequence;
+use logic_nih_plug_animation::chaining::AnimationSequence;
 
 let mut sequence = AnimationSequence::new();
 sequence.add(Animation::new(0.0, 50.0, 1.0, ease_in_cubic));
@@ -132,7 +132,7 @@ anim.jump_to_end();
 
 ```toml
 [dependencies]
-nih_plug_animation = { version = "0.0.0", features = ["full"] }
+logic_nih_plug_animation = { version = "0.0.0", features = ["full"] }
 ```
 
 ## Examples

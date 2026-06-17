@@ -7,9 +7,9 @@
 //!
 //! Run with: cargo run --example animation_demo --features full
 
-use nih_plug_animation::Animation;
-use nih_plug_animation::chaining::AnimationSequence;
-use nih_plug_animation::easing::*;
+use logic_nih_plug_animation::Animation;
+use logic_nih_plug_animation::chaining::AnimationSequence;
+use logic_nih_plug_animation::easing::*;
 
 fn main() {
     println!("=== Animation System Demo ===\n");

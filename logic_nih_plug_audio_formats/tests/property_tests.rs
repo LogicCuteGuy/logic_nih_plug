@@ -3,8 +3,8 @@
 //! **Feature: juce-modules-integration, Property 4: Audio file round-trip preserves data**
 //! **Validates: Requirements 6.1, 6.2**
 
-use nih_plug_audio_formats::wav::{WavReader, WavWriter};
-use nih_plug_audio_formats::aiff::{AiffReader, AiffWriter};
+use logic_nih_plug_audio_formats::wav::{WavReader, WavWriter};
+use logic_nih_plug_audio_formats::aiff::{AiffReader, AiffWriter};
 use proptest::prelude::*;
 use std::fs;
 

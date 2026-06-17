@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::vizia::prelude::*;
 
 use super::SafeModeClamper;
 

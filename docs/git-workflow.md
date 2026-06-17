@@ -57,7 +57,7 @@ No enforced convention in this repo. Keep commits focused; `CHANGELOG.md` is
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `build.yml` | push (any branch), PR to `master`, tags, manual | builds every package in `bundler.toml` on Ubuntu/macOS/Windows, uploads `nih-plugs-<date>-<runner>.zip` |
+| `build.yml` | push (any branch), PR to `master`, tags, manual | builds every package in `bundler.toml` on Ubuntu/macOS/Windows, uploads `logic-nih-plugs-<date>-<runner>.zip` |
 | `test.yml` | push, PR to `master` | `cargo test --locked --workspace --features "simd,standalone,zstd"` + `cargo build --no-default-features` |
 | `docs.yml` | push | builds and publishes rustdoc to GitHub Pages |
 | `juce_modules.yml` | — | JUCE module CI (added by this fork) |

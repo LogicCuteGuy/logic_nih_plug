@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug::prelude::*;
-use nih_plug::util::permit_alloc;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug::util::permit_alloc;
 use std::sync::Arc;
 
 /// After reaching the threshold, it will take this many milliseconds under that threshold to start

@@ -1,7 +1,7 @@
 use atomic_float::AtomicF32;
-use nih_plug::prelude::{util, Editor, GuiContext};
-use nih_plug_iced::widgets as nih_widgets;
-use nih_plug_iced::*;
+use logic_nih_plug::prelude::{util, Editor, GuiContext};
+use logic_nih_plug_iced::widgets as nih_widgets;
+use logic_nih_plug_iced::*;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -108,8 +108,8 @@ impl IcedEditor for GainEditor {
             .into()
     }
 
-    fn background_color(&self) -> nih_plug_iced::Color {
-        nih_plug_iced::Color {
+    fn background_color(&self) -> logic_nih_plug_iced::Color {
+        logic_nih_plug_iced::Color {
             r: 0.98,
             g: 0.98,
             b: 0.98,

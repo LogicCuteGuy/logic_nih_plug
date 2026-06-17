@@ -1,4 +1,4 @@
-//! # nih_plug_audio_formats
+//! # logic_nih_plug_audio_formats
 //!
 //! Audio file format support ported from JUCE.
 //!
@@ -12,7 +12,7 @@
 //! ## Examples
 //!
 //! ```ignore
-//! use nih_plug_audio_formats::{AudioFileReader, AudioFormat};
+//! use logic_nih_plug_audio_formats::{AudioFileReader, AudioFormat};
 //!
 //! let mut reader = AudioFileReader::open("audio.wav").unwrap();
 //! let samples = reader.read_all().unwrap();
@@ -57,7 +57,7 @@ impl AudioFormat {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::AudioFormat;
+    /// use logic_nih_plug_audio_formats::AudioFormat;
     /// use std::path::Path;
     ///
     /// let format = AudioFormat::from_path(Path::new("audio.wav"));
@@ -80,7 +80,7 @@ impl AudioFormat {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::AudioFormat;
+    /// use logic_nih_plug_audio_formats::AudioFormat;
     ///
     /// assert_eq!(AudioFormat::Wav.extension(), "wav");
     /// assert_eq!(AudioFormat::Aiff.extension(), "aiff");
@@ -114,7 +114,7 @@ impl AudioMetadata {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::AudioMetadata;
+    /// use logic_nih_plug_audio_formats::AudioMetadata;
     ///
     /// let metadata = AudioMetadata::new(44100.0, 2, 1000);
     /// assert_eq!(metadata.sample_rate, 44100.0);
@@ -149,7 +149,7 @@ impl AudioMetadata {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::AudioMetadata;
+    /// use logic_nih_plug_audio_formats::AudioMetadata;
     ///
     /// let metadata = AudioMetadata::new(44100.0, 2, 44100);
     /// assert!((metadata.duration_seconds() - 1.0).abs() < 0.001);
@@ -166,7 +166,7 @@ pub mod util {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::util::i16_to_f32;
+    /// use logic_nih_plug_audio_formats::util::i16_to_f32;
     ///
     /// assert_eq!(i16_to_f32(0), 0.0);
     /// assert!((i16_to_f32(i16::MAX) - 1.0).abs() < 0.001);
@@ -186,7 +186,7 @@ pub mod util {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::util::f32_to_i16;
+    /// use logic_nih_plug_audio_formats::util::f32_to_i16;
     ///
     /// assert_eq!(f32_to_i16(0.0), 0);
     /// assert_eq!(f32_to_i16(1.0), i16::MAX);
@@ -207,7 +207,7 @@ pub mod util {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::util::i24_to_f32;
+    /// use logic_nih_plug_audio_formats::util::i24_to_f32;
     ///
     /// assert_eq!(i24_to_f32(0), 0.0);
     /// ```
@@ -228,7 +228,7 @@ pub mod util {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::util::f32_to_i24;
+    /// use logic_nih_plug_audio_formats::util::f32_to_i24;
     ///
     /// assert_eq!(f32_to_i24(0.0), 0);
     /// ```
@@ -250,7 +250,7 @@ pub mod util {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::util::i32_to_f32;
+    /// use logic_nih_plug_audio_formats::util::i32_to_f32;
     ///
     /// assert_eq!(i32_to_f32(0), 0.0);
     /// ```
@@ -268,7 +268,7 @@ pub mod util {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::util::f32_to_i32;
+    /// use logic_nih_plug_audio_formats::util::f32_to_i32;
     ///
     /// assert_eq!(f32_to_i32(0.0), 0);
     /// ```
@@ -289,7 +289,7 @@ pub mod util {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::util::interleave;
+    /// use logic_nih_plug_audio_formats::util::interleave;
     ///
     /// let left = vec![1.0, 2.0, 3.0];
     /// let right = vec![4.0, 5.0, 6.0];
@@ -322,7 +322,7 @@ pub mod util {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_audio_formats::util::deinterleave;
+    /// use logic_nih_plug_audio_formats::util::deinterleave;
     ///
     /// let interleaved = vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0];
     /// let channels = deinterleave(&interleaved, 2);

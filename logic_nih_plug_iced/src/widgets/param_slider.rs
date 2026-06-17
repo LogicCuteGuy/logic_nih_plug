@@ -1,7 +1,7 @@
 //! A slider that integrates with NIH-plug's [`Param`] types.
 
 use atomic_refcell::AtomicRefCell;
-use nih_plug::prelude::Param;
+use logic_nih_plug::prelude::Param;
 use std::borrow::Borrow;
 
 use crate::backend::widget;

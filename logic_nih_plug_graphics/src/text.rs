@@ -5,7 +5,7 @@
 //! # Examples
 //!
 //! ```
-//! use nih_plug_graphics::text::{Font, FontSettings};
+//! use logic_nih_plug_graphics::text::{Font, FontSettings};
 //!
 //! let font_data = include_bytes!("../tests/test_font.ttf");
 //! let font = Font::from_bytes(font_data, FontSettings::default()).unwrap();
@@ -63,7 +63,7 @@ impl Font {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::text::{Font, FontSettings};
+    /// use logic_nih_plug_graphics::text::{Font, FontSettings};
     ///
     /// let font_data = include_bytes!("../tests/test_font.ttf");
     /// let font = Font::from_bytes(font_data, FontSettings::default()).unwrap();
@@ -96,7 +96,7 @@ impl Font {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::text::{Font, FontSettings};
+    /// use logic_nih_plug_graphics::text::{Font, FontSettings};
     ///
     /// let font_data = include_bytes!("../tests/test_font.ttf");
     /// let font = Font::from_bytes(font_data, FontSettings::default()).unwrap();
@@ -187,7 +187,7 @@ impl Font {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_graphics::text::{Font, FontSettings};
+    /// use logic_nih_plug_graphics::text::{Font, FontSettings};
     ///
     /// let font_data = include_bytes!("../tests/test_font.ttf");
     /// let font = Font::from_bytes(font_data, FontSettings::default()).unwrap();

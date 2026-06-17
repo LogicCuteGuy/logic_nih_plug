@@ -217,7 +217,7 @@ where
 impl_persistent_arc!(crossbeam::atomic::AtomicCell<T>,
                      T: serde::Serialize + serde::Deserialize<'a> + Copy + Send);
 
-/// Can be used with the `#[serde(with = "nih_plug::params::internals::serialize_atomic_cell")]`
+/// Can be used with the `#[serde(with = "logic_nih_plug::params::internals::serialize_atomic_cell")]`
 /// attribute to serialize `AtomicCell<T>`s.
 pub mod serialize_atomic_cell {
     use crossbeam::atomic::AtomicCell;

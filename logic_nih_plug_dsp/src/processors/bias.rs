@@ -13,7 +13,7 @@ use super::Processor;
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::processors::bias::Bias;
+/// use logic_nih_plug_dsp::processors::bias::Bias;
 ///
 /// let mut bias = Bias::new();
 /// bias.set_bias(0.1);
@@ -33,7 +33,7 @@ impl Bias {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::bias::Bias;
+    /// use logic_nih_plug_dsp::processors::bias::Bias;
     ///
     /// let bias = Bias::new();
     /// ```
@@ -50,7 +50,7 @@ impl Bias {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::bias::Bias;
+    /// use logic_nih_plug_dsp::processors::bias::Bias;
     ///
     /// let mut bias = Bias::new();
     /// bias.set_bias(0.1);
@@ -81,7 +81,7 @@ impl Bias {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::bias::Bias;
+    /// use logic_nih_plug_dsp::processors::bias::Bias;
     ///
     /// let mut bias = Bias::new();
     /// bias.prepare(44100.0, 512);
@@ -103,7 +103,7 @@ impl Bias {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::bias::Bias;
+    /// use logic_nih_plug_dsp::processors::bias::Bias;
     ///
     /// let mut bias = Bias::new();
     /// bias.set_bias(0.1);
@@ -138,7 +138,7 @@ impl Bias {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::bias::Bias;
+    /// use logic_nih_plug_dsp::processors::bias::Bias;
     ///
     /// let mut bias = Bias::new();
     /// bias.set_bias(0.1);
@@ -166,7 +166,7 @@ impl Bias {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::bias::Bias;
+    /// use logic_nih_plug_dsp::processors::bias::Bias;
     ///
     /// let mut bias = Bias::new();
     /// bias.reset();

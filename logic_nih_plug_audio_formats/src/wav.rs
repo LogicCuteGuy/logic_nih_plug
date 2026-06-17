@@ -9,7 +9,7 @@
 //! ## Reading a WAV file
 //!
 //! ```no_run
-//! use nih_plug_audio_formats::wav::WavReader;
+//! use logic_nih_plug_audio_formats::wav::WavReader;
 //!
 //! let mut reader = WavReader::open("audio.wav").unwrap();
 //! let samples = reader.read_all().unwrap();
@@ -19,7 +19,7 @@
 //! ## Writing a WAV file
 //!
 //! ```no_run
-//! use nih_plug_audio_formats::wav::WavWriter;
+//! use logic_nih_plug_audio_formats::wav::WavWriter;
 //!
 //! let left = vec![0.0, 0.5, 1.0, 0.5, 0.0];
 //! let right = vec![0.0, -0.5, -1.0, -0.5, 0.0];
@@ -61,7 +61,7 @@ impl WavReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::wav::WavReader;
+    /// use logic_nih_plug_audio_formats::wav::WavReader;
     ///
     /// let reader = WavReader::open("audio.wav").unwrap();
     /// ```
@@ -105,7 +105,7 @@ impl WavReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::wav::WavReader;
+    /// use logic_nih_plug_audio_formats::wav::WavReader;
     ///
     /// let reader = WavReader::open("audio.wav").unwrap();
     /// let metadata = reader.metadata();
@@ -147,7 +147,7 @@ impl WavReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::wav::WavReader;
+    /// use logic_nih_plug_audio_formats::wav::WavReader;
     ///
     /// let mut reader = WavReader::open("audio.wav").unwrap();
     /// let samples = reader.read_all().unwrap();
@@ -233,7 +233,7 @@ impl WavReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::wav::WavReader;
+    /// use logic_nih_plug_audio_formats::wav::WavReader;
     ///
     /// let mut reader = WavReader::open("audio.wav").unwrap();
     /// let mut left = vec![0.0; 1024];
@@ -343,7 +343,7 @@ impl WavWriter {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::wav::WavWriter;
+    /// use logic_nih_plug_audio_formats::wav::WavWriter;
     ///
     /// let writer = WavWriter::create("output.wav", 44100.0, 2, 16).unwrap();
     /// ```
@@ -419,7 +419,7 @@ impl WavWriter {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::wav::WavWriter;
+    /// use logic_nih_plug_audio_formats::wav::WavWriter;
     ///
     /// let left = vec![0.0, 0.5, 1.0];
     /// let right = vec![0.0, -0.5, -1.0];
@@ -499,7 +499,7 @@ impl WavWriter {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::wav::WavWriter;
+    /// use logic_nih_plug_audio_formats::wav::WavWriter;
     ///
     /// let mut writer = WavWriter::create("output.wav", 44100.0, 2, 16).unwrap();
     /// // ... write samples ...

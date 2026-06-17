@@ -1,4 +1,4 @@
-//! # nih_plug_graphics
+//! # logic_nih_plug_graphics
 //!
 //! 2D graphics primitives ported from JUCE.
 //!
@@ -11,7 +11,7 @@
 //! ## Examples
 //!
 //! ```
-//! use nih_plug_graphics::{Graphics, Color};
+//! use logic_nih_plug_graphics::{Graphics, Color};
 //!
 //! let mut graphics = Graphics::new(800, 600).unwrap();
 //! graphics.set_color(Color::rgb(255, 0, 0));

@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug::prelude::*;
-use nih_plug::util::window::multiply_with_window;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug::util::window::multiply_with_window;
 use realfft::num_complex::Complex32;
 use realfft::{RealFftPlanner, RealToComplex};
 use std::f32;

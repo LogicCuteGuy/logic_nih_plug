@@ -13,14 +13,14 @@ working copy and what `AGENTS.md` points to but doesn't.
 
 | Crate | Doc |
 |---|---|
-| `nih_plug_animation` | [README.md](nih_plug_animation/README.md) |
-| `nih_plug_egui` | [README.md](nih_plug_egui/README.md) |
-| `nih_plug_iced` | [README.md](nih_plug_iced/README.md) |
-| `nih_plug_vizia` | [README.md](nih_plug_vizia/README.md) |
-| `nih_plug_xtask` | [README.md](nih_plug_xtask/README.md) |
-| `nih_plug_gui` | [CONTROLS.md](nih_plug_gui/CONTROLS.md), [LOOKANDFEEL.md](nih_plug_gui/LOOKANDFEEL.md) (no README) |
+| `logic_nih_plug_animation` | [README.md](logic_nih_plug_animation/README.md) |
+| `logic_nih_plug_egui` | [README.md](logic_nih_plug_egui/README.md) |
+| `logic_nih_plug_iced` | [README.md](logic_nih_plug_iced/README.md) |
+| `logic_nih_plug_vizia` | [README.md](logic_nih_plug_vizia/README.md) |
+| `logic_nih_plug_xtask` | [README.md](logic_nih_plug_xtask/README.md) |
+| `logic_nih_plug_gui` | [CONTROLS.md](logic_nih_plug_gui/CONTROLS.md), [LOOKANDFEEL.md](logic_nih_plug_gui/LOOKANDFEEL.md) (no README) |
 
-`nih_plug_audio_formats`, `nih_plug_derive`, `nih_plug_dsp`, `nih_plug_graphics`
+`logic_nih_plug_audio_formats`, `logic_nih_plug_derive`, `logic_nih_plug_dsp`, `logic_nih_plug_graphics`
 have no README — read their `src/lib.rs` module docs and tests instead.
 
 ## Example plugins
@@ -45,7 +45,7 @@ have no README — read their `src/lib.rs` module docs and tests instead.
 
 ## Bundler
 
-[cargo_nih_plug/README.md](cargo_nih_plug/README.md) — `cargo nih-plug` subcommand.
+[cargo_logic_nih_plug/README.md](cargo_logic_nih_plug/README.md) — `cargo nih-plug` subcommand.
 
 ## `docs/`
 
@@ -56,7 +56,7 @@ This folder.
 | [README.md](README.md) | this index |
 | [getting-started.md](getting-started.md) | build, test, toolchain, hard rules |
 | [plugin-skeleton.md](plugin-skeleton.md) | minimal `gain`-style plugin walkthrough |
-| [dsp-and-gui.md](dsp-and-gui.md) | `nih_plug_dsp`, GUI backends, BYO-GUI, animation |
+| [dsp-and-gui.md](dsp-and-gui.md) | `logic_nih_plug_dsp`, GUI backends, BYO-GUI, animation |
 | [bundling.md](bundling.md) | `cargo xtask`, formats, `cargo-nih-plug`, CI |
 | [plugins.md](plugins.md) | the 9 real plugins + examples directory |
 | [git-workflow.md](git-workflow.md) | remotes, branches, CI gates, fork sync |
@@ -69,7 +69,7 @@ These are referenced by `AGENTS.md` as if they exist, but they're absent from
 this checkout. Follow the upstream `master` branch or the published docs site
 for them:
 
-- `QUICK_START.md` — see README's JUCE Ported Modules + `nih_plug_dsp` `lib.rs`
+- `QUICK_START.md` — see README's JUCE Ported Modules + `logic_nih_plug_dsp` `lib.rs`
 - `MIGRATION_GUIDE.md`, `JUCE_MODULES.md`, `VALIDATION_TEST_SUMMARY.md` — published docs site
 - `RELEASE_CHECKLIST.md`, `RELEASE_NOTES.md`, `RELEASE_SUMMARY.md` — published docs site
 - `MULTI_FORMAT_EXPORT.md` — partially covered by `FORMAT_EXAMPLES.md`

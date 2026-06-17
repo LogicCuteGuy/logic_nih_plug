@@ -3,7 +3,7 @@
 //! pointers to get started:
 //!
 //! - All useful functionality is exported through the [`prelude`] module. Add
-//!   `use nih_plug::prelude::*;` to the top of your `lib.rs` file to get started.
+//!   `use logic_nih_plug::prelude::*;` to the top of your `lib.rs` file to get started.
 //! - Make sure to check out the macros from the [`debug`] module. These should be used instead of,
 //!   `println!()`/`eprint!()`, `dbg!()` and similar macros, and they are re-exported from the
 //!   prelude. NIH-plug sets up a flexible logger for you that all of these functions will output
@@ -28,7 +28,7 @@
 //! - NIH-plug comes with a bundler that creates plugin bundles for you based on the exported plugin
 //!   formats and the operating system and architecture you're compiling for. Check out the
 //!   readme for
-//!   [`nih_plug_xtask`](https://github.com/robbert-vdh/nih-plug/tree/master/nih_plug_xtask) for
+//!   [`logic_nih_plug_xtask`](https://github.com/robbert-vdh/nih-plug/tree/master/logic_nih_plug_xtask) for
 //!   instructions on how to use this within your own project.
 //! - It's also possible to export a standalone application from a plugin using the
 //!   [`nih_export_standalone()`] function. Check that function's documentation to learn how to do
@@ -90,14 +90,14 @@
 #![allow(clippy::type_complexity)]
 
 // These macros are also in the crate root and in the prelude, but having the module itself be pub
-// as well makes it easy to import _just_ the macros without using `#[macro_use] extern crate nih_plug;`
+// as well makes it easy to import _just_ the macros without using `#[macro_use] extern crate logic_nih_plug;`
 #[macro_use]
 pub mod debug;
 
 /// A re-export of the `log` crate for use in the debug macros. This should not be used directly.
 pub use log;
 
-/// Everything you'll need to use NIH-plug. Import this with `use nih_plug::prelude::*;`.
+/// Everything you'll need to use NIH-plug. Import this with `use logic_nih_plug::prelude::*;`.
 pub mod prelude;
 
 // These modules are also re-exported in the prelude

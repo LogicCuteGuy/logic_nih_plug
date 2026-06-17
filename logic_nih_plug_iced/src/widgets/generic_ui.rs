@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::marker::PhantomData;
 use std::sync::Arc;
 
-use nih_plug::prelude::{Param, ParamFlags, ParamPtr, Params};
+use logic_nih_plug::prelude::{Param, ParamFlags, ParamPtr, Params};
 
 use super::{ParamMessage, ParamSlider};
 use crate::backend::Renderer;

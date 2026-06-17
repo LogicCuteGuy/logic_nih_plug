@@ -27,7 +27,7 @@ pub enum FilterType {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+/// use logic_nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
 ///
 /// let mut filter = StateVariableFilter::new();
 /// filter.prepare(44100.0);
@@ -117,7 +117,7 @@ impl StateVariableFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
+    /// use logic_nih_plug_dsp::state_variable::{StateVariableFilter, FilterType};
     ///
     /// let mut filter = StateVariableFilter::new();
     /// filter.set_type(FilterType::Highpass);
@@ -135,7 +135,7 @@ impl StateVariableFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::state_variable::StateVariableFilter;
+    /// use logic_nih_plug_dsp::state_variable::StateVariableFilter;
     ///
     /// let mut filter = StateVariableFilter::new();
     /// filter.set_cutoff(2000.0);
@@ -156,7 +156,7 @@ impl StateVariableFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::state_variable::StateVariableFilter;
+    /// use logic_nih_plug_dsp::state_variable::StateVariableFilter;
     ///
     /// let mut filter = StateVariableFilter::new();
     /// filter.set_resonance(0.5);
@@ -179,7 +179,7 @@ impl StateVariableFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::state_variable::StateVariableFilter;
+    /// use logic_nih_plug_dsp::state_variable::StateVariableFilter;
     ///
     /// let mut filter = StateVariableFilter::new();
     /// let output = filter.process_sample(1.0);
@@ -224,7 +224,7 @@ impl StateVariableFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::state_variable::StateVariableFilter;
+    /// use logic_nih_plug_dsp::state_variable::StateVariableFilter;
     ///
     /// let mut filter = StateVariableFilter::new();
     /// let input = vec![1.0; 100];
@@ -251,7 +251,7 @@ impl StateVariableFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::state_variable::StateVariableFilter;
+    /// use logic_nih_plug_dsp::state_variable::StateVariableFilter;
     ///
     /// let mut filter = StateVariableFilter::new();
     /// filter.set_cutoff(2000.0);

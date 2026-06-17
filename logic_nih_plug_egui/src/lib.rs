@@ -2,13 +2,13 @@
 //!
 //! TODO: Proper usage example, for now check out the gain_gui example
 
-// See the comment in the main `nih_plug` crate
+// See the comment in the main `logic_nih_plug` crate
 #![allow(clippy::type_complexity)]
 
 use crossbeam::atomic::AtomicCell;
 use egui::Context;
-use nih_plug::params::persist::PersistentField;
-use nih_plug::prelude::{Editor, ParamSetter};
+use logic_nih_plug::params::persist::PersistentField;
+use logic_nih_plug::prelude::{Editor, ParamSetter};
 use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -61,11 +61,11 @@ where
     }))
 }
 
-/// State for an `nih_plug_egui` editor.
+/// State for an `logic_nih_plug_egui` editor.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EguiState {
     /// The window's size in logical pixels before applying `scale_factor`.
-    #[serde(with = "nih_plug::params::persist::serialize_atomic_cell")]
+    #[serde(with = "logic_nih_plug::params::persist::serialize_atomic_cell")]
     size: AtomicCell<(u32, u32)>,
 
     /// The new size of the window, if it was requested to resize by the GUI.

@@ -21,7 +21,7 @@ compile_error!("Compiling without SIMD support is currently not supported");
 
 use crossover::fir::{FirCrossover, FirCrossoverType};
 use crossover::iir::{IirCrossover, IirCrossoverType};
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 

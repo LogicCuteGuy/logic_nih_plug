@@ -4,7 +4,7 @@
 //! to ensure they meet performance requirements.
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use nih_plug_audio_formats::wav::{WavReader, WavWriter};
+use logic_nih_plug_audio_formats::wav::{WavReader, WavWriter};
 use std::fs;
 
 // Helper function to create test audio data

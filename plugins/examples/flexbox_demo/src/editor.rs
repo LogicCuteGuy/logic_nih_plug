@@ -1,7 +1,7 @@
 use crossbeam::atomic::AtomicCell;
-use nih_plug::prelude::*;
-use nih_plug_graphics::{Color, Graphics};
-use nih_plug_gui::layout::flexbox::*;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_graphics::{Color, Graphics};
+use logic_nih_plug_gui::layout::flexbox::*;
 use std::sync::Arc;
 
 use crate::FlexBoxParams;
@@ -14,13 +14,13 @@ pub struct FlexBoxDemoEditor {
 impl Editor for FlexBoxDemoEditor {
     fn spawn(
         &self,
-        _parent: nih_plug::editor::ParentWindowHandle,
+        _parent: logic_nih_plug::editor::ParentWindowHandle,
         _context: Arc<dyn GuiContext>,
     ) -> Box<dyn std::any::Any + Send> {
         let params = Arc::clone(&self.params);
 
         // Create GL window with custom rendering
-        let window = nih_plug_gui::GlWindowBuilder::spawn(
+        let window = logic_nih_plug_gui::GlWindowBuilder::spawn(
             "FlexBox Layout Demo",
             900,
             700,
@@ -95,7 +95,7 @@ impl Editor for FlexBoxDemoEditor {
         );
 
         struct EditorHandle {
-            window: nih_plug_gui::GlWindow,
+            window: logic_nih_plug_gui::GlWindow,
         }
         unsafe impl Send for EditorHandle {}
 

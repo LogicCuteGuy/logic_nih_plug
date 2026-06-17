@@ -4,8 +4,8 @@
 //! ranges separately for some of the GUI abstractions to work.
 
 use atomic_float::AtomicF32;
-use nih_plug::prelude::*;
-use nih_plug_vizia::ViziaState;
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_vizia::ViziaState;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 

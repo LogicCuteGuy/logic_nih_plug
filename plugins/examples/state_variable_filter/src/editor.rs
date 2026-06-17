@@ -1,7 +1,7 @@
 use atomic_float::AtomicF32;
 use crossbeam::atomic::AtomicCell;
-use nih_plug::prelude::*;
-use nih_plug_graphics::{Color, Graphics};
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_graphics::{Color, Graphics};
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
@@ -16,14 +16,14 @@ pub struct StateVariableFilterEditor {
 impl Editor for StateVariableFilterEditor {
     fn spawn(
         &self,
-        _parent: nih_plug::editor::ParentWindowHandle,
+        _parent: logic_nih_plug::editor::ParentWindowHandle,
         _context: Arc<dyn GuiContext>,
     ) -> Box<dyn std::any::Any + Send> {
         let params = Arc::clone(&self.params);
         let frequency_response = Arc::clone(&self.frequency_response);
 
         // Create GL window with custom rendering
-        let window = nih_plug_gui::GlWindowBuilder::spawn(
+        let window = logic_nih_plug_gui::GlWindowBuilder::spawn(
             "State Variable Filter",
             600,
             400,
@@ -77,7 +77,7 @@ impl Editor for StateVariableFilterEditor {
         );
 
         struct EditorHandle {
-            window: nih_plug_gui::GlWindow,
+            window: logic_nih_plug_gui::GlWindow,
         }
         unsafe impl Send for EditorHandle {}
 

@@ -24,8 +24,8 @@
 //! ## Examples
 //!
 //! ```
-//! use nih_plug_gui::layout::{FlexLayout, FlexDirection};
-//! use nih_plug_gui::components::{Component, Bounds};
+//! use logic_nih_plug_gui::layout::{FlexLayout, FlexDirection};
+//! use logic_nih_plug_gui::components::{Component, Bounds};
 //!
 //! // Create a horizontal flex layout
 //! let mut layout = FlexLayout::new(FlexDirection::Horizontal);

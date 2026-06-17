@@ -11,7 +11,7 @@
 //! # Examples
 //!
 //! ```no_run
-//! use nih_plug_graphics::images::Image;
+//! use logic_nih_plug_graphics::images::Image;
 //!
 //! // Load an image from a file
 //! let image = Image::load("path/to/image.png").unwrap();
@@ -55,7 +55,7 @@ impl Image {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_graphics::images::Image;
+    /// use logic_nih_plug_graphics::images::Image;
     ///
     /// let image = Image::load("logo.png").unwrap();
     /// ```
@@ -89,7 +89,7 @@ impl Image {
     /// # Examples
     ///
     /// ```ignore
-    /// use nih_plug_graphics::images::Image;
+    /// use logic_nih_plug_graphics::images::Image;
     ///
     /// // Load from embedded bytes
     /// let png_data = include_bytes!("path/to/image.png");

@@ -15,7 +15,7 @@ use super::Processor;
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::processors::dc_filter::DCFilter;
+/// use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
 ///
 /// let mut dc_filter = DCFilter::new();
 /// dc_filter.prepare(44100.0, 512);
@@ -45,7 +45,7 @@ impl DCFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::dc_filter::DCFilter;
+    /// use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
     ///
     /// let dc_filter = DCFilter::new();
     /// ```
@@ -66,7 +66,7 @@ impl DCFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::dc_filter::DCFilter;
+    /// use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
     ///
     /// let dc_filter = DCFilter::with_cutoff(10.0);
     /// ```
@@ -91,7 +91,7 @@ impl DCFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::dc_filter::DCFilter;
+    /// use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
     ///
     /// let mut dc_filter = DCFilter::new();
     /// dc_filter.prepare(44100.0, 512);
@@ -125,7 +125,7 @@ impl DCFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::dc_filter::DCFilter;
+    /// use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
     ///
     /// let mut dc_filter = DCFilter::new();
     /// dc_filter.prepare(44100.0, 512);
@@ -148,7 +148,7 @@ impl DCFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::dc_filter::DCFilter;
+    /// use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
     ///
     /// let mut dc_filter = DCFilter::new();
     /// dc_filter.prepare(44100.0, 512);
@@ -173,7 +173,7 @@ impl DCFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::dc_filter::DCFilter;
+    /// use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
     ///
     /// let mut dc_filter = DCFilter::new();
     /// dc_filter.prepare(44100.0, 512);
@@ -194,7 +194,7 @@ impl DCFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::processors::dc_filter::DCFilter;
+    /// use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
     ///
     /// let mut dc_filter = DCFilter::new();
     /// dc_filter.prepare(44100.0, 512);

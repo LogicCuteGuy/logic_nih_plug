@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug::buffer::ChannelSamples;
-use nih_plug::debug::*;
+use logic_nih_plug::buffer::ChannelSamples;
+use logic_nih_plug::debug::*;
 use std::simd::f32x2;
 
 use self::biquad::{Biquad, BiquadCoefficients, NEUTRAL_Q};

@@ -1,5 +1,5 @@
 //! Registration functions for Vizia's built-in fonts. These are not enabled by default in
-//! `nih_plug_vizia` to save on binary size.
+//! `logic_nih_plug_vizia` to save on binary size.
 
 use vizia::prelude::*;
 

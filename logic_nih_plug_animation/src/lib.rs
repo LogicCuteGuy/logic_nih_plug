@@ -1,4 +1,4 @@
-//! # nih_plug_animation
+//! # logic_nih_plug_animation
 //!
 //! Animation utilities ported from JUCE.
 //!
@@ -11,8 +11,8 @@
 //! ## Examples
 //!
 //! ```
-//! use nih_plug_animation::{Animation, AnimationState};
-//! use nih_plug_animation::easing::ease_in_out_cubic;
+//! use logic_nih_plug_animation::{Animation, AnimationState};
+//! use logic_nih_plug_animation::easing::ease_in_out_cubic;
 //!
 //! // Create an animation from 0.0 to 100.0 over 1 second
 //! let mut anim = Animation::new(0.0, 100.0, 1.0, ease_in_out_cubic);
@@ -63,8 +63,8 @@ pub enum AnimationState {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_animation::{Animation, AnimationState};
-/// use nih_plug_animation::easing::linear;
+/// use logic_nih_plug_animation::{Animation, AnimationState};
+/// use logic_nih_plug_animation::easing::linear;
 ///
 /// let mut anim = Animation::new(0.0, 100.0, 2.0, linear);
 /// assert_eq!(anim.state(), AnimationState::NotStarted);
@@ -98,8 +98,8 @@ impl Animation {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_animation::Animation;
-    /// use nih_plug_animation::easing::ease_in_out_cubic;
+    /// use logic_nih_plug_animation::Animation;
+    /// use logic_nih_plug_animation::easing::ease_in_out_cubic;
     ///
     /// let anim = Animation::new(0.0, 100.0, 1.0, ease_in_out_cubic);
     /// ```
@@ -132,8 +132,8 @@ impl Animation {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_animation::Animation;
-    /// use nih_plug_animation::easing::linear;
+    /// use logic_nih_plug_animation::Animation;
+    /// use logic_nih_plug_animation::easing::linear;
     ///
     /// let mut anim = Animation::new(0.0, 100.0, 1.0, linear);
     /// anim.start();

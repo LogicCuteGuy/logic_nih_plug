@@ -11,7 +11,7 @@
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::smoothing::SmoothedValue;
+/// use logic_nih_plug_dsp::smoothing::SmoothedValue;
 ///
 /// let mut smoother = SmoothedValue::<f32>::new(0.0);
 /// smoother.reset(44100.0, 0.05); // 50ms smoothing time at 44.1kHz
@@ -56,7 +56,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let smoother = SmoothedValue::<f32>::new(440.0);
     /// ```
@@ -85,7 +85,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let mut smoother = SmoothedValue::<f32>::new(0.0);
     /// smoother.reset(48000.0, 0.1); // 100ms smoothing at 48kHz
@@ -118,7 +118,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let mut smoother = SmoothedValue::<f32>::new(0.0);
     /// smoother.reset(44100.0, 0.05);
@@ -154,7 +154,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let mut smoother = SmoothedValue::<f32>::new(0.0);
     /// smoother.reset(44100.0, 0.05);
@@ -188,7 +188,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let mut smoother = SmoothedValue::<f32>::new(0.0);
     /// smoother.skip(1.0); // Jump to 1.0 immediately
@@ -209,7 +209,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let smoother = SmoothedValue::<f32>::new(0.5);
     /// assert_eq!(smoother.current(), 0.5);
@@ -227,7 +227,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let mut smoother = SmoothedValue::<f32>::new(0.0);
     /// smoother.set_target(1.0);
@@ -246,7 +246,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let mut smoother = SmoothedValue::<f32>::new(0.0);
     /// smoother.reset(44100.0, 0.05);
@@ -268,7 +268,7 @@ impl SmoothedValue<f32> {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::smoothing::SmoothedValue;
+    /// use logic_nih_plug_dsp::smoothing::SmoothedValue;
     ///
     /// let mut smoother = SmoothedValue::<f32>::new(0.0);
     /// smoother.reset(44100.0, 0.05);

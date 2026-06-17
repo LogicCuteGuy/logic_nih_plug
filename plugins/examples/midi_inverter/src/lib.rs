@@ -1,4 +1,4 @@
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 use std::sync::Arc;
 
 /// A plugin that inverts all MIDI note numbers, channels, CCs, velocities, pressures, and

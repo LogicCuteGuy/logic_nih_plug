@@ -1,6 +1,6 @@
 # State Variable Filter Example
 
-This example plugin demonstrates the state variable filter (TPT) from `nih_plug_dsp` with a real-time frequency response visualization using `nih_plug_gui`.
+This example plugin demonstrates the state variable filter (TPT) from `logic_nih_plug_dsp` with a real-time frequency response visualization using `logic_nih_plug_gui`.
 
 ## Features
 
@@ -9,7 +9,7 @@ This example plugin demonstrates the state variable filter (TPT) from `nih_plug_
 - **Real-time Visualization**: Frequency response display that updates as parameters change using OpenGL rendering
 - **Smooth Parameter Control**: Cutoff frequency and resonance with smooth transitions
 - **Stereo Processing**: Independent filtering for left and right channels
-- **JUCE-style GUI**: Uses nih_plug_gui (ported JUCE GUI components) for the interface
+- **JUCE-style GUI**: Uses logic_nih_plug_gui (ported JUCE GUI components) for the interface
 
 ## Parameters
 

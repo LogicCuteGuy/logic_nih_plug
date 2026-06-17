@@ -13,7 +13,7 @@ use proptest::prelude::*;
 /// DC component to near zero while preserving AC components above 20Hz.
 mod dc_removal {
     use super::*;
-    use nih_plug_dsp::processors::dc_filter::DCFilter;
+    use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
 
     proptest! {
         #![proptest_config(ProptestConfig {
@@ -264,7 +264,7 @@ mod dc_removal {
 /// constant when sample rate changes.
 mod sample_rate_adaptation {
     use super::*;
-    use nih_plug_dsp::processors::dc_filter::DCFilter;
+    use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
 
     proptest! {
         #![proptest_config(ProptestConfig {

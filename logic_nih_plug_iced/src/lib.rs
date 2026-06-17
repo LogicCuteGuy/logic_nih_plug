@@ -5,7 +5,7 @@
 //! parmater updates. This is a minimal example:
 //!
 //! ```ignore
-//! use nih_plug_iced::*;
+//! use logic_nih_plug_iced::*;
 //!
 //! pub(crate) fn default_state() -> Arc<IcedState> {
 //!     IcedState::from_size(200, 150)
@@ -92,8 +92,8 @@
 use baseview::WindowScalePolicy;
 use crossbeam::atomic::AtomicCell;
 use crossbeam::channel;
-use nih_plug::params::persist::PersistentField;
-use nih_plug::prelude::{Editor, GuiContext};
+use logic_nih_plug::params::persist::PersistentField;
+use logic_nih_plug::prelude::{Editor, GuiContext};
 use serde::{Deserialize, Serialize};
 // This doesn't need to be re-export but otherwise the compiler complains about
 // `hidden_glob_reexports`
@@ -234,11 +234,11 @@ pub trait IcedEditor: 'static + Send + Sync + Sized {
     }
 }
 
-/// State for an `nih_plug_iced` editor.
+/// State for an `logic_nih_plug_iced` editor.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IcedState {
     /// The window's size in logical pixels before applying `scale_factor`.
-    #[serde(with = "nih_plug::params::persist::serialize_atomic_cell")]
+    #[serde(with = "logic_nih_plug::params::persist::serialize_atomic_cell")]
     size: AtomicCell<(u32, u32)>,
     /// Whether the editor's window is currently open.
     #[serde(skip)]

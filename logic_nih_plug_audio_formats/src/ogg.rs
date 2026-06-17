@@ -9,7 +9,7 @@
 //! ## Reading an OGG file
 //!
 //! ```no_run
-//! use nih_plug_audio_formats::ogg::OggReader;
+//! use logic_nih_plug_audio_formats::ogg::OggReader;
 //!
 //! let mut reader = OggReader::open("audio.ogg").unwrap();
 //! let samples = reader.read_all().unwrap();
@@ -47,7 +47,7 @@ impl OggReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::ogg::OggReader;
+    /// use logic_nih_plug_audio_formats::ogg::OggReader;
     ///
     /// let reader = OggReader::open("audio.ogg").unwrap();
     /// ```
@@ -99,7 +99,7 @@ impl OggReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::ogg::OggReader;
+    /// use logic_nih_plug_audio_formats::ogg::OggReader;
     ///
     /// let reader = OggReader::open("audio.ogg").unwrap();
     /// let metadata = reader.metadata();
@@ -146,7 +146,7 @@ impl OggReader {
     /// # Examples
     ///
     /// ```no_run
-    /// use nih_plug_audio_formats::ogg::OggReader;
+    /// use logic_nih_plug_audio_formats::ogg::OggReader;
     ///
     /// let mut reader = OggReader::open("audio.ogg").unwrap();
     /// let samples = reader.read_all().unwrap();

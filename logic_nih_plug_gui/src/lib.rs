@@ -1,4 +1,4 @@
-//! # nih_plug_gui
+//! # logic_nih_plug_gui
 //!
 //! GUI components ported from JUCE.
 //!
@@ -28,9 +28,9 @@
 //! The LookAndFeel system allows you to customize the appearance of UI components:
 //!
 //! ```
-//! use nih_plug_gui::lookandfeel::{DefaultLookAndFeel, LookAndFeel, Theme};
-//! use nih_plug_gui::controls::{Button, ButtonState};
-//! use nih_plug_gui::components::Bounds;
+//! use logic_nih_plug_gui::lookandfeel::{DefaultLookAndFeel, LookAndFeel, Theme};
+//! use logic_nih_plug_gui::controls::{Button, ButtonState};
+//! use logic_nih_plug_gui::components::Bounds;
 //!
 //! // Create a button with dark theme
 //! let mut button = Button::new("Click Me");
@@ -43,7 +43,7 @@
 //! ## Examples
 //!
 //! ```
-//! use nih_plug_gui::components::{Component, Bounds};
+//! use logic_nih_plug_gui::components::{Component, Bounds};
 //!
 //! // Create a parent component
 //! let mut parent = Component::new("parent");

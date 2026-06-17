@@ -30,7 +30,7 @@ impl Bounds {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_gui::components::Bounds;
+    /// use logic_nih_plug_gui::components::Bounds;
     ///
     /// let bounds = Bounds::new(10, 20, 100, 50);
     /// assert_eq!(bounds.x, 10);
@@ -92,7 +92,7 @@ struct ComponentData {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_gui::components::{Component, Bounds};
+/// use logic_nih_plug_gui::components::{Component, Bounds};
 ///
 /// let mut parent = Component::new("parent");
 /// parent.set_bounds(Bounds::new(0, 0, 400, 300)).unwrap();
@@ -328,8 +328,8 @@ impl Component {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_gui::components::Component;
-    /// use nih_plug_gui::input::{MouseEvent, MouseButton, Modifiers, EventResult};
+    /// use logic_nih_plug_gui::components::Component;
+    /// use logic_nih_plug_gui::input::{MouseEvent, MouseButton, Modifiers, EventResult};
     ///
     /// let mut component = Component::new("test");
     /// let event = MouseEvent::ButtonDown {
@@ -359,8 +359,8 @@ impl Component {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_gui::components::Component;
-    /// use nih_plug_gui::input::{KeyboardEvent, KeyCode, Modifiers, EventResult};
+    /// use logic_nih_plug_gui::components::Component;
+    /// use logic_nih_plug_gui::input::{KeyboardEvent, KeyCode, Modifiers, EventResult};
     ///
     /// let mut component = Component::new("test");
     /// let event = KeyboardEvent::KeyDown {

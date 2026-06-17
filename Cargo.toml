@@ -1,5 +1,5 @@
 [package]
-name = "nih_plug"
+name = "logic_nih_plug"
 version = "0.0.0"
 edition = "2021"
 rust-version = "1.80"
@@ -13,19 +13,19 @@ repository = "https://github.com/robbert-vdh/nih-plug"
 [workspace]
 resolver = "2"
 members = [
-  "nih_plug_derive",
-  "nih_plug_egui",
-  "nih_plug_iced",
-  "nih_plug_vizia",
-  "nih_plug_xtask",
+  "logic_nih_plug_derive",
+  "logic_nih_plug_egui",
+  "logic_nih_plug_iced",
+  "logic_nih_plug_vizia",
+  "logic_nih_plug_xtask",
 
-  "nih_plug_dsp",
-  "nih_plug_audio_formats",
-  "nih_plug_graphics",
-  "nih_plug_gui",
-  "nih_plug_animation",
+  "logic_nih_plug_dsp",
+  "logic_nih_plug_audio_formats",
+  "logic_nih_plug_graphics",
+  "logic_nih_plug_gui",
+  "logic_nih_plug_animation",
 
-  "cargo_nih_plug",
+  "cargo_logic_nih_plug",
   "xtask",
 
   "plugins/examples/byo_gui_gl",
@@ -110,7 +110,7 @@ zstd = ["dep:zstd"]
 docs = []
 
 [dependencies]
-nih_plug_derive = { path = "nih_plug_derive" }
+logic_nih_plug_derive = { path = "logic_nih_plug_derive" }
 
 anyhow = "1.0"
 anymap3 = "1.0.1"

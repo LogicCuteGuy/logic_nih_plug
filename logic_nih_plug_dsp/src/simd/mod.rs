@@ -16,13 +16,13 @@
 //!
 //! ```toml
 //! [dependencies]
-//! nih_plug_dsp = { version = "0.0.0", features = ["simd"] }
+//! logic_nih_plug_dsp = { version = "0.0.0", features = ["simd"] }
 //! ```
 //!
 //! # Examples
 //!
 //! ```
-//! use nih_plug_dsp::simd::optimizations::SimdStateVariableFilter;
+//! use logic_nih_plug_dsp::simd::optimizations::SimdStateVariableFilter;
 //!
 //! let mut filter = SimdStateVariableFilter::new();
 //! filter.prepare(44100.0).unwrap();

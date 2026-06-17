@@ -1,6 +1,6 @@
-//! Integration tests for nih_plug_gui.
+//! Integration tests for logic_nih_plug_gui.
 
-use nih_plug_gui::components::{Bounds, Component, ComponentState};
+use logic_nih_plug_gui::components::{Bounds, Component, ComponentState};
 
 #[test]
 fn test_component_hierarchy() {
@@ -207,7 +207,7 @@ fn test_component_clone_shares_data() {
 
 // Tests for UI controls
 
-use nih_plug_gui::controls::{Button, ButtonState, Label, Slider, SliderOrientation, TextAlignment};
+use logic_nih_plug_gui::controls::{Button, ButtonState, Label, Slider, SliderOrientation, TextAlignment};
 
 #[test]
 fn test_button_integration() {
@@ -399,7 +399,7 @@ fn test_slider_invalid_range_error() {
 
 // Tests for input handling
 
-use nih_plug_gui::input::{
+use logic_nih_plug_gui::input::{
     EventResult, InputCallbacks, KeyCode, KeyboardEvent, Modifiers, MouseButton, MouseEvent,
 };
 
@@ -650,7 +650,7 @@ fn test_key_code_types() {
 // Tests for layout management
 
 #[cfg(feature = "layout")]
-use nih_plug_gui::layout::{
+use logic_nih_plug_gui::layout::{
     AbsoluteLayout, FlexAlign, FlexDirection, FlexLayout, GridLayout, SizeConstraint,
 };
 

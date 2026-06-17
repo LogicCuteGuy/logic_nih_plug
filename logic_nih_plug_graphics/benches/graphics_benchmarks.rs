@@ -4,7 +4,7 @@
 //! to ensure they meet performance requirements.
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use nih_plug_graphics::{Color, Graphics};
+use logic_nih_plug_graphics::{Color, Graphics};
 
 // Benchmark pixel setting operations
 fn bench_set_pixel(c: &mut Criterion) {

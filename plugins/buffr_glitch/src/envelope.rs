@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use nih_plug::nih_debug_assert;
+use logic_nih_plug::nih_debug_assert;
 
 /// The most barebones envelope generator you can imagine using a bog standard first order IIR
 /// filter. We don't need anything fancy right now. This returns values in the range `[0, 1]`.

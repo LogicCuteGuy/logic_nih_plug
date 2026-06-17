@@ -76,8 +76,8 @@ impl SimdCapabilities {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::simd::optimizations::SimdStateVariableFilter;
-/// use nih_plug_dsp::state_variable::FilterType;
+/// use logic_nih_plug_dsp::simd::optimizations::SimdStateVariableFilter;
+/// use logic_nih_plug_dsp::state_variable::FilterType;
 ///
 /// let mut filter = SimdStateVariableFilter::new();
 /// filter.prepare(44100.0).unwrap();
@@ -253,7 +253,7 @@ impl Default for SimdStateVariableFilter {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::simd::optimizations::SimdFIRFilter;
+/// use logic_nih_plug_dsp::simd::optimizations::SimdFIRFilter;
 ///
 /// let coefficients = vec![0.1, 0.2, 0.4, 0.2, 0.1];
 /// let mut filter = SimdFIRFilter::new(coefficients);
@@ -365,7 +365,7 @@ impl SimdFIRFilter {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::simd::optimizations::interleave_channels;
+/// use logic_nih_plug_dsp::simd::optimizations::interleave_channels;
 ///
 /// let left = vec![1.0, 2.0, 3.0];
 /// let right = vec![4.0, 5.0, 6.0];
@@ -422,7 +422,7 @@ pub fn interleave_channels(channels: &[&[f32]], output: &mut [f32]) {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::simd::optimizations::deinterleave_channels;
+/// use logic_nih_plug_dsp::simd::optimizations::deinterleave_channels;
 ///
 /// let input = vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0];
 /// let mut left = vec![0.0; 3];

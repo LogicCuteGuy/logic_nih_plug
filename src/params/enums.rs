@@ -9,7 +9,7 @@ use super::range::IntRange;
 use super::{IntParam, Param, ParamFlags, ParamMut};
 
 // Re-export the derive macro
-pub use nih_plug_derive::Enum;
+pub use logic_nih_plug_derive::Enum;
 
 /// An enum usable with `EnumParam`. This trait can be derived. Variants are identified either by a
 /// stable _id_ (see below), or if those are not set then they are identifier by their **declaration

@@ -17,7 +17,7 @@
 
 use std::f32::consts::{FRAC_PI_2, PI};
 
-use nih_plug::nih_debug_assert;
+use logic_nih_plug::nih_debug_assert;
 
 /// For some reason this constant is used quite a few times in the Hard Vacuum implementation. I'm
 /// pretty sure it's a typo.

@@ -34,7 +34,7 @@ impl GlWindowBuilder {
     }
 
     pub fn draw<F>(mut self, f: F) -> Self
-    where F: FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static
+    where F: FnMut(&mut logic_nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static
     {
         // Default event callback does nothing (ignored) — callers can later make use of
         // `draw_with_event` if they want to handle events.
@@ -46,7 +46,7 @@ impl GlWindowBuilder {
     /// Like `draw`, but also allows you to provide an event handler that receives
     /// platform events (useful for mapping input into your UI state).
     pub fn draw_with_event<F, E>(mut self, f: F, e: E) -> Self
-    where F: FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static,
+    where F: FnMut(&mut logic_nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static,
           E: FnMut(baseview::Event) -> baseview::EventStatus + Send + 'static
     {
         let cb = DrawCallbacks { draw: Box::new(f), event: Box::new(e) };
@@ -128,7 +128,7 @@ impl GlWindowBuilder {
     }
 
     pub fn spawn<F>(title: impl Into<String>, width: u32, height: u32, f: F) -> GlWindow
-    where F: FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static
+    where F: FnMut(&mut logic_nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static
     {
         GlWindowBuilder::new(title, width, height).draw(f).open()
     }
@@ -149,7 +149,7 @@ struct GlHandler {
 
 /// Callbacks holder — contains both draw and event handlers.
 struct DrawCallbacks {
-    draw: Box<dyn FnMut(&mut nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static>,
+    draw: Box<dyn FnMut(&mut logic_nih_plug_graphics::Graphics, (u32,u32)) + Send + 'static>,
     event: Box<dyn FnMut(baseview::Event) -> baseview::EventStatus + Send + 'static>,
 }
 
@@ -159,7 +159,7 @@ impl baseview::WindowHandler for GlHandler {
             window.close();
             return;
         }
-        use nih_plug_graphics::Graphics;
+        use logic_nih_plug_graphics::Graphics;
 
         // create a graphics buffer and ask the callback to paint it
         let mut graphics = match Graphics::new(self.logical_width, self.logical_height) {

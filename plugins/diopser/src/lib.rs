@@ -21,7 +21,7 @@ compile_error!("Compiling without SIMD support is currently not supported");
 
 use atomic_float::AtomicF32;
 use editor::SafeModeClamper;
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 use std::simd::f32x2;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};

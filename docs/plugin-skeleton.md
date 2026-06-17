@@ -5,7 +5,7 @@ Minimal end-to-end `gain`-style plugin. Live reference:
 
 ```rust
 // filepath: plugins/examples/gain/src/lib.rs
-use nih_plug::prelude::*;
+use logic_nih_plug::prelude::*;
 
 struct Gain { params: Arc<GainParams> }
 

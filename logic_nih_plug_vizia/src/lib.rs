@@ -1,11 +1,11 @@
 //! [VIZIA](https://github.com/vizia/vizia) editor support for NIH plug.
 
-// See the comment in the main `nih_plug` crate
+// See the comment in the main `logic_nih_plug` crate
 #![allow(clippy::type_complexity)]
 
 use crossbeam::atomic::AtomicCell;
-use nih_plug::params::persist::PersistentField;
-use nih_plug::prelude::{Editor, GuiContext};
+use logic_nih_plug::params::persist::PersistentField;
+use logic_nih_plug::prelude::{Editor, GuiContext};
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -34,11 +34,11 @@ pub mod widgets;
 ///
 /// The `theming` argument controls what level of theming to apply. If you use
 /// [`ViziaTheming::Custom`], then you **need** to call
-/// [`nih_plug_vizia::assets::register_noto_sans_light()`][assets::register_noto_sans_light()] at
+/// [`logic_nih_plug_vizia::assets::register_noto_sans_light()`][assets::register_noto_sans_light()] at
 /// the start of your app function. Vizia's included fonts are also not registered by default. If
 /// you use the Roboto font that normally comes with Vizia or any of its emoji or icon fonts, you
 /// also need to register those using the functions in
-/// [`nih_plug_vizia::vizia_assets`][crate::vizia_assets].
+/// [`logic_nih_plug_vizia::vizia_assets`][crate::vizia_assets].
 ///
 /// See [VIZIA](https://github.com/vizia/vizia)'s repository for examples on how to use this.
 pub fn create_vizia_editor<F>(
@@ -69,21 +69,21 @@ where
 /// Controls what level of theming to apply to the editor.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Default)]
 pub enum ViziaTheming {
-    /// Disable both `nih_plug_vizia`'s and vizia's built-in theming.
+    /// Disable both `logic_nih_plug_vizia`'s and vizia's built-in theming.
     None,
-    /// Disable `nih_plug_vizia`'s custom theming. Vizia's included fonts are also not registered by
+    /// Disable `logic_nih_plug_vizia`'s custom theming. Vizia's included fonts are also not registered by
     /// default. If you use the Roboto font that normally comes with Vizia or any of its emoji or
     /// icon fonts, you need to register those using the functions in
-    /// [`nih_plug_vizia::vizia_assets`][crate::vizia_assets].
+    /// [`logic_nih_plug_vizia::vizia_assets`][crate::vizia_assets].
     Builtin,
-    /// Apply `nih_plug_vizia`'s custom theming. This is the default. You **need** to call
-    /// [`nih_plug_vizia::assets::register_noto_sans_light()`][assets::register_noto_sans_light()]
+    /// Apply `logic_nih_plug_vizia`'s custom theming. This is the default. You **need** to call
+    /// [`logic_nih_plug_vizia::assets::register_noto_sans_light()`][assets::register_noto_sans_light()]
     /// at the start of your app function for the font to work correctly.
     #[default]
     Custom,
 }
 
-/// State for an `nih_plug_vizia` editor. The scale factor can be manipulated at runtime using
+/// State for an `logic_nih_plug_vizia` editor. The scale factor can be manipulated at runtime using
 /// `cx.set_user_scale_factor()`.
 #[derive(Serialize, Deserialize)]
 pub struct ViziaState {
@@ -93,7 +93,7 @@ pub struct ViziaState {
     size_fn: Box<dyn Fn() -> (u32, u32) + Send + Sync>,
     /// A scale factor that should be applied to `size` separate from from any system HiDPI scaling.
     /// This can be used to allow GUIs to be scaled uniformly.
-    #[serde(with = "nih_plug::params::persist::serialize_atomic_cell")]
+    #[serde(with = "logic_nih_plug::params::persist::serialize_atomic_cell")]
     scale_factor: AtomicCell<f64>,
     /// Whether the editor's window is currently open.
     #[serde(skip)]

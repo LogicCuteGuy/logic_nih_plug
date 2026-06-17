@@ -128,7 +128,7 @@ impl WindowFunction {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::fir::{FIRFilter, WindowFunction};
+/// use logic_nih_plug_dsp::fir::{FIRFilter, WindowFunction};
 ///
 /// // Create a filter with specific coefficients
 /// let coefficients = vec![0.1, 0.2, 0.4, 0.2, 0.1];
@@ -158,7 +158,7 @@ impl FIRFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::fir::FIRFilter;
+    /// use logic_nih_plug_dsp::fir::FIRFilter;
     ///
     /// let coefficients = vec![0.2, 0.6, 0.2];
     /// let filter = FIRFilter::new(coefficients);
@@ -195,7 +195,7 @@ impl FIRFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::fir::FIRFilter;
+    /// use logic_nih_plug_dsp::fir::FIRFilter;
     ///
     /// let coefficients = vec![0.5, 0.5];
     /// let mut filter = FIRFilter::new(coefficients);
@@ -236,7 +236,7 @@ impl FIRFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::fir::FIRFilter;
+    /// use logic_nih_plug_dsp::fir::FIRFilter;
     ///
     /// let coefficients = vec![0.5, 0.5];
     /// let mut filter = FIRFilter::new(coefficients);
@@ -264,7 +264,7 @@ impl FIRFilter {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::fir::FIRFilter;
+    /// use logic_nih_plug_dsp::fir::FIRFilter;
     ///
     /// let coefficients = vec![0.5, 0.5];
     /// let mut filter = FIRFilter::new(coefficients);
@@ -307,7 +307,7 @@ impl FilterDesign {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::fir::{FilterDesign, WindowFunction};
+    /// use logic_nih_plug_dsp::fir::{FilterDesign, WindowFunction};
     ///
     /// let coeffs = FilterDesign::fir_lowpass(
     ///     1000.0,
@@ -373,7 +373,7 @@ impl FilterDesign {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::fir::{FilterDesign, WindowFunction};
+    /// use logic_nih_plug_dsp::fir::{FilterDesign, WindowFunction};
     ///
     /// let coeffs = FilterDesign::fir_highpass(
     ///     1000.0,
@@ -418,7 +418,7 @@ impl FilterDesign {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::fir::{FilterDesign, WindowFunction};
+    /// use logic_nih_plug_dsp::fir::{FilterDesign, WindowFunction};
     ///
     /// let coeffs = FilterDesign::fir_bandpass(
     ///     500.0,
@@ -469,7 +469,7 @@ impl FilterDesign {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::fir::{FilterDesign, WindowFunction};
+    /// use logic_nih_plug_dsp::fir::{FilterDesign, WindowFunction};
     ///
     /// let coeffs = FilterDesign::fir_bandstop(
     ///     500.0,

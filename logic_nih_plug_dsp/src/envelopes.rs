@@ -26,7 +26,7 @@ enum EnvelopeState {
 /// # Examples
 ///
 /// ```
-/// use nih_plug_dsp::envelopes::Envelope;
+/// use logic_nih_plug_dsp::envelopes::Envelope;
 ///
 /// let mut envelope = Envelope::new(44100.0);
 /// envelope.set_adsr(0.01, 0.1, 0.7, 0.2);
@@ -87,7 +87,7 @@ impl Envelope {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::envelopes::Envelope;
+    /// use logic_nih_plug_dsp::envelopes::Envelope;
     ///
     /// let envelope = Envelope::new(44100.0);
     /// ```
@@ -117,7 +117,7 @@ impl Envelope {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::envelopes::Envelope;
+    /// use logic_nih_plug_dsp::envelopes::Envelope;
     ///
     /// let mut envelope = Envelope::new(44100.0);
     /// envelope.set_adsr(0.01, 0.1, 0.7, 0.2);
@@ -177,7 +177,7 @@ impl Envelope {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::envelopes::Envelope;
+    /// use logic_nih_plug_dsp::envelopes::Envelope;
     ///
     /// let mut envelope = Envelope::new(44100.0);
     /// envelope.note_on();
@@ -199,7 +199,7 @@ impl Envelope {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::envelopes::Envelope;
+    /// use logic_nih_plug_dsp::envelopes::Envelope;
     ///
     /// let mut envelope = Envelope::new(44100.0);
     /// envelope.note_on();
@@ -235,7 +235,7 @@ impl Envelope {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::envelopes::Envelope;
+    /// use logic_nih_plug_dsp::envelopes::Envelope;
     ///
     /// let mut envelope = Envelope::new(44100.0);
     /// envelope.note_on();
@@ -261,7 +261,7 @@ impl Envelope {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::envelopes::Envelope;
+    /// use logic_nih_plug_dsp::envelopes::Envelope;
     ///
     /// let mut envelope = Envelope::new(44100.0);
     /// envelope.set_adsr(0.01, 0.1, 0.7, 0.2);
@@ -344,7 +344,7 @@ impl Envelope {
     /// # Examples
     ///
     /// ```
-    /// use nih_plug_dsp::envelopes::Envelope;
+    /// use logic_nih_plug_dsp::envelopes::Envelope;
     ///
     /// let mut envelope = Envelope::new(44100.0);
     /// envelope.note_on();

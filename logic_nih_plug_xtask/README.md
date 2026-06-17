@@ -16,21 +16,21 @@ To use this, add an `xtask` binary to your project using `cargo new --bin xtask`
 members = ["xtask"]
 ```
 
-Add `nih_plug_xtask` to the new xtask package's dependencies, and call its main
+Add `logic_nih_plug_xtask` to the new xtask package's dependencies, and call its main
 function from the new xtask binary:
 
 ```toml
 # xtask/Cargo.toml
 
 [dependencies]
-nih_plug_xtask = { git = "https://github.com/robbert-vdh/nih-plug.git" }
+logic_nih_plug_xtask = { git = "https://github.com/robbert-vdh/nih-plug.git" }
 ```
 
 ```rust
 // xtask/src/main.rs
 
-fn main() -> nih_plug_xtask::Result<()> {
-    nih_plug_xtask::main()
+fn main() -> logic_nih_plug_xtask::Result<()> {
+    logic_nih_plug_xtask::main()
 }
 ```
 

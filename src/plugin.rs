@@ -91,7 +91,7 @@ pub trait Plugin: Default + Send + 'static {
     /// functions for compile-time equivalents to `Default::default()`:
     ///
     /// ```
-    /// # use nih_plug::prelude::*;
+    /// # use logic_nih_plug::prelude::*;
     /// const AUDIO_IO_LAYOUTS: &'static [AudioIOLayout] = &[AudioIOLayout {
     ///     main_input_channels: NonZeroU32::new(2),
     ///     main_output_channels: NonZeroU32::new(2),

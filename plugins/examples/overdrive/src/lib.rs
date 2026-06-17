@@ -12,11 +12,11 @@
 //! - DC Filter to remove unwanted DC offset
 //! - Gain processor for output level control
 
-use nih_plug::prelude::*;
-use nih_plug_dsp::processors::bias::Bias;
-use nih_plug_dsp::processors::dc_filter::DCFilter;
-use nih_plug_dsp::processors::gain::Gain;
-use nih_plug_dsp::processors::waveshaper::{transfer_functions, WaveShaper};
+use logic_nih_plug::prelude::*;
+use logic_nih_plug_dsp::processors::bias::Bias;
+use logic_nih_plug_dsp::processors::dc_filter::DCFilter;
+use logic_nih_plug_dsp::processors::gain::Gain;
+use logic_nih_plug_dsp::processors::waveshaper::{transfer_functions, WaveShaper};
 use std::sync::Arc;
 
 /// Overdrive effect plugin demonstrating processor chain composition

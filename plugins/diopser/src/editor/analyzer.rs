@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use atomic_float::AtomicF32;
-use nih_plug::nih_debug_assert;
-use nih_plug::prelude::FloatRange;
-use nih_plug_vizia::vizia::prelude::*;
-use nih_plug_vizia::vizia::vg;
+use logic_nih_plug::nih_debug_assert;
+use logic_nih_plug::prelude::FloatRange;
+use logic_nih_plug_vizia::vizia::prelude::*;
+use logic_nih_plug_vizia::vizia::vg;
 use std::sync::atomic::Ordering;
 use std::sync::{Arc, Mutex};
 
@@ -106,7 +106,7 @@ impl View for SpectrumAnalyzer {
             // Scale this so that 1.0/0 dBFS magnitude is at 80% of the height, the bars begin at
             // -80 dBFS, and that the scaling is linear
             nih_debug_assert!(*magnitude >= 0.0);
-            let magnitude_db = nih_plug::util::gain_to_db(*magnitude);
+            let magnitude_db = logic_nih_plug::util::gain_to_db(*magnitude);
             let height = ((magnitude_db + 80.0) / 100.0).clamp(0.0, 1.0);
 
             path.move_to(
