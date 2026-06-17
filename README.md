@@ -1,4 +1,4 @@
-# NIH-plug
+# Logic-NIH-plug
 
 [![Builds](https://github.com/LogicCuteGuy/logic_nih_plug/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/LogicCuteGuy/logic_nih_plug/actions/workflows/build.yml?query=branch%3Amain)
 [![Docs](https://github.com/LogicCuteGuy/logic_nih_plug/actions/workflows/docs.yml/badge.svg?branch=main)](https://LogicCuteGuy.github.io/logic_nih_plug/)
