@@ -3,7 +3,7 @@ name: Docs
 on:
   push:
     branches:
-      - master
+      - main
 
 defaults:
   run:
@@ -75,5 +75,5 @@ jobs:
 
           # Having the gh-pages branch on this repository adds a whole bunch of
           # noise to the GitHub feed if you follow this repo
-          repository-name: robbert-vdh/nih-plug-docs
+          repository-name: LogicCuteGuy/logic_nih_plug-docs
           ssh-key: ${{ secrets.DOCS_DEPLOY_KEY }}

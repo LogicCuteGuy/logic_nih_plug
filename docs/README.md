@@ -59,6 +59,7 @@ This folder.
 | [dsp-and-gui.md](dsp-and-gui.md) | `nih_plug_dsp`, GUI backends, BYO-GUI, animation |
 | [bundling.md](bundling.md) | `cargo xtask`, formats, `cargo-nih-plug`, CI |
 | [plugins.md](plugins.md) | the 9 real plugins + examples directory |
+| [git-workflow.md](git-workflow.md) | remotes, branches, CI gates, fork sync |
 
 The published framework docs live at https://nih-plug.robbertvanderhelm.nl/.
 

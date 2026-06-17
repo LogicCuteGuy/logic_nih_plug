@@ -1,10 +1,16 @@
 # NIH-plug
 
-[![Automated builds](https://github.com/robbert-vdh/nih-plug/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/robbert-vdh/nih-plug/actions/workflows/build.yml?query=branch%3Amaster)
-[![Tests](https://github.com/robbert-vdh/nih-plug/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/robbert-vdh/nih-plug/actions/workflows/test.yml?query=branch%3Amaster)
-[![Docs](https://github.com/robbert-vdh/nih-plug/actions/workflows/docs.yml/badge.svg?branch=master)](https://nih-plug.robbertvanderhelm.nl/)
+[![Builds](https://github.com/LogicCuteGuy/logic_nih_plug/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/LogicCuteGuy/logic_nih_plug/actions/workflows/build.yml?query=branch%3Amain)
+[![Docs](https://github.com/LogicCuteGuy/logic_nih_plug/actions/workflows/docs.yml/badge.svg?branch=main)](https://LogicCuteGuy.github.io/logic_nih_plug/)
 
-**NOTE: `NIH-plug` the plugin framework is currently in maintenance mode. If you are interested in the framework rather than the plugin, please check out [this community fork](https://codeberg.org/BillyDM/nih-plug) instead.**
+**This is a fork of [robbert-vdh/nih-plug](https://github.com/robbert-vdh/nih-plug)**
+that adds pure-Rust ports of several JUCE modules. See
+[docs/README.md](docs/README.md) for the documentation index, and
+[docs/git-workflow.md](docs/git-workflow.md) for fork-specific git/CI notes.
+
+**Upstream NOTE:** `NIH-plug` the plugin framework is currently in maintenance
+mode. If you are interested in the framework rather than this fork, please
+check out [this community fork](https://codeberg.org/BillyDM/nih-plug).
 
 NIH-plug is an API-agnostic audio plugin framework written in Rust, as well as a
 small collection of plugins. The idea is to have a stateful yet simple plugin
@@ -13,7 +19,8 @@ keeping the amount of magic to minimum and making it easy to experiment with
 different approaches to things. See the [current features](#current-features)
 section for more information on the project's current status.
 
-Check out the [documentation](https://nih-plug.robbertvanderhelm.nl/), or use
+Check out the [documentation](https://nih-plug.robbertvanderhelm.nl/), the
+fork docs at [docs/README.md](docs/README.md), or use the
 the [cookiecutter template](https://github.com/robbert-vdh/nih-plug-template) to
 quickly get started with NIH-plug.
 
