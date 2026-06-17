@@ -19,13 +19,11 @@ members = [
   "nih_plug_vizia",
   "nih_plug_xtask",
 
-  # JUCE module ports
   "nih_plug_dsp",
   "nih_plug_audio_formats",
   "nih_plug_graphics",
   "nih_plug_gui",
   "nih_plug_animation",
-  "nih_plug_juce",
 
   "cargo_nih_plug",
   "xtask",
@@ -50,9 +48,6 @@ members = [
   "plugins/examples/sysex",
   "plugins/examples/juce_dsp_filter",
   "plugins/examples/juce_gui_demo",
-  "plugins/examples/juce_ffi_button",
-  "plugins/examples/juce_ffi_drawing",
-  "plugins/examples/juce_ffi_layout",
   "plugins/examples/state_variable_filter",
   "plugins/examples/overdrive",
   "plugins/examples/spectrum_analyzer",
