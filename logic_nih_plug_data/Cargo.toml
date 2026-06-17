@@ -1,0 +1,23 @@
+[package]
+name = "logic_nih_plug_data"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["data-structures", "value-tree", "undo", "plugin"]
+description = "ValueTree, UndoManager and CachedValue ported from JUCE for nih-plug"
+repository = "https://github.com/robbert-vdh/nih-plug"
+
+[features]
+default = ["valuetree", "undo"]
+valuetree = []
+undo = []
+full = ["valuetree", "undo"]
+
+[dependencies]
+thiserror = "2.0.18"
+
+[dev-dependencies]
+proptest = "1.8"

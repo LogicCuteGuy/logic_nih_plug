@@ -139,6 +139,13 @@ pub(crate) struct WrapperInner<P: Vst3Plugin> {
     pub param_ptr_to_hash: HashMap<ParamPtr, u32>,
 }
 
+// SAFETY: `WrapperInner` contains an `OsEventLoop` (a `WindowsEventLoop` on Windows) which holds
+// a raw `HWND` pointer. The handle is only ever touched on the main thread or after the host has
+// torn down the event loop, so it is safe to share this struct across threads as long as the
+// interior mutability is mediated by the existing `Mutex`/`AtomicRefCell` fields.
+unsafe impl<P: Vst3Plugin> Send for WrapperInner<P> {}
+unsafe impl<P: Vst3Plugin> Sync for WrapperInner<P> {}
+
 /// Tasks that can be sent from the plugin to be executed on the main thread in a non-blocking
 /// realtime-safe way (either a random thread or `IRunLoop` on Linux, the OS' message loop on
 /// Windows and macOS).

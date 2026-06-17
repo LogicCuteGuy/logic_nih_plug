@@ -18,12 +18,12 @@ text = ["dep:fontdue"]
 full = ["primitives", "images", "text"]
 
 [dependencies]
-thiserror = "1.0"
-image = { version = "0.24", optional = true }
-fontdue = { version = "0.7", optional = true }
+thiserror = "2.0"
+image = { version = "0.25", optional = true }
+fontdue = { version = "0.9", optional = true }
 
 [dev-dependencies]
-criterion = "0.5"
+criterion = "0.8.2"
 
 [[bench]]
 name = "graphics_benchmarks"

@@ -15,4 +15,4 @@ crate-type = ["cdylib", "lib"]
 logic_nih_plug = { path = "../../../", features = ["assert_process_allocs", "standalone"] }
 logic_nih_plug_egui = { path = "../../../logic_nih_plug_egui" }
 
-atomic_float = "0.1"
+atomic_float = "1.1"

@@ -428,7 +428,7 @@ impl CpalMidir {
                 .context("No default audio output device available")?,
         };
 
-        let requested_sample_rate = cpal::SampleRate(config.sample_rate as u32);
+        let requested_sample_rate = config.sample_rate as cpal::SampleRate;
         let requested_buffer_size = cpal::BufferSize::Fixed(config.period_size);
         let num_input_channels = audio_io_layout
             .main_input_channels

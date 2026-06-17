@@ -12,6 +12,19 @@ state is to list breaking changes.
 
 ## [2025-02-23]
 
+### Added
+
+- New `logic_nih_plug_data` crate: pure-Rust port of `juce_data_structures`.
+  Provides `ValueTree` (hierarchical observable state), `UndoManager`
+  (transactional undo/redo), and `CachedValue<T>` (typed property binding).
+  Feature flags: `valuetree` (default), `undo` (default), `full`.
+- New `logic_nih_plug_crypto` crate: pure-Rust port of `juce_crypto`.
+  Provides streaming SHA-256 / SHA-1 / MD5 hashing (with one-shot helpers
+  and hex encoders), a `BigInteger` arbitrary-precision unsigned integer
+  type, and `RSAKey` for key generation, signing and verification
+  (SHA-256 + PKCS#1 v1.5). Feature flags: `sha2` (default), `sha1`,
+  `md5`, `bignum`, `rsa`, `full`.
+
 ### Breaking changes
 
 - `logic_nih_plug_egui` now uses egui 0.31.

@@ -16,6 +16,6 @@ logic_nih_plug_dsp = { path = "../../../logic_nih_plug_dsp", features = ["analys
 logic_nih_plug_gui = { path = "../../../logic_nih_plug_gui", features = ["gl-editor"] }
 logic_nih_plug_graphics = { path = "../../../logic_nih_plug_graphics" }
 
-atomic_float = "0.1"
+atomic_float = "1.1"
 crossbeam = "0.8"
 num-complex = "0.4"

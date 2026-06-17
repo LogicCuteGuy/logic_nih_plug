@@ -43,180 +43,92 @@ pub fn derive_params(input: TokenStream) -> TokenStream {
         // then we'll error out.
         let mut processed_attribute = false;
         for attr in &field.attrs {
-            if attr.path.is_ident("id") {
-                match attr.parse_meta() {
-                    Ok(syn::Meta::NameValue(syn::MetaNameValue {
-                        lit: syn::Lit::Str(s),
-                        ..
-                    })) => {
-                        if processed_attribute {
-                            return syn::Error::new(
-                                attr.span(),
-                                "Duplicate or incompatible attribute found",
-                            )
-                            .to_compile_error()
-                            .into();
-                        }
-
-                        // This is a vector since we want to preserve the order. If structs get
-                        // large enough to the point where a linear search starts being expensive,
-                        // then the plugin should probably start splitting up their parameters.
-                        if params.iter().any(|p| match p {
-                            Param::Single { id, .. } => &s == id,
-                            _ => false,
-                        }) {
-                            return syn::Error::new(
-                                field.span(),
-                                "Multiple parameters with the same ID found",
-                            )
-                            .to_compile_error()
-                            .into();
-                        }
-
-                        params.push(Param::Single {
-                            id: s,
-                            field: field_name.clone(),
-                        });
-
-                        processed_attribute = true;
-                    }
-                    _ => {
-                        return syn::Error::new(
-                            attr.span(),
-                            "The id attribute should be a key-value pair with a string argument: \
-                             #[id = \"foo_bar\"]",
-                        )
-                        .to_compile_error()
-                        .into()
-                    }
+            if attr.path().is_ident("id") {
+                let s = match string_attr_value(attr, "id") {
+                    Ok(s) => s,
+                    Err(err) => return err.to_compile_error().into(),
                 };
-            } else if attr.path.is_ident("persist") {
-                match attr.parse_meta() {
-                    Ok(syn::Meta::NameValue(syn::MetaNameValue {
-                        lit: syn::Lit::Str(s),
-                        ..
-                    })) => {
-                        if processed_attribute {
-                            return syn::Error::new(
-                                attr.span(),
-                                "Duplicate or incompatible attribute found",
-                            )
-                            .to_compile_error()
-                            .into();
-                        }
 
-                        if persistent_fields.iter().any(|p| p.key == s) {
-                            return syn::Error::new(
-                                field.span(),
-                                "Multiple persistent fields with the same key found",
-                            )
-                            .to_compile_error()
-                            .into();
-                        }
+                if processed_attribute {
+                    return syn::Error::new(
+                        attr.span(),
+                        "Duplicate or incompatible attribute found",
+                    )
+                    .to_compile_error()
+                    .into();
+                }
 
-                        persistent_fields.push(PersistentField {
-                            key: s,
-                            field: field_name.clone(),
-                        });
+                // This is a vector since we want to preserve the order. If structs get
+                // large enough to the point where a linear search starts being expensive,
+                // then the plugin should probably start splitting up their parameters.
+                if params.iter().any(|p| match p {
+                    Param::Single { id, .. } => &s == id,
+                    _ => false,
+                }) {
+                    return syn::Error::new(
+                        field.span(),
+                        "Multiple parameters with the same ID found",
+                    )
+                    .to_compile_error()
+                    .into();
+                }
 
-                        processed_attribute = true;
-                    }
-                    _ => {
-                        return syn::Error::new(
-                            attr.span(),
-                            "The persist attribute should be a key-value pair with a string \
-                             argument: #[persist = \"foo_bar\"]",
-                        )
-                        .to_compile_error()
-                        .into()
-                    }
+                params.push(Param::Single {
+                    id: s,
+                    field: field_name.clone(),
+                });
+
+                processed_attribute = true;
+            } else if attr.path().is_ident("persist") {
+                let s = match string_attr_value(attr, "persist") {
+                    Ok(s) => s,
+                    Err(err) => return err.to_compile_error().into(),
                 };
-            } else if attr.path.is_ident("nested") {
+
+                if processed_attribute {
+                    return syn::Error::new(
+                        attr.span(),
+                        "Duplicate or incompatible attribute found",
+                    )
+                    .to_compile_error()
+                    .into();
+                }
+
+                if persistent_fields.iter().any(|p| p.key == s) {
+                    return syn::Error::new(
+                        field.span(),
+                        "Multiple persistent fields with the same key found",
+                    )
+                    .to_compile_error()
+                    .into();
+                }
+
+                persistent_fields.push(PersistentField {
+                    key: s,
+                    field: field_name.clone(),
+                });
+
+                processed_attribute = true;
+            } else if attr.path().is_ident("nested") {
+                if processed_attribute {
+                    return syn::Error::new(
+                        attr.span(),
+                        "Duplicate or incompatible attribute found",
+                    )
+                    .to_compile_error()
+                    .into();
+                }
+
                 // This one is more complicated. Supports an `array` attribute, an `id_prefix =
                 // "foo"` attribute, and a `group = "group name"` attribute. All are optional, and
                 // the first two are mutually exclusive.
-                let mut nested_array = false;
-                let mut nested_id_prefix: Option<syn::LitStr> = None;
-                let mut nested_group: Option<syn::LitStr> = None;
-                match attr.parse_meta() {
-                    // In this case it's a plain `#[nested]` attribute without parameters
-                    Ok(syn::Meta::Path(..)) => (),
-                    Ok(syn::Meta::List(syn::MetaList {
-                        nested: nested_attrs,
-                        ..
-                    })) => {
-                        if processed_attribute {
-                            return syn::Error::new(
-                                attr.span(),
-                                "Duplicate or incompatible attribute found",
-                            )
-                            .to_compile_error()
-                            .into();
-                        }
-
-                        for nested_attr in nested_attrs {
-                            match nested_attr {
-                                syn::NestedMeta::Meta(syn::Meta::Path(p))
-                                    if p.is_ident("array") =>
-                                {
-                                    nested_array = true;
-                                }
-                                syn::NestedMeta::Meta(syn::Meta::NameValue(
-                                    syn::MetaNameValue {
-                                        path,
-                                        lit: syn::Lit::Str(s),
-                                        ..
-                                    },
-                                )) if path.is_ident("id_prefix") => {
-                                    nested_id_prefix = Some(s.clone());
-                                }
-                                syn::NestedMeta::Meta(syn::Meta::NameValue(
-                                    syn::MetaNameValue {
-                                        path,
-                                        lit: syn::Lit::Str(s),
-                                        ..
-                                    },
-                                )) if path.is_ident("group") => {
-                                    let group_name = s.value();
-                                    if group_name.is_empty() {
-                                        return syn::Error::new(
-                                            attr.span(),
-                                            "Group names cannot be empty",
-                                        )
-                                        .to_compile_error()
-                                        .into();
-                                    } else if group_name.contains('/') {
-                                        return syn::Error::new(
-                                            attr.span(),
-                                            "Group names may not contain slashes",
-                                        )
-                                        .to_compile_error()
-                                        .into();
-                                    } else {
-                                        nested_group = Some(s.clone());
-                                    }
-                                }
-                                _ => {
-                                    return syn::Error::new(
-                                        nested_attr.span(),
-                                        "Unknown attribute. See the Params trait documentation \
-                                         for more information.",
-                                    )
-                                    .to_compile_error()
-                                    .into()
-                                }
-                            }
-                        }
-                    }
-                    _ => {
-                        return syn::Error::new(
-                            attr.span(),
-                            "The nested attribute should be a list in the following format: \
-                             #[nested([array | id_prefix = \"foo\"], [group = \"group name\"])]",
-                        )
-                        .to_compile_error()
-                        .into()
-                    }
+                let NestedArgs {
+                    array: nested_array,
+                    id_prefix: nested_id_prefix,
+                    group: nested_group,
+                } = match parse_nested_args(attr) {
+                    Ok(args) => args,
+                    Err(err) => return err.to_compile_error().into(),
                 };
 
                 params.push(Param::Nested(match (nested_array, nested_id_prefix) {
@@ -581,5 +493,89 @@ impl NestedParams {
                 })
             },
         }
+    }
+}
+
+/// Parsed contents of a `#[nested(...)]` attribute's parenthesized argument list.
+struct NestedArgs {
+    array: bool,
+    id_prefix: Option<syn::LitStr>,
+    group: Option<syn::LitStr>,
+}
+
+/// Extract the string value of a `#[name = "..."]` style attribute. Returns an error suitable for
+/// emitting as a compile error if the attribute isn't in that form.
+fn string_attr_value(attr: &syn::Attribute, kind: &str) -> syn::Result<syn::LitStr> {
+    let msg = format!(
+        "The {} attribute should be a key-value pair with a string argument: #[{} = \"...\"]",
+        kind, kind
+    );
+    match &attr.meta {
+        syn::Meta::NameValue(syn::MetaNameValue { value, .. }) => match value {
+            syn::Expr::Lit(syn::ExprLit {
+                lit: syn::Lit::Str(s),
+                ..
+            }) => Ok(s.clone()),
+            _ => Err(syn::Error::new(attr.span(), msg)),
+        },
+        _ => Err(syn::Error::new(attr.span(), msg)),
+    }
+}
+
+/// Parse the inner argument list of a `#[nested(...)]` attribute. Accepts a plain `#[nested]`
+/// (no arguments), `#[nested(array)]`, `#[nested(id_prefix = "foo")]`, and/or
+/// `#[nested(group = "name")]`.
+fn parse_nested_args(attr: &syn::Attribute) -> syn::Result<NestedArgs> {
+    let mut args = NestedArgs {
+        array: false,
+        id_prefix: None,
+        group: None,
+    };
+
+    match &attr.meta {
+        // A bare `#[nested]` attribute with no arguments
+        syn::Meta::Path(_) => Ok(args),
+        syn::Meta::List(_) => {
+            attr.parse_nested_meta(|nested| {
+                if nested.path.is_ident("array") {
+                    args.array = true;
+                } else if nested.path.is_ident("id_prefix") {
+                    let s = require_string_lit(&nested)?;
+                    args.id_prefix = Some(s.clone());
+                } else if nested.path.is_ident("group") {
+                    let s = require_string_lit(&nested)?;
+                    let group_name = s.value();
+                    if group_name.is_empty() {
+                        return Err(nested.error("Group names cannot be empty"));
+                    } else if group_name.contains('/') {
+                        return Err(nested.error("Group names may not contain slashes"));
+                    } else {
+                        args.group = Some(s.clone());
+                    }
+                } else {
+                    return Err(nested.error(
+                        "Unknown attribute. See the Params trait documentation for more \
+                         information.",
+                    ));
+                }
+                Ok(())
+            })?;
+            Ok(args)
+        }
+        _ => Err(syn::Error::new(
+            attr.span(),
+            "The nested attribute should be a list in the following format: \
+             #[nested([array | id_prefix = \"foo\"], [group = \"group name\"])]",
+        )),
+    }
+}
+
+/// Pull a string literal value out of a `parse_nested_meta` callback's named argument.
+fn require_string_lit(nested: &syn::meta::ParseNestedMeta) -> syn::Result<syn::LitStr> {
+    let lit: syn::Lit = nested.value()?.parse()?;
+    if let syn::Lit::Str(s) = lit {
+        Ok(s)
+    } else {
+        Err(nested.error("expected a string literal"))
     }
 }

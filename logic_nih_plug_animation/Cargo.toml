@@ -17,7 +17,7 @@ chaining = []
 full = ["easing", "chaining"]
 
 [dependencies]
-thiserror = "1.0"
+thiserror = "2.0"
 
 [dev-dependencies]
-proptest = "1.4"
+proptest = "1.8"

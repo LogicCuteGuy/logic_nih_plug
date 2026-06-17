@@ -15,4 +15,4 @@ crate-type = ["cdylib", "lib"]
 logic_nih_plug = { path = "../../../", features = ["standalone"] }
 logic_nih_plug_vizia = { path = "../../../logic_nih_plug_vizia" }
 
-atomic_float = "0.1"
+atomic_float = "1.1"

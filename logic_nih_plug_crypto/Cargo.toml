@@ -1,0 +1,49 @@
+[package]
+name = "logic_nih_plug_crypto"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["crypto", "hash", "sha256", "rsa", "plugin"]
+description = "Hashing, big integer arithmetic and RSA keys ported from JUCE for nih-plug"
+repository = "https://github.com/robbert-vdh/nih-plug"
+
+[features]
+# `sha2` is in the default set because SHA-256 is by far the most commonly
+# needed hash. The rest are opt-in.
+default = ["sha2"]
+
+# SHA-2 family hashing (SHA-256 / SHA-512). Streaming + one-shot helpers.
+sha2 = ["dep:sha2"]
+
+# SHA-1 hashing.
+sha1 = ["dep:sha1"]
+
+# MD5 hashing.
+md5 = ["dep:md-5"]
+
+# Arbitrary-precision integer arithmetic.
+bignum = ["dep:num-bigint", "dep:num-integer", "dep:num-traits"]
+
+# RSA key generation, signing and verification (uses SHA-256 under the hood).
+rsa = ["dep:rsa", "dep:rand", "dep:sha2"]
+
+# Everything turned on.
+full = ["sha2", "sha1", "md5", "bignum", "rsa"]
+
+[dependencies]
+thiserror = "2.0.18"
+
+sha2 = { version = "0.10", optional = true, features = ["oid"] }
+sha1 = { version = "0.10", optional = true }
+md-5 = { version = "0.10", optional = true }
+num-bigint = { version = "0.4", optional = true }
+num-integer = { version = "0.1", optional = true }
+num-traits = { version = "0.2", optional = true }
+rsa = { version = "0.9", optional = true, default-features = false, features = ["std"] }
+rand = { version = "0.8", optional = true }
+
+[dev-dependencies]
+proptest = "1.8"

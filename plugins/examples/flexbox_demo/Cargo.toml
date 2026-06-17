@@ -15,5 +15,5 @@ logic_nih_plug = { path = "../../../", features = ["standalone"] }
 logic_nih_plug_gui = { path = "../../../logic_nih_plug_gui", features = ["gl-editor", "layout"] }
 logic_nih_plug_graphics = { path = "../../../logic_nih_plug_graphics" }
 
-atomic_float = "0.1"
+atomic_float = "1.1"
 crossbeam = "0.8"

@@ -11,4 +11,4 @@ crate-type = ["cdylib"]
 [dependencies]
 logic_nih_plug = { path = "../../../", features = ["assert_process_allocs"] }
 
-realfft = "3.0"
+realfft = "3.5"

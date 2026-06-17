@@ -24,6 +24,8 @@ members = [
   "logic_nih_plug_graphics",
   "logic_nih_plug_gui",
   "logic_nih_plug_animation",
+  "logic_nih_plug_data",
+  "logic_nih_plug_crypto",
 
   "cargo_logic_nih_plug",
   "xtask",
@@ -66,9 +68,9 @@ members = [
 
 [workspace.dependencies]
 # Shared dependencies for JUCE module ports
-thiserror = "1.0"
-proptest = "1.4"
-criterion = "0.5"
+thiserror = "2.0"
+proptest = "1.8"
+criterion = "0.8.2"
 
 [features]
 default = ["vst3"]
@@ -113,11 +115,11 @@ docs = []
 logic_nih_plug_derive = { path = "logic_nih_plug_derive" }
 
 anyhow = "1.0"
-anymap3 = "1.0.1"
-atomic_float = "0.1"
+anymap3 = "1.1.0"
+atomic_float = "1.1.0"
 atomic_refcell = "0.1"
-backtrace = "0.3.65"
-bitflags = "1.3"
+backtrace = "0.3.74"
+bitflags = "2.13.0"
 cfg-if = "1.0"
 # This supports CLAP 1.2.2
 clap-sys = {  git = "https://github.com/micahrj/clap-sys.git", rev = "25d7f53fdb6363ad63fbd80049cb7a42a97ac156" }
@@ -129,7 +131,7 @@ parking_lot = "0.12"
 raw-window-handle = "0.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-widestring = "1.0.0-beta.1"
+widestring = "1.2.1"
 
 # Used for the `assert_process_allocs` feature
 assert_no_alloc = { git = "https://github.com/robbert-vdh/rust-assert-no-alloc.git", branch = "feature/nested-permit-forbid", features = ["backtrace", "log"], optional = true }
@@ -139,11 +141,11 @@ assert_no_alloc = { git = "https://github.com/robbert-vdh/rust-assert-no-alloc.g
 #       some crates do use it and others don't
 baseview = { git = "https://github.com/RustAudio/baseview.git", rev = "579130ecb4f9f315ae52190af42f0ea46aeaa4a2", features = ["opengl"], optional = true }
 # All the claps!
-clap = { version = "4.1.8", features = ["derive", "wrap_help"], optional = true }
-cpal = { version = "0.15", optional = true }
-jack = { version = "0.11.4", optional = true }
-midir = { version = "0.9.1", optional = true }
-rtrb = { version = "0.2.2", optional = true }
+clap = { version = "4.5.61", features = ["derive", "wrap_help"], optional = true }
+cpal = { version = "0.18.1", optional = true }
+jack = { version = "0.13.5", optional = true }
+midir = { version = "0.11.0", optional = true }
+rtrb = { version = "0.3.4", optional = true }
 
 # Used for the `vst3` feature
 vst3-sys = { git = "https://github.com/robbert-vdh/vst3-sys.git", branch = "fix/drop-box-from-raw", optional = true }
@@ -155,23 +157,23 @@ vst2-sys = { version = "0.2", optional = true }
 lv2-sys = { version = "2.0", optional = true }
 
 # Used for the `zstd` feature
-zstd = { version = "0.12.3", optional = true }
+zstd = { version = "0.13.3", optional = true }
 
 [dev-dependencies]
 approx = "0.5.1"
-proptest = "1.4"
+proptest = "1.8"
 
 [target.'cfg(all(target_family = "unix", not(target_os = "macos")))'.dependencies]
-libc = "0.2.124"
+libc = "0.2.186"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"
-core-foundation = "0.9.3"
+core-foundation = "0.10.1"
 # Used for the `au` and `auv3` features
 coreaudio-sys = { version = "0.2", optional = true }
 
 [target.'cfg(target_os = "windows")'.dependencies.windows]
-version = "0.44"
+version = "0.62.2"
 features = [
   "Win32_Foundation",
   "Win32_Graphics_Gdi",

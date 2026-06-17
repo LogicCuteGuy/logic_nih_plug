@@ -59,6 +59,12 @@ pub(crate) struct WindowsEventLoop<T, E> {
     background_thread: BackgroundThread<T, E>,
 }
 
+// SAFETY: `HWND` is a raw pointer to a window handle. The wrapper takes care to only access it
+// from the thread that created it (through the host's message loop) or after the window has been
+// destroyed, so it's safe to move the struct between threads.
+unsafe impl<T, E> Send for WindowsEventLoop<T, E> {}
+unsafe impl<T, E> Sync for WindowsEventLoop<T, E> {}
+
 impl<T, E> EventLoop<T, E> for WindowsEventLoop<T, E>
 where
     T: Send + 'static,
@@ -70,16 +76,20 @@ where
         // Window classes need to have unique names or else multiple plugins loaded into the same
         // process will end up calling the other plugin's callbacks
         let mut ticks = 0i64;
-        assert!(unsafe { QueryPerformanceCounter(&mut ticks).as_bool() });
+        assert!(unsafe { QueryPerformanceCounter(&mut ticks).is_ok() });
         let class_name = CString::new(format!("nih-event-loop-{ticks}"))
             .expect("Where did these null bytes come from?");
         let class_name_ptr = PCSTR(class_name.as_bytes_with_nul().as_ptr());
 
+        let hinstance = HINSTANCE(
+            unsafe { GetModuleHandleA(PCSTR(ptr::null())) }
+                .expect("Could not get the current module's handle")
+                .0,
+        );
         let class = WNDCLASSEXA {
             cbSize: mem::size_of::<WNDCLASSEXA>() as u32,
             lpfnWndProc: Some(window_proc),
-            hInstance: unsafe { GetModuleHandleA(PCSTR(ptr::null())) }
-                .expect("Could not get the current module's handle"),
+            hInstance: hinstance,
             lpszClassName: class_name_ptr,
             ..Default::default()
         };
@@ -115,16 +125,17 @@ where
                 0,
                 0,
                 0,
-                HWND(0),
-                HMENU(0),
-                HINSTANCE(0),
+                None,
+                None,
+                None,
                 // NOTE: We're boxing a box here. As mentioned in [PollCallback], we can't directly
                 //       pass around fat pointers, so we need a normal pointer to a fat pointer to
                 //       be able to call this and deallocate it later
                 Some(Box::into_raw(Box::new(callback)) as *const c_void),
             )
-        };
-        assert_ne!(!window.0, 0);
+        }
+        .expect("Failed to create the message loop window");
+        assert!(!window.is_invalid());
 
         Self {
             executor: executor.clone(),
@@ -152,7 +163,13 @@ where
                 // Instead of polling on a timer, we can just wake up the window whenever there's a
                 // new message.
                 unsafe {
-                    PostMessageA(self.message_window, NOTIFY_MESSAGE_ID, WPARAM(0), LPARAM(0))
+                    PostMessageA(
+                        Some(self.message_window),
+                        NOTIFY_MESSAGE_ID,
+                        WPARAM(0),
+                        LPARAM(0),
+                    )
+                    .ok();
                 };
             }
 
@@ -173,12 +190,13 @@ where
 
 impl<T, E> Drop for WindowsEventLoop<T, E> {
     fn drop(&mut self) {
-        unsafe { DestroyWindow(self.message_window) };
+        unsafe { DestroyWindow(self.message_window).ok() };
         unsafe {
             UnregisterClassA(
                 PCSTR(self.message_window_class_name.as_bytes_with_nul().as_ptr()),
-                HINSTANCE(0),
+                None,
             )
+            .ok();
         };
     }
 }

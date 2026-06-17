@@ -19,10 +19,10 @@ simd = ["logic_nih_plug/simd"]
 logic_nih_plug = { path = "../../", features = ["assert_process_allocs"] }
 logic_nih_plug_vizia = { path = "../../logic_nih_plug_vizia" }
 
-atomic_float = "0.1"
-semver = "1.0.14"
+atomic_float = "1.1"
+semver = "1.0.28"
 
 # For the GUI
-realfft = "3.0"
-open = "3.0"
-triple_buffer = "6.0"
+realfft = "3.5"
+open = "5.3"
+triple_buffer = "9.0"

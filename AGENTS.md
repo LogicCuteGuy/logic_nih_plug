@@ -10,6 +10,7 @@ This is a Rust audio-plugin framework (`logic_nih_plug`) with many sub-crates an
 
 - [README.md](README.md) — project overview, plugin list, framework feature summary.
 - [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) — index of all the root-level `.md` files.
+- [TODO.md](TODO.md) — full backlog of JUCE features still to be ported, with status per crate.
 - [QUICK_START.md](QUICK_START.md) — 5-minute intro to the JUCE-ported modules (`logic_nih_plug_dsp`, `logic_nih_plug_audio_formats`, `logic_nih_plug_gui`, `logic_nih_plug_animation`).
 - `logic_nih_plug::prelude` — every plugin starts with `use logic_nih_plug::prelude::*;`. Read [src/prelude.rs](src/prelude.rs) when in doubt about what is re-exported.
 

@@ -14,4 +14,4 @@ crate-type = ["cdylib"]
 logic_nih_plug = { path = "../../../", features = ["assert_process_allocs"] }
 logic_nih_plug_iced = { path = "../../../logic_nih_plug_iced" }
 
-atomic_float = "0.1"
+atomic_float = "1.1"

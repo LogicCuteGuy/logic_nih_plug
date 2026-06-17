@@ -54,6 +54,13 @@ pub(crate) struct WrapperGuiContext<P: Vst3Plugin> {
         atomic_refcell::AtomicRefCell<crate::wrapper::util::context_checks::ParamGestureChecker>,
 }
 
+// SAFETY: The `Arc<WrapperInner<P>>` would be `Send + Sync` regardless, but the inner `OsEventLoop`
+// contains a Windows `HWND` (a raw pointer) on Windows that is not automatically `Send + Sync`.
+// Since all access to that handle is coordinated by the event loop and the inner `Mutex`es, it is
+// safe to share across threads.
+unsafe impl<P: Vst3Plugin> Send for WrapperGuiContext<P> {}
+unsafe impl<P: Vst3Plugin> Sync for WrapperGuiContext<P> {}
+
 impl<P: Vst3Plugin> Drop for WrapperInitContext<'_, P> {
     fn drop(&mut self) {
         if let Some(samples) = self.pending_requests.latency_changed.take() {

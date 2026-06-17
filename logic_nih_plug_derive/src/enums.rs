@@ -33,53 +33,31 @@ pub fn derive_enum(input: TokenStream) -> TokenStream {
         let mut name_attr: Option<String> = None;
         let mut id_attr: Option<String> = None;
         for attr in &variant.attrs {
-            if attr.path.is_ident("name") {
-                match attr.parse_meta() {
-                    Ok(syn::Meta::NameValue(syn::MetaNameValue {
-                        lit: syn::Lit::Str(s),
-                        ..
-                    })) => {
+            if attr.path().is_ident("name") {
+                match string_attr_value(attr, "name") {
+                    Ok(s) => {
                         if name_attr.is_none() {
-                            name_attr = Some(s.value());
+                            name_attr = Some(s);
                         } else {
                             return syn::Error::new(attr.span(), "Duplicate name attribute")
                                 .to_compile_error()
                                 .into();
                         }
                     }
-                    _ => {
-                        return syn::Error::new(
-                            attr.span(),
-                            "The name attribute should be a key-value pair with a string \
-                             argument: #[name = \"foo bar\"]",
-                        )
-                        .to_compile_error()
-                        .into()
-                    }
+                    Err(err) => return err.to_compile_error().into(),
                 };
-            } else if attr.path.is_ident("id") {
-                match attr.parse_meta() {
-                    Ok(syn::Meta::NameValue(syn::MetaNameValue {
-                        lit: syn::Lit::Str(s),
-                        ..
-                    })) => {
+            } else if attr.path().is_ident("id") {
+                match string_attr_value(attr, "id") {
+                    Ok(s) => {
                         if id_attr.is_none() {
-                            id_attr = Some(s.value());
+                            id_attr = Some(s);
                         } else {
                             return syn::Error::new(attr.span(), "Duplicate id attribute")
                                 .to_compile_error()
                                 .into();
                         }
                     }
-                    _ => {
-                        return syn::Error::new(
-                            attr.span(),
-                            "The id attribute should be a key-value pair with a string argument: \
-                             #[id = \"foo-bar\"]",
-                        )
-                        .to_compile_error()
-                        .into()
-                    }
+                    Err(err) => return err.to_compile_error().into(),
                 };
             }
         }
@@ -146,4 +124,23 @@ pub fn derive_enum(input: TokenStream) -> TokenStream {
         }
     }
     .into()
+}
+
+/// Extract the string value of a `#[name = "..."]` style attribute. Returns an error suitable for
+/// emitting as a compile error if the attribute isn't in that form.
+fn string_attr_value(attr: &syn::Attribute, kind: &str) -> syn::Result<String> {
+    let msg = format!(
+        "The {} attribute should be a key-value pair with a string argument: #[{} = \"...\"]",
+        kind, kind
+    );
+    match &attr.meta {
+        syn::Meta::NameValue(syn::MetaNameValue { value, .. }) => match value {
+            syn::Expr::Lit(syn::ExprLit {
+                lit: syn::Lit::Str(s),
+                ..
+            }) => Ok(s.value()),
+            _ => Err(syn::Error::new(attr.span(), msg)),
+        },
+        _ => Err(syn::Error::new(attr.span(), msg)),
+    }
 }
