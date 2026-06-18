@@ -3689,6 +3689,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "juce_multi_module"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+ "logic_nih_plug_animation",
+ "logic_nih_plug_audio_formats",
+ "logic_nih_plug_crypto",
+ "logic_nih_plug_data",
+ "logic_nih_plug_dsp",
+]
+
+[[package]]
 name = "keyboard-types"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4066,6 +4078,17 @@ name = "logic_nih_plug_osc"
 version = "0.0.0"
 dependencies = [
  "rosc",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "logic_nih_plug_product_unlocking"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_crypto",
+ "logic_nih_plug_data",
+ "num-bigint",
+ "proptest",
  "thiserror 2.0.18",
 ]
 

@@ -30,3 +30,6 @@ name = "Safety Limiter"
 
 [spectral_compressor]
 name = "Spectral Compressor"
+
+[juce_multi_module]
+name = "JUCE Multi-Module Synth"

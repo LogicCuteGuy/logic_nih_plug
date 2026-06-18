@@ -10,6 +10,40 @@ Since there is no stable release yet, the changes are organized per day in
 reverse chronological order. The main purpose of this document in its current
 state is to list breaking changes.
 
+## [2026-06-19]
+
+### Added
+
+- **`juce_product_unlocking` port** — new crate
+  `logic_nih_plug_product_unlocking`:
+  - `key_generation` module with `generate_key_file` /
+    `generate_expiring_key_file` (server-side, textbook RSA
+    `m^d mod n`) and `decrypt_key_file` /
+    `KeyFileData` (client-side). Matches `juce::KeyGeneration`
+    line-for-line on the keyfile format (human-readable comment
+    header + `#`-prefixed 70-char-per-line hex blob).
+  - `online_unlock_status` module with the
+    `OnlineUnlockStatus<S: UnlockStore>` state machine — generic
+    over a user-supplied store trait so the same code drives any
+    marketplace backend. Implements `apply_key_file`,
+    `attempt_webserver_unlock`, `load`/`save`, `is_unlocked`,
+    `get_expiry_time_ms`, `clear`, plus the
+    `LicenseResult` constants from JUCE's
+    `juce::OnlineUnlockStatus::LicenseResult`.
+  - `machine_id` module with `get_platform_prefix` /
+    `get_encoded_id_string` / `get_unique_machine_id` /
+    `get_local_machine_ids` (mirrors
+    `juce::OnlineUnlockStatus::MachineIDUtilities`).
+  - 22 unit tests + 3 doc-tests passing under `--features full`
+    (default = `key_generation` + `online_unlock_status`).
+- **`logic_nih_plug_crypto::RSAKey::d_bytes`** — accessor for the
+  private exponent as a big-endian byte string. Lets callers (the
+  `key_generation` module in particular) do textbook RSA
+  `m^d mod n` directly without going through the `rsa` crate's
+  PKCS#1-v1.5-only public surface. Returns `None` for public-only
+  keys. Adds 1 round-trip + 1 doc-style use-test to the existing
+  45-test / 4-doc-test suite in `logic_nih_plug_crypto`.
+
 ## [2026-06-18]
 
 ### Added

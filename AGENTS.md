@@ -11,7 +11,7 @@ Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **
 | Doc | What it covers |
 |---|---|
 | [README.md](README.md) | Project overview, plugin list, features |
-| [TODO.md](TODO.md) | JUCE port backlog with per-crate status |
+| [TODO.md](TODO.md) | JUCE port backlog with per-crate status — **check this first when starting a new port** |
 | [QUICK_START.md](QUICK_START.md) | 5-min intro to ported modules (dsp, audio_formats, gui, animation) |
 | [src/prelude.rs](src/prelude.rs) | Everything re-exported by `use logic_nih_plug::prelude::*` |
 
@@ -48,13 +48,15 @@ Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **
 | `logic_nih_plug_data/` | `ValueTree`, `UndoManager`, `CachedValue<T>` |
 | `logic_nih_plug_osc/` | OSC sender/receiver, messages, bundles |
 | `logic_nih_plug_midi_ci/` | MIDI 2.0 Capability Inquiry |
+| `logic_nih_plug_product_unlocking/` | JUCE-style product unlocking: server-side keyfile generator (`generate_key_file` / `generate_expiring_key_file` using textbook RSA `m^d mod n`), client-side state machine (`OnlineUnlockStatus<S: UnlockStore>` with `apply_key_file`, `attempt_webserver_unlock`, `load`/`save`), and `machine_id` helpers (platform prefix, encoded IDs). Depends on `logic_nih_plug_crypto` and `logic_nih_plug_data`. 22 tests + 3 doc-tests. Features: `key_generation` (default), `online_unlock_status` (default), `full` |
 | `logic_nih_plug_video/` | Video playback: `VideoFrame` (RGBA8888), `VideoDecoder` (ffmpeg-next, feature `decoder`), `VideoComponent` (GUI, feature `gui`). 39 tests. Features: `decoder` (default), `gui`, `full` |
 | `logic_nih_plug_audio_processors/` | Host-side plugin discovery/management: `PluginDescription`, `PluginFormat` trait, `PluginFormatType`, `KnownPluginList`, `PluginDirectoryScanner`, `NullPluginFormat`. 79 tests. Features: `scanner`, `full` |
 | `logic_nih_plug_audio_formats::midi_file[_player]` | SMF (`.mid`) read/write + tempo-aware transport (`MidiFilePlayer`). Feature `midi` (default off). 31 tests. `TempoEvent` / `TimeSignature` / `KeySignature` types live in `logic_nih_plug_audio_basics::mtc`. |
 | `logic_nih_plug_gui::commands` | `ApplicationCommandManager`, `KeyPress`, `KeyPressMappingSet`, `CommandInfo`, `ApplicationCommandTarget` trait. 28 tests. |
 | `logic_nih_plug_gui::multi_doc_panel` | Tabbed MDI container. `MultiDocumentPanel`, `MultiDocumentPanelLayout`. 22 tests. |
 | `logic_nih_plug_xtask/` + `xtask/` | Bundling lib + shim |
-| `logic_nih_plug_graphics/`, `_animation/`, `_crypto/` | 2D primitives + vector graphics (tiny-skia backed `Painter` / `Path` / `Stroke` / `ColourGradient` / `DropShadow`), glyph arrangement, image rescale/convolve, easing/chaining, SHA/MD5/RSA |
+| `logic_nih_plug_graphics/`, `_animation/`, `_crypto/` | 2D primitives + vector graphics (tiny-skia backed `Painter` / `Path` / `Stroke` / `ColourGradient` / `DropShadow`), glyph arrangement, image rescale/convolve, easing/chaining, SHA/MD5/RSA (incl. `RSAKey::d_bytes` for raw textbook-RSA ops) |
+| `plugins/examples/juce_dsp_filter` / `juce_gui_demo` / `juce_multi_module` | JUCE-port demonstration plugins — `juce_multi_module` combines DSP + ValueTree + crypto + animation into one synth. See [plugins/examples/JUCE_EXAMPLES.md](plugins/examples/JUCE_EXAMPLES.md). |
 | `plugins/examples/` | Example plugins. See [FORMAT_EXAMPLES.md](plugins/examples/FORMAT_EXAMPLES.md) |
 | `plugins/soft_vacuum/` etc. | Real plugins; all listed in [bundler.toml](bundler.toml) |
 

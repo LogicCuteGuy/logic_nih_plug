@@ -18,7 +18,7 @@
 
 use rsa::pkcs1v15::{Signature, SigningKey, VerifyingKey};
 use rsa::signature::{SignatureEncoding, Signer, Verifier};
-use rsa::traits::PublicKeyParts;
+use rsa::traits::{PrivateKeyParts, PublicKeyParts};
 use rsa::{BigUint, RsaPrivateKey, RsaPublicKey};
 use sha2::Sha256;
 
@@ -137,6 +137,17 @@ impl RSAKey {
     /// Returns the public exponent `e` as a big-endian byte string.
     pub fn e_bytes(&self) -> Vec<u8> {
         self.public.e().to_bytes_be()
+    }
+
+    /// Returns the private exponent `d` as a big-endian byte string, or
+    /// `None` if this is a public-only key.
+    ///
+    /// This exposes raw secret material and is primarily intended for
+    /// callers that need to perform textbook RSA operations (e.g. the
+    /// product-unlocking crate's keyfile generator, which encrypts with
+    /// `m^d mod n` so anyone with the public key can decrypt).
+    pub fn d_bytes(&self) -> Option<Vec<u8>> {
+        self.private.as_ref().map(|p| p.d().to_bytes_be())
     }
 
     /// Signs `data` with SHA-256 + PKCS#1 v1.5 padding. Returns the signature

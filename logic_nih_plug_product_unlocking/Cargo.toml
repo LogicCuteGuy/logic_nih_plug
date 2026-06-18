@@ -1,0 +1,55 @@
+[package]
+name = "logic_nih_plug_product_unlocking"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["unlock", "license", "keyfile", "plugin"]
+description = "Product unlocking (keyfile generation + online unlock status state machine) ported from JUCE for nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[features]
+# The default surface includes the keyfile generator and the state machine,
+# since `KeyGeneration` (server-side) and `OnlineUnlockStatus` (client-side)
+# are almost always wanted together even if you only ever use one of them.
+default = ["key_generation", "online_unlock_status"]
+
+# Enables [`key_generation::generate_key_file`] and friends — server-side
+# keyfile creation. Pure crypto + minimal text formatting, no ValueTree.
+key_generation = ["dep:logic_nih_plug_crypto", "dep:num-bigint"]
+
+# Enables [`online_unlock_status::OnlineUnlockStatus`] — the client-side state
+# machine that consumes the keyfile produced by `key_generation`. Depends on
+# `logic_nih_plug_data` for the `ValueTree`-backed state.
+online_unlock_status = [
+    "dep:logic_nih_plug_data",
+    "dep:logic_nih_plug_crypto",
+    "dep:num-bigint",
+]
+
+# Everything turned on.
+full = ["key_generation", "online_unlock_status"]
+
+[dependencies]
+thiserror = "2.0.18"
+
+# `KeyGeneration` needs RSA + SHA-256 (the `rsa` feature already pulls in
+# `sha2`). `OnlineUnlockStatus` needs `RSAKey` to verify server-signed
+# keyfiles and a `ValueTree` to persist its unlock state.
+logic_nih_plug_data = { path = "../logic_nih_plug_data", version = "0.0.0", optional = true, default-features = false, features = ["valuetree", "undo"] }
+logic_nih_plug_crypto = { path = "../logic_nih_plug_crypto", version = "0.0.0", optional = true, default-features = false, features = ["sha2", "md5", "rsa"] }
+
+# We use `num-bigint::BigUint` directly for raw modular exponentiation
+# (textbook RSA: `m^d mod n` / `c^e mod n`). The `rsa` crate uses
+# `num-bigint-dig` under the hood, so this doesn't pull in a new
+# big-integer library — it just re-exposes the one already in the
+# dep tree.
+num-bigint = { version = "0.4", optional = true }
+
+[dev-dependencies]
+# We round-trip real keyfiles through a freshly-generated keypair, so the
+# property-test harness is the only dev-dep we need beyond the crypto crate's
+# own.
+proptest = "1.8"

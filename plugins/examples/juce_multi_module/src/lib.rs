@@ -6,8 +6,8 @@
 
 use logic_nih_plug::prelude::*;
 use logic_nih_plug_animation::easing::ease_in_out_quad;
-use logic_nih_plug_crypto::{HashAlgorithm, Hasher};
-use logic_nih_plug_data::valuetree::{Value, ValueTree};
+use logic_nih_plug_crypto::sha256::sha256_hex;
+use logic_nih_plug_data::{Value, ValueTree};
 use logic_nih_plug_dsp::envelopes::Envelope;
 use logic_nih_plug_dsp::filters::IIRFilter;
 use logic_nih_plug_dsp::oscillators::{Oscillator, Waveform};
@@ -231,11 +231,22 @@ impl Plugin for JuceMultiModule {
         // Initialize preset data structure (ValueTree)
         self.initialize_preset_tree();
 
-        // Generate preset hash for verification (using crypto module)
-        let preset_xml = self.preset_tree.to_xml();
-        let hasher = Hasher::new(HashAlgorithm::SHA256);
-        let preset_hash = hasher.hash(preset_xml.as_bytes()).unwrap();
-        nih_log!("Preset hash: {:?}", preset_hash);
+        // Generate preset hash for verification (using crypto module).
+        // We hash a stable string built from the preset's properties — that gives
+        // a deterministic identifier you can use to detect tampering without
+        // needing a full XML serialization round-trip on the audio thread.
+        let preset_fingerprint = format!(
+            "{}|{}|{}|{}|{}|{}|{}",
+            self.params.waveform.value() as i32,
+            self.params.cutoff.value() as i32,
+            self.params.resonance.value(),
+            self.params.attack.value(),
+            self.params.decay.value(),
+            self.params.sustain.value(),
+            self.params.release.value(),
+        );
+        let preset_hash = sha256_hex(preset_fingerprint.as_bytes());
+        nih_log!("Preset hash: {}", preset_hash);
 
         true
     }
@@ -417,22 +428,33 @@ impl JuceMultiModule {
     }
 
     fn initialize_preset_tree(&mut self) {
-        // Use ValueTree to store preset data
+        // Use ValueTree to store preset data. `Value` mirrors JUCE's `var` —
+        // floats are stored as `Double(f64)` so they round-trip through JSON
+        // and XML without loss; `Int` is `i64`.
         self.preset_tree
             .set_property("name", Value::String("Default".to_string()));
         self.preset_tree
             .set_property("version", Value::Int(1));
 
         // Store parameter values
-        let mut params_tree = ValueTree::new("Parameters");
-        params_tree.set_property("cutoff", Value::Float(self.params.cutoff.value()));
-        params_tree.set_property("resonance", Value::Float(self.params.resonance.value()));
-        params_tree.set_property("attack", Value::Float(self.params.attack.value()));
-        params_tree.set_property("decay", Value::Float(self.params.decay.value()));
-        params_tree.set_property("sustain", Value::Float(self.params.sustain.value()));
-        params_tree.set_property("release", Value::Float(self.params.release.value()));
+        let params_tree = ValueTree::new("Parameters");
+        params_tree.set_property("cutoff", Value::Double(self.params.cutoff.value() as f64));
+        params_tree.set_property(
+            "resonance",
+            Value::Double(self.params.resonance.value() as f64),
+        );
+        params_tree.set_property("attack", Value::Double(self.params.attack.value() as f64));
+        params_tree.set_property("decay", Value::Double(self.params.decay.value() as f64));
+        params_tree.set_property(
+            "sustain",
+            Value::Double(self.params.sustain.value() as f64),
+        );
+        params_tree.set_property(
+            "release",
+            Value::Double(self.params.release.value() as f64),
+        );
 
-        self.preset_tree.add_child(params_tree);
+        self.preset_tree.add_child(params_tree, 0);
     }
 }
 

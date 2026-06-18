@@ -515,19 +515,73 @@ already. These are the missing processors.
 
 ## 7. Examples & meta
 
-- [ ] **Create `plugins/examples/juce_multi_module`** (referenced in
+- [x] **Create `plugins/examples/juce_multi_module`** (referenced in
   [plugins/examples/JUCE_EXAMPLES.md](plugins/examples/JUCE_EXAMPLES.md) but
-  the crate is missing)
-  - Add it to the workspace in [Cargo.toml](Cargo.toml)
-  - Implement a synth using oscillators + filter + ADSR + value-tree preset
+  the crate is missing) — ✅ done (2026-06-19)
+  - Added to the workspace in [Cargo.toml](Cargo.toml)
+  - Bundler entry `[juce_multi_module]` added to [bundler.toml](bundler.toml)
+  - Implements a synth using `Oscillator` (sine/saw/square/triangle) +
+    `IIRFilter` + `Envelope` ADSR + ValueTree preset + SHA-256 fingerprint
+    of the parameter state
   - Uses `logic_nih_plug_data`, `logic_nih_plug_crypto`,
     `logic_nih_plug_animation`, `logic_nih_plug_audio_formats`
+  - Builds clean under `cargo build -p juce_multi_module --release`
+    (VST3 + CLAP, no warnings beyond the standard `logic_nih_plug`
+    `HMENU` / `unsafe_clap_call` unused-import lints).
 
-- [ ] **Cross-link `TODO.md` from `AGENTS.md`** so future agents see the
-  backlog immediately
+- [x] **Cross-link `TODO.md` from `AGENTS.md`** so future agents see the
+  backlog immediately — ✅ done (2026-06-19)
+  - Added a "**check this first when starting a new port**" hint on the
+    `TODO.md` row in the AGENTS doc table.
+  - Added an explicit `plugins/examples/juce_dsp_filter` / `juce_gui_demo` /
+    `juce_multi_module` row to the workspace layout table.
 
-- [ ] **Port `juce_product_unlocking`** *(low priority)*
-  - `KeyGeneration`, `RSAKey`, `OnlineUnlockStatus`
+- [x] **Port `juce_product_unlocking`** *(was low priority)* — ✅ done (2026-06-19)
+  - New crate: [`logic_nih_plug_product_unlocking`](logic_nih_plug_product_unlocking)
+  - `KeyGeneration`-equivalent helpers in
+    [`key_generation`](logic_nih_plug_product_unlocking/src/key_generation.rs):
+    - `generate_key_file(app_name, user_email, user_name, machine_numbers, &private_key) -> Result<String, KeyFileError>`
+    - `generate_expiring_key_file(...)` — same but with an expiry timestamp
+    - `decrypt_key_file(keyfile_text, &public_key) -> Result<KeyFileData, KeyFileError>`
+    - Textbook RSA encryption (`m^d mod n` / `c^e mod n`) — matches
+      `juce::KeyGeneration` line-for-line.
+    - Plain-text keyfile format: human-readable comment header + a
+      single `#`-prefixed, 70-char-per-line hex blob (raw RSA ciphertext
+      of a `<key …/>` XML element).
+  - `RSAKey` — already done in [`logic_nih_plug_crypto`](logic_nih_plug_crypto);
+    added `RSAKey::d_bytes()` accessor so the keyfile generator can do
+    raw `m^d mod n` without going through the `rsa` crate's
+    PKCS#1-v1.5-only public surface.
+  - `OnlineUnlockStatus`-equivalent state machine in
+    [`online_unlock_status`](logic_nih_plug_product_unlocking/src/online_unlock_status.rs):
+    - `OnlineUnlockStatus<S: UnlockStore>` — generic over a user-supplied
+      store trait (product ID, public key, persisted state, webserver URL,
+      machine IDs).
+    - `apply_key_file(text) -> Result<(), KeyFileError>` — validates
+      against the public key, the product ID, and the local machine IDs
+      (case-insensitive substring match, same as JUCE).
+    - `attempt_webserver_unlock(email, password) -> UnlockResult` —
+      blocking webserver call; caller is responsible for running it on a
+      background thread (matching JUCE's contract).
+    - `load()` / `save()` — round-trip through the store's persisted
+      state. Internal state lives on a `ValueTree`; the persisted
+      representation is a hand-rolled `key=value\n` format (small enough
+      to be stable across versions).
+    - `is_unlocked()`, `get_expiry_time_ms()`, `get_user_email()`,
+      `set_user_email()`, `clear()`, `state()` — the JUCE-compatible
+      query surface.
+  - `MachineIDUtilities`-equivalent helpers in
+    [`machine_id`](logic_nih_plug_product_unlocking/src/machine_id.rs):
+    - `get_platform_prefix()` — `'W'` / `'M'` / `'L'` / `'B'` / `'I'`
+      / `'A'` matching JUCE's prefix table.
+    - `get_encoded_id_string(input)` — `MD5(input + "salt_1" + prefix).hex()[..9]`
+      + the prefix, upper-cased (matches JUCE's `getEncodedIDString`).
+    - `get_unique_machine_id()` / `get_local_machine_ids()` — defaults;
+      override `UnlockStore::get_local_machine_ids` for production.
+  - 22 unit tests + 3 doc-tests passing under `--features full`
+    (default = both `key_generation` and `online_unlock_status`).
+  - Features: `key_generation` (default), `online_unlock_status`
+    (default), `full` = both.
 
 ---
 
@@ -562,13 +616,14 @@ already. These are the missing processors.
 | `logic_nih_plug_dsp` | ✅ Ported — Dynamics, Reverb, Delay, Modulation, Mixer, Analysis, Pitch, Resampling & FFT upgrades done (incl. PhaseVocoder ↔ RealFFT integration) |
 | `logic_nih_plug_egui` / `_iced` / `_vizia` | ✅ Ported (GUI backends) |
 | `logic_nih_plug_graphics` | ✅ Expanded — Path/Stroke/Fill/Gradient/DropShadow/Painter + GlyphArrangement/LineSpacing + Image rescale/convolve (§5 graphics items done) |
-| `logic_nih_plug_gui` | 🟡 Partial — see §5 |
+| `logic_nih_plug_gui` | ✅ Ported — see §5 + §6 (commands + MDI) |
 | `logic_nih_plug` core | ✅ Ported |
 | `logic_nih_plug_xtask` / `cargo_logic_nih_plug` | ✅ Ported |
 | `logic_nih_plug_data` | ✅ Ported (ValueTree, UndoManager, CachedValue) |
 | `logic_nih_plug_crypto` | ✅ Ported (SHA-256/1/MD5, BigInteger, RSAKey) |
 | `logic_nih_plug_osc` | ✅ Ported (OscSender, OscReceiver, OSCArgument, OSCBundle) |
 | `logic_nih_plug_midi_ci` | ✅ Ported (32 message types, transport-agnostic) |
+| `logic_nih_plug_product_unlocking` | ✅ Ported (KeyGeneration, OnlineUnlockStatus, MachineIDUtilities; 22 + 3 tests) |
 | `logic_nih_plug_video` | ✅ Ported (VideoFrame, VideoDecoder, VideoComponent; 39 tests) |
 | `logic_nih_plug_audio_processors` | ✅ Ported (PluginDescription, PluginFormat, KnownPluginList, PluginDirectoryScanner; 79 tests) |
 | `logic_nih_plug_audio_utils` (SMF + commands + MDI) | ✅ Ported (MidiFile/MidiFilePlayer in `audio_formats`; ApplicationCommandManager/KeyPress/KeyPressMappingSet + MultiDocumentPanel in `gui`; 81 audio_formats + 50 gui tests) |
