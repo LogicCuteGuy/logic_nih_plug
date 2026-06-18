@@ -14,6 +14,101 @@ state is to list breaking changes.
 
 ### Added
 
+- **`logic_nih_plug_video`** — video playback crate ported from JUCE's
+  `juce_video` module:
+  - `VideoFrame` — RGBA8888 frame with pixel accessors and solid-colour
+    test factory
+  - `VideoDecoder` — ffmpeg-next wrapper for file-based decoding
+    (open, next_frame, seek, rewind); feature-gated on `decoder`
+  - `VideoComponent` — GUI component with play/pause/stop, push_frame
+    for external decoders, callbacks, speed/volume/position control;
+    feature-gated on `gui`
+  - `PlaybackState` enum, `VideoError` (7 variants)
+  - 39 unit tests; decoder feature is optional so core types compile
+    without FFmpeg system libraries
+
+- **`logic_nih_plug_gui` OpenGL utilities** — reusable OpenGL abstractions
+  ported from JUCE's `juce_opengl` module, built on `glow`:
+  - `OpenGLContext` wrapper with GL state helpers (clear, viewport, blend, depth, cull)
+  - `ShaderProgram` (compile + link + uniform setters) + `OpenGLHelpers` static methods
+  - `OpenGLTexture` (create, upload, bind, mipmaps, filtering, wrapping)
+  - `OpenGLFrameBuffer` (FBO with color + depth/stencil, read-back, resize)
+  - `OpenGLRenderer` trait + `RenderLoopDriver` frame-loop helper
+  - `Matrix3D` / `Matrix4x4` (column-major, perspective/ortho/look-at/rotation)
+  - Feature-gated on `gl-editor`; 66 unit tests.
+
+- **`logic_nih_plug_gui` MidiKeyboardComponent** — visual MIDI piano
+  keyboard control ported from JUCE: white/black key rendering, mouse
+  interaction with velocity, external active-note highlighting,
+  configurable range/orientation/colours, two-tier render, 18 tests.
+  Re-exported as `MidiKeyboardComponent` and `KeyboardOrientation`.
+
+- **`logic_nih_plug_gui` layout expansion** — new CSS Grid, relative
+  coordinates, and animation frame rate modules:
+  - `CssGrid` — full CSS Grid layout with `GridTrack` sizing (`Fraction`
+    / `Fixed` / `Auto` / `MinContent` / `MaxContent` / `MinMax`),
+    two-pass resolution (fixed tracks first, then `fr` distribution),
+    row and column gaps, named `NamedArea` support, `GridPlacement`
+    (`cell`, `area`, `named`), `GridItem` with per-item alignment
+    (`Start` / `End` / `Center` / `Stretch`), and `Rect` output.
+  - `RelativeCoordinate` — percentage-based or absolute pixel coordinates
+    with `Absolute` / `Percent` / `FromRight` / `FromBottom` variants and
+    `resolve_horizontal` / `resolve_vertical` methods.
+  - `RelativeRectangle` — four `RelativeCoordinate` edges for proportional
+    child bounds; `fill()`, `from_pixels()`, `from_percent()` constructors.
+  - `AnimationFrameRate` — throttled redraw controller with configurable
+    FPS or custom `Duration` interval, `should_frame` / `should_frame_duration`
+    gating, time-until-next queries, enable/disable, and reset.
+  - All types re-exported at `logic_nih_plug_gui` crate root.
+  - 59 new unit tests (22 CSS Grid + 19 relative + 18 animation frame rate).
+
+- **`logic_nih_plug_graphics` vector module** — JUCE-style 2D vector
+  graphics backed by `tiny-skia` (opt-in `vector` feature):
+  - `PathBuilder` — chainable `move_to` / `line_to` / `quad_to` /
+    `cubic_to` / `close` / `start_new_sub_path` wrapping
+    `tiny_skia::PathBuilder`.
+  - `Stroke`, `FillType`, `Justification` (bitflags) — JUCE API
+    parity types; `Stroke` and `FillRule` re-exported from
+    `tiny_skia`.
+  - `ColourGradient` — linear and radial gradient fills (wraps
+    `tiny_skia::Shader<'static>`). Accepts `GradientStop` +
+    `SpreadMode`, matching JUCE's `ColourGradient` constructor
+    semantics.
+  - `DropShadow` — colour + offset compositing; foreground rendered
+    on top of an offset shadow pass.
+  - `Painter` — CPU paint target backed by `tiny_skia::Pixmap`;
+    premultiplied-RGBA8 output with `data_straight()` for
+    straight-alpha consumers. Fill/stroke paths, rects, gradient
+    fills, shadow compositing.
+  - Common `tiny_skia` types re-exported at crate root (`Path`,
+    `Stroke`, `Paint`, `Shader`, `GradientStop`, `SpreadMode`,
+    `BlendMode`, `FillRule`, `LineCap`, `LineJoin`) for ergonomic
+    `use logic_nih_plug_graphics::Path`.
+  - 27 unit tests + 1 doc-test for the vector module.
+
+- **`logic_nih_plug_graphics` text extensions**:
+  - `GlyphArrangement` — shaped text layout with `PositionedGlyph`
+    entries; `from_text(font, text, size, origin_x, origin_y)`,
+    `translate(dx, dy)`, `width()`, `glyphs()`.
+  - `LineSpacing` — `Single` / `Multiple(f32)` / `Fixed(f32)`
+    enum with `line_distance(font, size)` helper.
+  - `Font::get_string_width_float` (alias for `measure_text`),
+    `Font::get_ascent`, `Font::get_descent` (positive convention),
+    `Font::get_height`.
+  - 11 new unit tests for text extensions.
+
+- **`logic_nih_plug_graphics` image extensions**:
+  - `Image::rescaled(new_w, new_h, RescaleFilter)` — `Nearest` /
+    `Bilinear` up/downscale backed by `image` crate resize.
+  - `Image::convolve` / `Image::convolve_in_place` — edge-clamped
+    NxN convolution with arbitrary `f32` kernel.
+  - `ImageConvolutionEngine` — reusable convolution engine with
+    `box_blur_3x3`, `sharpen_3x3`, `edge_detect_3x3` presets.
+  - `Image::new(w, h)` — transparent blank image constructor.
+  - 12 new unit tests for image extensions.
+
+### Added
+
 - **`logic_nih_plug_audio_basics`** — new crate porting
   `juce_audio_basics` for the `logic_nih_plug` ecosystem:
   - `AudioSampleBuffer` — non-interleaved (JUCE-default) audio sample
@@ -59,6 +154,28 @@ state is to list breaking changes.
   - 17 unit tests + 4 doc-tests for `RealFFT` and `STFT`; 9
     windowing tests now under `analysis`; gated behind the
     existing `analysis` feature flag.
+
+### Added
+
+- **`logic_nih_plug_gui` controls_extra module** (`controls_extra.rs`) —
+  JUCE-style high-level control types wrapping `Component`:
+  - `ComboBox` — drop-down selection control with items, selection state,
+    and change callbacks via closures.
+  - `TextEditor` — editable text field supporting single/multi-line,
+    max length, read-only mode, cursor position, and insert operations.
+  - `ToggleButton` — button that toggles between on/off states with
+    a change callback.
+  - `CheckBox` — boolean checkbox with label and checked-change callback.
+  - `ProgressBar` — horizontal progress bar (0.0–1.0) with optional
+    display text.
+  - `Tooltip` — tooltip manager with show/hide/delay configuration.
+  - `DrawableButton` — button for custom-drawn content via closures.
+  - `HyperlinkButton` — button styled as a hyperlink with an associated URL.
+  - `ImageComponent` — image display with `ImageScalingMode` enum
+    (`Fill`, `Fit`, `None`, `Stretch`).
+  - All controls have `render()` and `render_with_lookandfeel()` methods,
+    feature-gated behind the `graphics` feature.
+  - 46 unit tests, all passing.
 
 ### Changed
 
@@ -122,10 +239,28 @@ state is to list breaking changes.
   - Concrete driver bindings (`cpal`, `coreaudio-rs`, `asio-sys`, …)
     are intentionally NOT bundled — they require platform SDKs.
     The trait surface here is the integration point.
-
-## [2026-06-18]
-
-### Added
+- **`juce_core` essentials & `juce_events`** — TODO §4 & §4.5 shrunk:
+  no new crate. Every JUCE item here is already covered by Rust
+  stdlib or by a dep already in the workspace tree. Use the stdlib
+  equivalents directly (full table in
+  [AGENTS.md](AGENTS.md) §9):
+  - `File` → `std::path::PathBuf` + `std::fs`
+  - `Array<T>` / `OwnedArray<T>` / `ReferenceCountedArray<T>` →
+    `Vec<T>` / `Vec<Box<T>>` / `Arc<[T]>`
+  - `Thread` → `std::thread::JoinHandle`
+  - `ThreadPool` → `rayon` (already in dep tree)
+  - `WaitableEvent` → `crossbeam_channel` (already in dep tree)
+  - `Time` / `RelativeTime` → `std::time::Instant` / `Duration`
+  - `HighResolutionTimer` → `std::time::Instant::elapsed()`
+  - `AsyncUpdater` / `MessageManager::call_soon` →
+    `logic_nih_plug::event_loop::EventLoop::schedule_gui` (already
+    the realtime-safe → GUI-thread hop the framework provides)
+  - `Timer` (periodic tick) → backend-native:
+    `egui::Context::request_repaint_after`,
+    `iced::Subscription::interval`, `vizia::view::timer`
+  The decision prevents `pub struct X(pub Y);` cargo-culting — if
+  you find yourself reaching for a wrapper crate, stop and check
+  whether the stdlib version already does what you need.
 
 - **Analysis module** (`logic_nih_plug_dsp::analysis`) — four new analysis tools:
   - `LevelMeter` — peak / RMS metering with configurable attack/release ballistics,

@@ -30,6 +30,7 @@ members = [
   "logic_nih_plug_midi_ci",
   "logic_nih_plug_audio_basics",
   "logic_nih_plug_audio_devices",
+  "logic_nih_plug_video",
 
   "cargo_logic_nih_plug",
   "xtask",

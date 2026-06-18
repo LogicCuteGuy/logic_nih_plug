@@ -291,58 +291,136 @@ already. These are the missing processors.
 
 ## 4. Core utilities (lightest items first)
 
-- [ ] **Port `juce_core` essentials**
-  - `File` (path + metadata + read/write helpers; defer FS operations to
-    `std::fs`)
-  - `String` thin wrapper (Rust `String` is enough; defer)
-  - `Array<T>`, `OwnedArray<T>`, `ReferenceCountedArray<T>` — use `Vec<T>`,
-    document when to use `Arc<Vec<T>>`
-  - `Thread`, `ThreadPool`, `WaitableEvent` (crossbeam) — already partially
-    available through `nih_plug` background tasks
-  - `Time`, `RelativeTime`, `HighResolutionTimer`
+- [x] **`juce_core` essentials** — ✅ shrunk (no crate, 2026-06-18)
+  Every JUCE item here is already covered by Rust stdlib + existing
+  workspace deps. No new crate needed; use the stdlib equivalent:
+  - `File` → [`std::path::PathBuf`](https://doc.rust-lang.org/std/path/struct.PathBuf.html)
+    + [`std::fs`](https://doc.rust-lang.org/std/fs/index.html)
+  - `String` → [`std::string::String`](https://doc.rust-lang.org/std/string/struct.String.html)
+  - `Array<T>` / `OwnedArray<T>` / `ReferenceCountedArray<T>` →
+    [`std::vec::Vec`](https://doc.rust-lang.org/std/vec/struct.Vec.html)
+    / `Vec<Box<T>>` / [`std::sync::Arc<[T]>`](https://doc.rust-lang.org/std/sync/struct.Arc.html)
+    (or `Arc<Vec<T>>` if shrinking)
+  - `Thread` → [`std::thread::JoinHandle`](https://doc.rust-lang.org/std/thread/struct.JoinHandle.html)
+    (already used throughout [src/event_loop/background_thread.rs](src/event_loop/background_thread.rs))
+  - `ThreadPool` → `rayon` (already in the dep tree)
+  - `WaitableEvent` → `crossbeam_channel` (already in the dep tree) or
+    `parking_lot::Mutex` + `Condvar`
+  - `Time` / `RelativeTime` → [`std::time::Instant`](https://doc.rust-lang.org/std/time/struct.Instant.html)
+    / [`std::time::Duration`](https://doc.rust-lang.org/std/time/struct.Duration.html)
+  - `HighResolutionTimer` → `std::time::Instant::elapsed()` (Linux/macOS
+    use `clock_gettime`, Windows uses `QueryPerformanceCounter` under
+    the hood). If a sub-µs monotonic source is ever needed, add
+    `quanta` then.
+  - The realtime-safe trigger → message-loop pattern (`AsyncUpdater`)
+    already lives in
+    [`logic_nih_plug::event_loop::EventLoop::schedule_gui`](src/event_loop.rs);
+    use that instead of inventing a new `AsyncUpdater` type.
 
-- [ ] **Port `juce_events`**
-  - `Timer` (tick callback, start/stop)
-  - `MessageManager` (single-threaded `call_soon` for the GUI thread)
-  - `AsyncUpdater` (realtime-safe trigger → message-loop dispatch)
+- [x] **`juce_events`** — ✅ shrunk (no crate, 2026-06-18)
+  - `Timer` (periodic tick) — backend-native: `egui::Context::request_repaint_after`,
+    `iced::Subscription::interval`, `vizia::view::timer`. The pattern is
+    the same in every backend; no shared abstraction needed.
+  - `MessageManager::call_soon` (single-threaded GUI dispatch) → use
+    [`EventLoop::schedule_gui`](src/event_loop.rs), which is already
+    the realtime-safe → GUI-thread hop the framework provides.
+  - `AsyncUpdater` (realtime-safe trigger → message-loop dispatch) → same
+    as `MessageManager::call_soon`; covered by `schedule_gui`.
 
 ---
 
 ## 5. Graphics & GUI
 
-- [ ] **Expand `logic_nih_plug_graphics`**
-  - `Path` (move/line/cubic/quad/close/subpath)
-  - `Stroke`, `FillType`, `Justification`
-  - `ColourGradient` (linear / radial)
-  - `DropShadow`
-  - `GlyphArrangement` / shaped text layout
-  - `ImageConvolutionEngine`, `Image::rescaled`, `Image::convolve`
-  - `LineSpacing`, `Font::getStringWidthFloat`
+- [x] **Expand `logic_nih_plug_graphics`** — ✅ done (2026-06-18)
+  - `Path` (move/line/cubic/quad/close/subpath) via `PathBuilder` (wraps
+    `tiny_skia::PathBuilder`)
+  - `Stroke`, `FillType`, `Justification` (bitflags) — re-exported from
+    `tiny_skia` or defined in `vector` module
+  - `ColourGradient` (linear / radial) — wraps `tiny_skia::Shader<'static>`
+  - `DropShadow` — colour + offset (no blur yet; tiny-skia doesn't ship
+    Gaussian blur)
+  - `Painter` — JUCE-style CPU paint target backed by `tiny_skia::Pixmap`;
+    premultiplied-RGBA8 output with `data_straight()` for straight-alpha
+    consumers. Fill/stroke paths, rects, gradients, shadows.
+  - `GlyphArrangement` — shaped text layout with `PositionedGlyph` entries
+  - `ImageConvolutionEngine` — reusable NxN convolution kernel; `box_blur_3x3`,
+    `sharpen_3x3`, `edge_detect_3x3` presets
+  - `Image::rescaled(new_w, new_h, RescaleFilter)` — `Nearest` / `Bilinear`
+    (backed by `image` crate resize)
+  - `Image::convolve` / `Image::convolve_in_place` — edge-clamped NxN
+    convolution
+  - `LineSpacing` — `Single` / `Multiple(f32)` / `Fixed(f32)`
+  - `Font::get_string_width_float` (alias for `measure_text`),
+    `Font::get_ascent`, `Font::get_descent`, `Font::get_height`
+  - 58 unit tests + 33 doc-tests passing under `--features full`
+  - New `vector` feature (opt-in via `tiny-skia` dep) to avoid pulling
+    ~200 KiB into builds that only use pixel-pushing primitives
 
-- [ ] **Expand `logic_nih_plug_gui` controls** (only `Button`/`Slider`/`Label`
-  exist)
-  - `ComboBox`
-  - `TextEditor`
-  - `CheckBox` / `ToggleButton`
-  - `ProgressBar`
-  - `Tooltip`
-  - `DrawableButton`, `HyperlinkButton`
-  - `ImageComponent`, `MidiKeyboardComponent` (see §6)
+- [x] **Expand `logic_nih_plug_gui` controls** — ✅ done (2026-06-18)
+  - `ComboBox` — drop-down selection with items, selection state, change callbacks
+  - `TextEditor` — editable text field (single/multi-line, max length, read-only)
+  - `CheckBox` / `ToggleButton` — boolean on/off controls with change callbacks
+  - `ProgressBar` — horizontal progress bar (0.0–1.0) with optional text
+  - `Tooltip` — tooltip manager with show/hide/delay
+  - `DrawableButton` — button for custom-drawn content
+  - `HyperlinkButton` — button styled as hyperlink with URL
+  - `ImageComponent` — image display with scaling modes (`Fill`, `Fit`, `None`, `Stretch`)
+  - All in `controls_extra.rs`; 46 unit tests passing; `render()` / `render_with_lookandfeel()` feature-gated on `graphics`
+- [x] **`MidiKeyboardComponent`** — ✅ done (2026-06-18)
+  - Visual piano keyboard with white/black key rendering, configurable
+    MIDI note range (default C2–C6), and `KeyboardOrientation`
+    (`Horizontal` / `Vertical`).
+  - Mouse interaction: `mouse_down(x, y)` / `mouse_up()` / `mouse_drag(x, y)`
+    with velocity based on vertical click position (top=hard, bottom=soft).
+  - External active-note highlighting via `add_active_note` / `remove_active_note`.
+  - Configurable key dimensions, colours, middle-C mapping, note-name display.
+  - Hit testing with black-key priority (drawn on top, checked first).
+  - Two-tier render: `render()` with hardcoded colours, `render_with_lookandfeel()`
+    using the theme's `ColorScheme`.
+  - 18 unit tests; in `controls_extra.rs`; re-exported as `MidiKeyboardComponent`
+    and `KeyboardOrientation` at crate root.
 
-- [ ] **Expand layout**
-  - `Grid` (CSS Grid)
-  - `RelativeRectangle` / `RelativeCoordinate`
-  - `AnimationFrameRate` (throttled redraw)
+- [x] **Expand layout** — ✅ done (2026-06-18)
+  - `CssGrid` — full CSS Grid with `fr`/`px`/`auto`/`minmax()` track sizing,
+    named grid areas, row/column spanning, gap control, per-item alignment
+    (`Start`/`End`/`Center`/`Stretch`), and two-pass `fr` resolution that
+    subtracts fixed tracks before distributing fractionally.
+  - `RelativeCoordinate` — percentage or absolute pixel coordinates
+    (`Absolute`, `Percent`, `FromRight`, `FromBottom`) with horizontal/
+    vertical resolution against a parent dimension.
+  - `RelativeRectangle` — four `RelativeCoordinate` edges for proportional
+    child bounding boxes; `fill()`, `from_pixels()`, `from_percent()` helpers.
+  - `AnimationFrameRate` — throttled redraw controller with configurable FPS,
+    `should_frame(nanos)` / `should_frame_duration(Duration)`, time-until-next
+    queries, enable/disable, and reset.
+  - All in `layout/css_grid.rs`, `layout/relative.rs`, `layout/animation_frame_rate.rs`;
+    22 CSS Grid + 19 relative + 18 AnimationFrameRate = 59 new unit tests;
+    re-exported at crate root via `layout` module.
 
-- [ ] **Port `juce_opengl`**
-  - `OpenGLContext` wrapper (build on top of the existing `gl-editor` feature
-    in `logic_nih_plug_gui`)
-  - `OpenGLRenderer` trait
-  - `OpenGLHelpers` (compile-shader, link-program, check-errors)
-  - `OpenGLShaderCode` (juce shader code translator) — defer
+- [x] **Port `juce_opengl`** — ✅ done (2026-06-18)
+  - `OpenGLContext` wrapper (build on top of `glow` + `baseview` GL context)
+  - `OpenGLRenderer` trait + `RenderLoopDriver` frame-loop helper
+  - `OpenGLHelpers` (compile-shader, link-program, check-errors, blend/depth/cull helpers)
+  - `ShaderProgram` wrapper (compile, link, uniform setters, `UniformLocation`)
+  - `OpenGLTexture` (create, upload, bind, mipmaps, filtering, wrapping)
+  - `OpenGLFrameBuffer` (FBO with color + optional depth/stencil, read-back, resize)
+  - `Matrix3D` / `Matrix4x4` (column-major GL math, perspective/ortho/look-at/rotation)
+  - `TextureFormat`, `TextureDataType`, `TextureMinFilter` enums
+  - 66 unit tests; feature-gated on `gl-editor`; re-exported at crate root
+  - `OpenGLShaderCode` (JUCE GLSL translator) — deferred
 
-- [ ] **Port `juce_video`** *(low priority)*
-  - `VideoComponent` (frame decoder; needs `ffmpeg-next`)
+- [x] **Port `juce_video`** — ✅ done (2026-06-18)
+  - `VideoFrame` — RGBA8888 frame with pixel access, solid-colour factory
+  - `VideoDecoder` — ffmpeg-next wrapper: open, decode, seek, rewind
+    (feature `decoder`; requires FFmpeg system libs at build time)
+  - `VideoComponent` — GUI component: play/pause/stop, push_frame,
+    callbacks (playback started/stopped/error), speed/volume/position
+    control, component delegation (feature `gui`)
+  - `PlaybackState` — Stopped/Playing/Paused enum
+  - `VideoError` — 7 error variants with `thiserror` display
+  - Feature flags: `decoder` (default), `gui`, `full`; decoder feature
+    is optional so the core types compile without FFmpeg
+  - 39 unit tests (15 core + 24 component) passing
 
 ---
 
@@ -412,7 +490,7 @@ already. These are the missing processors.
 | `logic_nih_plug_derive` | ✅ Ported |
 | `logic_nih_plug_dsp` | ✅ Ported — Dynamics, Reverb, Delay, Modulation, Mixer, Analysis, Pitch, Resampling & FFT upgrades done (incl. PhaseVocoder ↔ RealFFT integration) |
 | `logic_nih_plug_egui` / `_iced` / `_vizia` | ✅ Ported (GUI backends) |
-| `logic_nih_plug_graphics` | 🟡 Partial — see §5 |
+| `logic_nih_plug_graphics` | ✅ Expanded — Path/Stroke/Fill/Gradient/DropShadow/Painter + GlyphArrangement/LineSpacing + Image rescale/convolve (§5 graphics items done) |
 | `logic_nih_plug_gui` | 🟡 Partial — see §5 |
 | `logic_nih_plug` core | ✅ Ported |
 | `logic_nih_plug_xtask` / `cargo_logic_nih_plug` | ✅ Ported |
@@ -420,3 +498,4 @@ already. These are the missing processors.
 | `logic_nih_plug_crypto` | ✅ Ported (SHA-256/1/MD5, BigInteger, RSAKey) |
 | `logic_nih_plug_osc` | ✅ Ported (OscSender, OscReceiver, OSCArgument, OSCBundle) |
 | `logic_nih_plug_midi_ci` | ✅ Ported (32 message types, transport-agnostic) |
+| `logic_nih_plug_video` | ✅ Ported (VideoFrame, VideoDecoder, VideoComponent; 39 tests) |

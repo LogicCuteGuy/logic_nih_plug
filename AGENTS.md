@@ -40,7 +40,7 @@ Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **
 | [src/](src/) | Core: `Plugin` trait, `Buffer`, `Params`, wrappers, `debug`/`util`/`formatters` |
 | `logic_nih_plug_derive/` | `#[derive(Params)]` proc macro |
 | `logic_nih_plug_dsp/` | DSP: filters, oscillators, convolution, envelopes, dynamics, reverb, delay, modulation, mixer, analysis (FFT, RealFFT, STFT, WindowingFunction, LevelMeter, Follower, LoudnessMeter, Oscilloscope), pitch (PhaseVocoder, PitchShift, TimeStretching, WindowingFunction re-export), resampling (GenericInterpolator, ZeroOrderHold, Linear, CatmullRom, Lagrange, WindowedSinc). Features: `filters`+`oscillators` (default); `dynamics`/`reverb`/`delay`/`modulation`/`mixer`/`resampling` under `processors`; `analysis` for analysis tools (incl. RealFFT/STFT); `pitch` for pitch/time processing; `full` enables all |
-| `logic_nih_plug_gui/` | JUCE-style `Component`/`Button`/FlexBox port + BYO-GUI helpers. Features: `components`, `layout`, `graphics`, `text`, `softbuffer-editor`, `gl-editor`, `full` |
+| `logic_nih_plug_gui/` | JUCE-style `Component`/`Button`/FlexBox port + BYO-GUI helpers. **`controls_extra`** module adds `ComboBox`, `TextEditor`, `ToggleButton`, `CheckBox`, `ProgressBar`, `Tooltip`, `DrawableButton`, `HyperlinkButton`, `ImageComponent` (with `ImageScalingMode` enum), `MidiKeyboardComponent` (visual piano keyboard with mouse interaction, active-note highlighting, `KeyboardOrientation`). All wrap `Component`, support closure callbacks, and have `render()` / `render_with_lookandfeel()` (feature-gated on `graphics`). **`layout`** module: `CssGrid` (CSS Grid with `fr`/`px`/`auto`/`minmax()` track sizing, named areas, spanning, gaps), `RelativeCoordinate`/`RelativeRectangle` (percentage-based positioning), `AnimationFrameRate` (throttled redraw), plus existing `FlexLayout`/`FlexBox`/`GridLayout`/`AbsoluteLayout`. **`opengl`** module (feature `gl-editor`): `OpenGLContext`, `ShaderProgram`, `OpenGLHelpers`, `OpenGLTexture`, `OpenGLFrameBuffer`, `OpenGLRenderer` trait + `RenderLoopDriver`, `Matrix3D`/`Matrix4x4`. 262 unit tests. Features: `components`, `layout`, `graphics`, `text`, `softbuffer-editor`, `gl-editor`, `full` |
 | `logic_nih_plug_egui`/`_iced`/`_vizia` | GUI backends |
 | `logic_nih_plug_audio_formats/` | WAV/AIFF (+ optional FLAC/OGG) |
 | `logic_nih_plug_audio_basics/` | `AudioSampleBuffer`, `AudioChannelSet`, `MidiMessage`, `MidiRPN`, `MidiClock`, `MtcRate`/`MtcTime`/`MtcEncoder`/`MtcFullFrame` |
@@ -48,8 +48,9 @@ Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **
 | `logic_nih_plug_data/` | `ValueTree`, `UndoManager`, `CachedValue<T>` |
 | `logic_nih_plug_osc/` | OSC sender/receiver, messages, bundles |
 | `logic_nih_plug_midi_ci/` | MIDI 2.0 Capability Inquiry |
+| `logic_nih_plug_video/` | Video playback: `VideoFrame` (RGBA8888), `VideoDecoder` (ffmpeg-next, feature `decoder`), `VideoComponent` (GUI, feature `gui`). 39 tests. Features: `decoder` (default), `gui`, `full` |
 | `logic_nih_plug_xtask/` + `xtask/` | Bundling lib + shim |
-| `logic_nih_plug_graphics/`, `_animation/`, `_crypto/` | 2D primitives, easing/chaining, SHA/MD5/RSA |
+| `logic_nih_plug_graphics/`, `_animation/`, `_crypto/` | 2D primitives + vector graphics (tiny-skia backed `Painter` / `Path` / `Stroke` / `ColourGradient` / `DropShadow`), glyph arrangement, image rescale/convolve, easing/chaining, SHA/MD5/RSA |
 | `plugins/examples/` | Example plugins. See [FORMAT_EXAMPLES.md](plugins/examples/FORMAT_EXAMPLES.md) |
 | `plugins/soft_vacuum/` etc. | Real plugins; all listed in [bundler.toml](bundler.toml) |
 
@@ -106,3 +107,31 @@ See [plugins/examples/gain/src/lib.rs](plugins/examples/gain/src/lib.rs) — the
 | DSP work | [API_REFERENCE.md](API_REFERENCE.md), [BENCHMARKING.md](BENCHMARKING.md) |
 | OSC work | [logic_nih_plug_osc/src](logic_nih_plug_osc/src) |
 | Ship a release | [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md), [RELEASE_NOTES.md](RELEASE_NOTES.md) |
+| `juce_core` / `juce_events` equivalents | §9 below — no `logic_nih_plug_core` crate, use stdlib + existing deps |
+
+---
+
+## 9. `juce_core` / `juce_events` — no crate, use stdlib + existing deps
+
+Every JUCE item in [TODO.md](TODO.md) §4 is already covered by Rust
+stdlib or by a dep already in the workspace tree. **Do not** create a
+`logic_nih_plug_core` (or similar) crate that wraps them — that's just
+cargo-culting `pub struct X(pub Y);`. Use the stdlib equivalents directly:
+
+| JUCE item | Rust equivalent | Notes |
+|---|---|---|
+| `File` | [`std::path::PathBuf`](https://doc.rust-lang.org/std/path/struct.PathBuf.html) + [`std::fs`](https://doc.rust-lang.org/std/fs/index.html) | Path metadata via `std::fs::metadata`. |
+| `String` wrapper | [`std::string::String`](https://doc.rust-lang.org/std/string/struct.String.html) | Rust has UTF-8 by default — JUCE's `juce::String` workarounds don't apply. |
+| `Array<T>` / `OwnedArray<T>` / `ReferenceCountedArray<T>` | [`Vec<T>`](https://doc.rust-lang.org/std/vec/struct.Vec.html) / `Vec<Box<T>>` / [`Arc<[T]>`](https://doc.rust-lang.org/std/sync/struct.Arc.html) | Use `Arc<Vec<T>>` only if you need shrinking after sharing. |
+| `Thread` | [`std::thread::JoinHandle`](https://doc.rust-lang.org/std/thread/struct.JoinHandle.html) | Already used throughout [src/event_loop/background_thread.rs](src/event_loop/background_thread.rs). |
+| `ThreadPool` | `rayon` | Already in the dep tree via the workspace. |
+| `WaitableEvent` | `crossbeam_channel` (already in tree) or `parking_lot::Mutex` + `Condvar` | See [src/event_loop/background_thread.rs](src/event_loop/background_thread.rs) for the canonical pattern. |
+| `Time` / `RelativeTime` | [`std::time::Instant`](https://doc.rust-lang.org/std/time/struct.Instant.html) / [`std::time::Duration`](https://doc.rust-lang.org/std/time/struct.Duration.html) | Monotonic by construction. |
+| `HighResolutionTimer` | `std::time::Instant::elapsed()` | Linux/macOS use `clock_gettime`; Windows uses `QueryPerformanceCounter`. Add `quanta` only if a sub-µs monotonic source is ever needed. |
+| `MessageManager::call_soon` (single-threaded GUI dispatch) | [`logic_nih_plug::event_loop::EventLoop::schedule_gui`](src/event_loop.rs) | Already the realtime-safe → GUI-thread hop the framework provides. |
+| `AsyncUpdater` (realtime-safe trigger → message-loop dispatch) | Same as `MessageManager::call_soon` — use `EventLoop::schedule_gui` | Realtime-safe enqueue, dispatched on the GUI thread. |
+| `Timer` (periodic tick) | Backend-native: `egui::Context::request_repaint_after`, `iced::Subscription::interval`, `vizia::view::timer` | No shared abstraction; every backend already does this idiomatically. |
+
+If you find yourself reaching for a wrapper crate for any of these,
+stop and check whether the stdlib version already does what you need —
+it almost certainly does.

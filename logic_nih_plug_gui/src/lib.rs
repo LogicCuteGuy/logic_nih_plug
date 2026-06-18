@@ -69,6 +69,9 @@ pub mod components;
 pub mod controls;
 
 #[cfg(feature = "components")]
+pub mod controls_extra;
+
+#[cfg(feature = "components")]
 pub mod input;
 
 #[cfg(feature = "layout")]
@@ -83,13 +86,18 @@ pub mod editor;
 #[cfg(feature = "gl-editor")]
 pub mod gl_editor;
 
+// OpenGL utilities (shader programs, textures, framebuffers, matrix math)
+#[cfg(feature = "gl-editor")]
+pub mod opengl;
+
 pub use error::{GuiError, Result};
 
 #[cfg(feature = "layout")]
 pub use layout::{
-    AbsoluteLayout, AlignContent, AlignItems, AlignSelf, FlexAlign, FlexBox, FlexBoxDirection,
-    FlexDirection, FlexItem, FlexLayout, FlexWrap, GridLayout, JustifyContent, Margin, Rect,
-    SizeConstraint,
+    AbsoluteLayout, AlignContent, AlignItems, AlignSelf, AnimationFrameRate, CssGrid,
+    CssGridItem, FlexAlign, FlexBox, FlexBoxDirection, FlexDirection, FlexItem, FlexLayout,
+    FlexWrap, GridLayout, GridAlignment, GridPlacement, GridTrack, JustifyContent, Margin, Rect,
+    RelativeCoordinate, RelativeRectangle, SizeConstraint,
 };
 
 #[cfg(feature = "components")]
@@ -99,9 +107,22 @@ pub use components::{Bounds, Component, ComponentId, ComponentState};
 pub use controls::{Button, ButtonState, Label, Slider, SliderOrientation, TextAlignment};
 
 #[cfg(feature = "components")]
+pub use controls_extra::{
+    CheckBox, ComboBox, DrawableButton, HyperlinkButton, ImageComponent, ImageScalingMode,
+    KeyboardOrientation, MidiKeyboardComponent, ProgressBar, TextEditor, ToggleButton, Tooltip,
+};
+
+#[cfg(feature = "components")]
 pub use input::{
     EventResult, InputCallbacks, KeyCode, KeyboardCallback, KeyboardEvent, KeyboardListener,
     Modifiers, MouseButton, MouseCallback, MouseEvent, MouseListener,
+};
+
+#[cfg(feature = "gl-editor")]
+pub use opengl::{
+    Matrix3D, Matrix4x4, OpenGLContext, OpenGLFrameBuffer, OpenGLHelpers, OpenGLRenderer,
+    OpenGLTexture, ShaderProgram, ShaderType, TextureDataType, TextureFormat, TextureMinFilter,
+    UniformLocation,
 };
 
 #[cfg(feature = "components")]

@@ -15,12 +15,19 @@ default = ["primitives"]
 primitives = []
 images = ["dep:image"]
 text = ["dep:fontdue"]
-full = ["primitives", "images", "text"]
+# 2D vector primitives (Path / Stroke / Fill / Gradient / DropShadow) backed by
+# `tiny-skia`. Opt-in because `tiny-skia` adds noticeable compile time and a
+# ~200 KiB binary footprint. Enable when you need bezier paths, gradients, or
+# shadow rendering.
+vector = ["dep:tiny-skia"]
+full = ["primitives", "images", "text", "vector"]
 
 [dependencies]
 thiserror = "2.0"
 image = { version = "0.25", optional = true }
 fontdue = { version = "0.9", optional = true }
+tiny-skia = { version = "0.12", optional = true }
+bitflags = "2"
 
 [dev-dependencies]
 criterion = "0.8.2"

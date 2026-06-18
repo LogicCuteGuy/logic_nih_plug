@@ -47,6 +47,9 @@
 //! ```
 
 pub mod flexbox;
+pub mod css_grid;
+pub mod relative;
+pub mod animation_frame_rate;
 
 use crate::components::{Bounds, Component};
 use crate::error::{GuiError, Result};
@@ -55,6 +58,12 @@ pub use flexbox::{
     AlignContent, AlignItems, AlignSelf, FlexBox, FlexDirection as FlexBoxDirection,
     FlexItem, FlexWrap, JustifyContent, Margin, Rect,
 };
+
+pub use css_grid::{
+    CssGrid, GridAlignment, GridItem as CssGridItem, GridPlacement, GridTrack,
+};
+pub use relative::{RelativeCoordinate, RelativeRectangle};
+pub use animation_frame_rate::AnimationFrameRate;
 
 /// Size constraint for a component.
 #[derive(Debug, Clone, Copy, PartialEq)]

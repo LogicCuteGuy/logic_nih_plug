@@ -328,7 +328,7 @@ mod image_tests {
         assert_eq!(loaded_png.height(), 2);
         fs::remove_file(png_path).ok();
         
-        // Test JPEG format
+        // Test JPEG format (JPEG doesn't support alpha — Image::save converts automatically)
         let jpg_path = "test_format.jpg";
         image.save(jpg_path).unwrap();
         let loaded_jpg = Image::load(jpg_path).unwrap();

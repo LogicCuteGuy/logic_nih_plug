@@ -1,0 +1,24 @@
+[package]
+name = "logic_nih_plug_video"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["video", "playback", "decoder"]
+description = "Video playback component ported from JUCE for nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[features]
+default = ["decoder"]
+decoder = ["dep:ffmpeg-next"]
+gui = ["dep:logic_nih_plug_gui"]
+full = ["decoder", "gui"]
+
+[dependencies]
+ffmpeg-next = { version = "8.1", optional = true }
+thiserror = "2.0"
+logic_nih_plug_gui = { path = "../logic_nih_plug_gui", optional = true }
+
+[dev-dependencies]

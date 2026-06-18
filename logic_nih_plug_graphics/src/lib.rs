@@ -33,6 +33,9 @@ pub mod images;
 #[cfg(feature = "text")]
 pub mod text;
 
+#[cfg(feature = "vector")]
+pub mod vector;
+
 pub use error::GraphicsError;
 pub use color::Color;
 pub use transform::Transform;
@@ -41,7 +44,16 @@ pub use transform::Transform;
 pub use primitives::Graphics;
 
 #[cfg(feature = "images")]
-pub use images::Image;
+pub use images::{Image, ImageConvolutionEngine, RescaleFilter};
 
 #[cfg(feature = "text")]
-pub use text::{Font, FontSettings};
+pub use text::{Font, FontSettings, GlyphArrangement, LineSpacing, PositionedGlyph};
+
+// Re-export the most common vector types at the crate root for ergonomic
+// `use logic_nih_plug_graphics::Path` rather than
+// `use logic_nih_plug_graphics::vector::Path`.
+#[cfg(feature = "vector")]
+pub use vector::{
+    ColourGradient, DropShadow, FillType, GradientStop, Justification, Paint, Path, PathBuilder,
+    Painter, Shader, SpreadMode, Stroke,
+};
