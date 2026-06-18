@@ -1,0 +1,29 @@
+[package]
+name = "logic_nih_plug_audio_devices"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["audio", "device", "asio", "wasapi", "coreaudio", "alsa", "jack", "juce-port"]
+description = "Audio device manager + I/O device trait ported from JUCE for nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[features]
+# Default is the manager surface — every consumer wants the orchestrator.
+default = ["manager"]
+
+# The audio device abstraction: `AudioDeviceManager`, `AudioIODevice` trait,
+# `AudioIODeviceType` enum, `AudioDeviceSetup`, the `AudioIODeviceCallback`
+# trait, and the manager listener trait.
+manager = []
+
+# Equivalent to the default surface.
+full = ["manager"]
+
+[dependencies]
+thiserror = "2.0.18"
+
+[dev-dependencies]
+# Tests use the public API only — no external integration harness is needed.

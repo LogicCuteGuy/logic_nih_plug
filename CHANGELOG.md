@@ -14,6 +14,37 @@ state is to list breaking changes.
 
 ### Added
 
+- **`logic_nih_plug_audio_basics`** — new crate porting
+  `juce_audio_basics` for the `logic_nih_plug` ecosystem:
+  - `AudioSampleBuffer` — non-interleaved (JUCE-default) audio sample
+    container with `interleave` / `deinterleave` helpers,
+    `apply_gain` / `apply_channel_gains` / `clear` / `copy_from` /
+    `add_from` / `set_size`.
+  - `AudioChannelSet` — speaker / channel layouts: `Mono`, `Stereo`,
+    `Lrc`, `Lrs`, `Quadraphonic`, `FiveDotZero`, `FiveDotOne`,
+    `SixDotOne`, `SevenDotZero`, `SevenDotOne`, `SevenDotOnePointTwo`,
+    `SevenDotOnePointFour`, `Ambisonic(order)` (with
+    `MAX_AMBISONIC_ORDER = 7`), and `Custom(n)`. Channel names
+    include abbreviation / description / speaker position.
+  - `MidiMessage` — value type (`Vec<u8>` payload + `i32` time
+    stamp) with builder methods for every common MIDI channel and
+    system message, plus `parse` for the inverse direction
+    (single-pass, no allocations).
+  - `MidiRPN` / `MidiRpnKind` — RPN vs NRPN encoding/decoding for
+    7-bit and 14-bit values, with `standard_rpn::*` constants for
+    well-known RPN numbers (pitch-bend sensitivity, MPE configuration,
+    tuning program/bank, RPN null, …).
+  - `MidiClock` — sample/tick/QN math for the 24-ppqn MIDI clock
+    (`samples_per_clock_tick`, `samples_to_ticks`, `ticks_to_samples`,
+    `split_tick_delta`, BPM ↔ microseconds-per-QN).
+  - `MtcRate` / `MtcTime` / `MtcEncoder` / `MtcFullFrame` — MTC
+    timecode (24 / 25 / 29.97 drop / 30 fps), drop-frame-aware
+    `to_frame_count` / `from_frame_count`, driven-by-`encode_frame()`
+    encoder, plus the `[0xF0, 0x7F, 0x7F, 0x01, 0x01, hh, mm, ss, ff,
+    0xF7]` full-frame SysEx form.
+  - 81 unit tests + 4 doc-tests; default features
+    `["buffer", "midi"]`, with `full` re-exporting everything.
+
 - **FFT upgrades** (`logic_nih_plug_dsp::analysis`) — real-only FFT,
   STFT, and a top-level `WindowingFunction` re-export:
   - `RealFFT` — real-only FFT path: real input → one-sided complex
@@ -37,6 +68,60 @@ state is to list breaking changes.
   one-sided (`fft_size/2 + 1` bins), the manual mirror-after-phase-
   processing step is gone, and the FFT path is a single source of
   truth across `analysis` and `pitch`. All 20 pitch tests pass.
+
+- **`logic_nih_plug_audio_devices`** — new crate porting
+  `juce_audio_devices` for the `logic_nih_plug` ecosystem:
+  - `AudioDeviceSetup` — desired sample rate, buffer size, and
+    input / output channel counts; helpers `stereo_44100` /
+    `stereo_48000`. Validates against the active device's
+    capabilities when one is attached.
+  - `AudioIODeviceType` — enum of every driver backend JUCE
+    supports (`CoreAudio`, `ASIO`, `WASAPI`, `DirectSound`, `ALSA`,
+    `JACK`, `AndroidAAudio`, `AndroidOpenSLES`, `Bela`, `IOSAudio`,
+    `WebAudio`, `Dummy`), with `type_name()`, `description()`,
+    `is_supported_on_current_platform()`, and
+    `supported_on_current_platform()`.
+  - `DriverType::current()` — compile-time detection of the
+    preferred driver for the current build target.
+  - `AudioIODevice` trait — `get_name`, `get_device_info`,
+    `get_output_channel_names`, `get_input_channel_names`,
+    `get_default_buffer_size`, `get_current_buffer_size`,
+    `get_current_sample_rate`, `get_input_latency_in_samples`,
+    `get_output_latency_in_samples`, `open` / `close` / `is_open`,
+    `start` / `stop` / `is_playing`, `get_last_error`, and optional
+    `has_control_panel` / `show_control_panel`. Concrete driver
+    integrations (cpal, coreaudio-rs, asio-sys, …) plug in by
+    implementing this trait.
+  - `AudioDeviceInfo` — name, sample rates, buffer sizes, channel
+    names, latencies; `validate_sample_rate` /
+    `validate_buffer_size` helpers; `closest_sample_rate` /
+    `closest_buffer_size` for nearest-neighbour fallback.
+  - `AudioIODeviceCallback` trait — `audio_device_about_to_start`,
+    `audio_device_io_callback`, `audio_device_stopped`
+    (real-time safe; mirrors `juce::AudioIODeviceCallback`); plus
+    `AudioIODeviceCallbackData<'a>` with parallel input / output
+    slice arrays and `NullAudioIODeviceCallback` for tests.
+  - `AudioDeviceManager` — long-lived orchestrator; holds the
+    active `Box<dyn AudioIODevice>`, the desired
+    `AudioDeviceSetup`, the current `AudioIODeviceType`, and the
+    listener list. Lifecycle: `set_current_audio_device_type`,
+    `set_current_audio_device`, `set_audio_device_setup` (reopens
+    the active device if it's open), `open_device`, `play`, `stop`,
+    `close_device`, `scan_device_names`, `play_test_sound` (no-op
+    stub).
+  - `AudioDeviceManagerState` — `Stopped` / `Open` / `Playing`
+    tri-state machine.
+  - `AudioDeviceManagerListener` trait — fires on device-type
+    change (`audio_device_manager_changed`) and setup change
+    (`audio_device_setup_changed`).
+  - `MockAudioIODevice` — concrete in-memory device for tests /
+    headless hosts, with `event_log` + `callback_count` +
+    `force_error` inspection helpers.
+  - 64 unit tests + 1 doc-test passing under `--features full`.
+  - Default features: `["manager"]`; `full` re-exports everything.
+  - Concrete driver bindings (`cpal`, `coreaudio-rs`, `asio-sys`, …)
+    are intentionally NOT bundled — they require platform SDKs.
+    The trait surface here is the integration point.
 
 ## [2026-06-18]
 

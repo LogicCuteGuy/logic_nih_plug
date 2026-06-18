@@ -3889,6 +3889,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "logic_nih_plug_audio_basics"
+version = "0.0.0"
+dependencies = [
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "logic_nih_plug_audio_devices"
+version = "0.0.0"
+dependencies = [
+ "thiserror 2.0.18",
+]
+
+[[package]]
 name = "logic_nih_plug_audio_formats"
 version = "0.0.0"
 dependencies = [

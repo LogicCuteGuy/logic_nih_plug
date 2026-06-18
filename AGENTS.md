@@ -43,6 +43,8 @@ Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **
 | `logic_nih_plug_gui/` | JUCE-style `Component`/`Button`/FlexBox port + BYO-GUI helpers. Features: `components`, `layout`, `graphics`, `text`, `softbuffer-editor`, `gl-editor`, `full` |
 | `logic_nih_plug_egui`/`_iced`/`_vizia` | GUI backends |
 | `logic_nih_plug_audio_formats/` | WAV/AIFF (+ optional FLAC/OGG) |
+| `logic_nih_plug_audio_basics/` | `AudioSampleBuffer`, `AudioChannelSet`, `MidiMessage`, `MidiRPN`, `MidiClock`, `MtcRate`/`MtcTime`/`MtcEncoder`/`MtcFullFrame` |
+| `logic_nih_plug_audio_devices/` | `AudioDeviceManager`, `AudioIODevice` trait, `AudioIODeviceType` / `DriverType` enums, `AudioDeviceSetup`, `AudioIODeviceCallback` trait, `MockAudioIODevice`. Concrete driver bindings (cpal, coreaudio-rs, asio-sys, …) are intentionally NOT bundled — they plug in by implementing `AudioIODevice`. Features: `manager` (default), `full` = `["manager"]` |
 | `logic_nih_plug_data/` | `ValueTree`, `UndoManager`, `CachedValue<T>` |
 | `logic_nih_plug_osc/` | OSC sender/receiver, messages, bundles |
 | `logic_nih_plug_midi_ci/` | MIDI 2.0 Capability Inquiry |
