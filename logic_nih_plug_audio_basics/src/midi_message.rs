@@ -450,6 +450,103 @@ impl MidiMessage {
         Self::controller(channel, Self::RESET_ALL_CONTROLLERS, 0)
     }
 
+    // ---- Meta events (SMF) ---------------------------------------------
+
+    /// Construct a generic meta-event with a variable-length payload.
+    ///
+    /// The on-the-wire form is `[0xFF, type_byte, len_vlq, ...payload]`.
+    /// This is the workhorse used by [`Self::tempo_meta`],
+    /// [`Self::time_signature_meta`], etc., and is exposed for callers
+    /// that need to round-trip the rest of the SMF meta vocabulary
+    /// (text events, markers, copyright, …).
+    ///
+    /// # Panics
+    ///
+    /// Panics if `data` is longer than `0x0FFF_FFFF` bytes (the maximum
+    /// representable in a 4-byte VLQ).
+    pub fn meta_event(type_byte: u8, data: &[u8]) -> Self {
+        let mut bytes = Vec::with_capacity(data.len() + 4);
+        bytes.push(0xFF);
+        bytes.push(type_byte);
+        // Encode VLQ length
+        let len = data.len() as u32;
+        if len < (1 << 7) {
+            bytes.push(len as u8);
+        } else if len < (1 << 14) {
+            bytes.push(((len >> 7) & 0x7F) as u8 | 0x80);
+            bytes.push((len & 0x7F) as u8);
+        } else if len < (1 << 21) {
+            bytes.push(((len >> 14) & 0x7F) as u8 | 0x80);
+            bytes.push(((len >> 7) & 0x7F) as u8 | 0x80);
+            bytes.push((len & 0x7F) as u8);
+        } else {
+            bytes.push(((len >> 21) & 0x7F) as u8 | 0x80);
+            bytes.push(((len >> 14) & 0x7F) as u8 | 0x80);
+            bytes.push(((len >> 7) & 0x7F) as u8 | 0x80);
+            bytes.push((len & 0x7F) as u8);
+        }
+        bytes.extend_from_slice(data);
+        Self::from_bytes(bytes, 0)
+    }
+
+    /// Construct a "Set Tempo" meta-event (type `0x51`).
+    ///
+    /// `microseconds_per_quarter_note` defines the tempo until the next
+    /// tempo event (or end-of-track).
+    pub fn tempo_meta(tempo: crate::mtc::TempoEvent) -> Self {
+        let us = tempo.microseconds_per_quarter_note;
+        Self::meta_event(
+            0x51,
+            &[(us >> 16) as u8, (us >> 8) as u8, us as u8],
+        )
+    }
+
+    /// Construct a "Time Signature" meta-event (type `0x58`).
+    pub fn time_signature_meta(sig: crate::mtc::TimeSignature) -> Self {
+        Self::meta_event(
+            0x58,
+            &[
+                sig.numerator,
+                sig.denominator_log2,
+                sig.clocks_per_click,
+                sig.thirty_seconds_per_24_clocks,
+            ],
+        )
+    }
+
+    /// Construct a "Key Signature" meta-event (type `0x59`).
+    pub fn key_signature_meta(sig: crate::mtc::KeySignature) -> Self {
+        Self::meta_event(0x59, &[sig.sharps as u8, u8::from(sig.is_minor)])
+    }
+
+    /// Construct an "End of Track" meta-event (type `0x2F`).
+    pub fn end_of_track_meta() -> Self {
+        Self::meta_event(0x2F, &[])
+    }
+
+    /// The meta-event type byte if this is a meta-event (`0xFF` …), else `None`.
+    pub fn meta_type(&self) -> Option<u8> {
+        if self.data.len() >= 2 && self.data[0] == 0xFF {
+            Some(self.data[1])
+        } else {
+            None
+        }
+    }
+
+    /// The meta-event payload (everything after the type byte and VLQ
+    /// length), if this is a meta-event.
+    pub fn meta_data(&self) -> Option<&[u8]> {
+        if self.data.len() < 3 || self.data[0] != 0xFF {
+            return None;
+        }
+        // Skip 0xFF, type, and a single-byte VLQ length. This covers
+        // every meta-event we expose constructors for; callers handling
+        // payloads longer than 127 bytes should read the SMF format spec.
+        let len_byte = self.data[2] & 0x7F;
+        let end = (3 + len_byte as usize).min(self.data.len());
+        Some(&self.data[3..end])
+    }
+
     // ---- Parsing --------------------------------------------------------
 
     /// Attempt to parse a complete MIDI message from the start of `input`.

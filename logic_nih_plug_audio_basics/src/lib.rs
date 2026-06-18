@@ -95,4 +95,4 @@ pub use midi_rpn::{MidiRPN, MidiRpnKind};
 pub use midi_clock::MidiClock;
 
 #[cfg(feature = "midi")]
-pub use mtc::{MtcEncoder, MtcFullFrame, MtcRate, MtcTime};
+pub use mtc::{KeySignature, MtcEncoder, MtcFullFrame, MtcRate, MtcTime, TempoEvent, TimeSignature};

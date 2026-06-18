@@ -14,6 +14,50 @@ state is to list breaking changes.
 
 ### Added
 
+- **`juce_audio_utils` port** — split across `logic_nih_plug_audio_formats`
+  (SMF + transport) and `logic_nih_plug_gui` (commands + MDI):
+  - `MidiFile` / `MidiFileTrack` / `MidiFileEvent` /
+    `MidiFileFormat` in `logic_nih_plug_audio_formats::midi_file` —
+    Standard MIDI File reader/writer supporting Format 0 + 1 + 2,
+    PPQN time-base, VLQ-encoded delta times, running status,
+    meta events (tempo / time signature / key signature / end of
+    track), SysEx. 20 unit tests + 1 doc-test.
+  - `MidiFilePlayer` in `logic_nih_plug_audio_formats::midi_file_player` —
+    tempo-aware transport: `set_position_ticks` /
+    `set_position_seconds`, `get_next_midi_block` emits events with
+    sample-offset `time_stamp`, `loop_range`, `total_seconds`,
+    `is_finished`. 11 unit tests + 1 doc-test.
+  - `MidiMessage::meta_event(type, data)`,
+    `tempo_meta(TempoEvent)`, `time_signature_meta(TimeSignature)`,
+    `key_signature_meta(KeySignature)`, `end_of_track_meta()`,
+    plus `meta_type()` / `meta_data()` accessors in
+    `logic_nih_plug_audio_basics` (so SMF callers can construct
+    meta events without hand-rolling bytes).
+  - `TempoEvent` / `TimeSignature` / `KeySignature` types in
+    `logic_nih_plug_audio_basics::mtc`, re-exported at crate root
+    (the canonical implementations; the SMF reader/writer re-uses
+    them).
+  - `ApplicationCommandManager` family in
+    `logic_nih_plug_gui::commands` — `CommandId`, `CommandFlags`
+    bitflags, `KeyPress` (with virtual-key constants and
+    `get_text_description()`), `CommandInfo` builder,
+    `KeyPressMappingSet` (bidirectional mapping with compact-string
+    round-trip), `ApplicationCommandTarget` trait, and the manager
+    itself with chain dispatch. 28 unit tests + 1 doc-test.
+  - `MultiDocumentPanel` in `logic_nih_plug_gui::multi_doc_panel` —
+    tabbed MDI container with `MultiDocumentPanelLayout`
+    (`FloatingWindows` / `MaximisedWindowsWithTabs`),
+    `add_document(component, owned)` / `close_document(idx)` /
+    `set_active_document_by_index` / `set_max_documents` /
+    `set_background_colour(rgba)`. 22 unit tests + 1 doc-test.
+  - **Skipped** (deferred to a follow-up):
+    `AudioThumbnail` (data + GUI component — needs an async source
+    loader and the GUI render path),
+    `AudioFilePlayer` (small but not yet wired in).
+  - All `logic_nih_plug_audio_formats` SMF/MIDI features are
+    feature-gated on `midi` (default off, like `flac`/`ogg`) so
+    the default build doesn't take on `logic_nih_plug_audio_basics`.
+
 - **`logic_nih_plug_video`** — video playback crate ported from JUCE's
   `juce_video` module:
   - `VideoFrame` — RGBA8888 frame with pixel accessors and solid-colour
@@ -26,6 +70,20 @@ state is to list breaking changes.
   - `PlaybackState` enum, `VideoError` (7 variants)
   - 39 unit tests; decoder feature is optional so core types compile
     without FFmpeg system libraries
+
+- **`logic_nih_plug_audio_processors`** — host-side plugin discovery,
+  scanning, and management ported from JUCE's `juce_audio_processors`:
+  - `PluginDescription` — immutable metadata (name, manufacturer, version,
+    format, unique ID, channel counts, file path) with tab-delimited
+    compact serialization
+  - `PluginFormat` trait — format-specific scanning/loading abstraction
+  - `PluginFormatType` — 8 variants with platform detection, extensions,
+    default search paths
+  - `KnownPluginList` — persistent registry with deduplication, sorting
+    (6 methods), change listener, serialization
+  - `PluginDirectoryScanner` — incremental scanner with blacklisting,
+    dead-man's-pedal file I/O, progress reporting
+  - 65 unit tests + 14 doc-tests
 
 - **`logic_nih_plug_gui` OpenGL utilities** — reusable OpenGL abstractions
   ported from JUCE's `juce_opengl` module, built on `glow`:

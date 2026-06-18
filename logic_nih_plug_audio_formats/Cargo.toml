@@ -16,13 +16,17 @@ wav = ["dep:hound"]
 aiff = []
 flac = ["dep:claxon"]
 ogg = ["dep:lewton"]
-full = ["wav", "aiff", "flac", "ogg"]
+# Standard MIDI File (.mid/.smf) read/write plus a tempo-aware MidiFilePlayer.
+# Adds a dependency on logic_nih_plug_audio_basics for the MidiMessage type.
+midi = ["dep:logic_nih_plug_audio_basics"]
+full = ["wav", "aiff", "flac", "ogg", "midi"]
 
 [dependencies]
 thiserror = "2.0"
 hound = { version = "3.5", optional = true }
 claxon = { version = "0.4", optional = true }
 lewton = { version = "0.10", optional = true }
+logic_nih_plug_audio_basics = { path = "../logic_nih_plug_audio_basics", default-features = false, features = ["midi"], optional = true }
 
 [dev-dependencies]
 proptest = "1.8"

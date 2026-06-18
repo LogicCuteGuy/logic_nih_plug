@@ -49,6 +49,10 @@ Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **
 | `logic_nih_plug_osc/` | OSC sender/receiver, messages, bundles |
 | `logic_nih_plug_midi_ci/` | MIDI 2.0 Capability Inquiry |
 | `logic_nih_plug_video/` | Video playback: `VideoFrame` (RGBA8888), `VideoDecoder` (ffmpeg-next, feature `decoder`), `VideoComponent` (GUI, feature `gui`). 39 tests. Features: `decoder` (default), `gui`, `full` |
+| `logic_nih_plug_audio_processors/` | Host-side plugin discovery/management: `PluginDescription`, `PluginFormat` trait, `PluginFormatType`, `KnownPluginList`, `PluginDirectoryScanner`, `NullPluginFormat`. 79 tests. Features: `scanner`, `full` |
+| `logic_nih_plug_audio_formats::midi_file[_player]` | SMF (`.mid`) read/write + tempo-aware transport (`MidiFilePlayer`). Feature `midi` (default off). 31 tests. `TempoEvent` / `TimeSignature` / `KeySignature` types live in `logic_nih_plug_audio_basics::mtc`. |
+| `logic_nih_plug_gui::commands` | `ApplicationCommandManager`, `KeyPress`, `KeyPressMappingSet`, `CommandInfo`, `ApplicationCommandTarget` trait. 28 tests. |
+| `logic_nih_plug_gui::multi_doc_panel` | Tabbed MDI container. `MultiDocumentPanel`, `MultiDocumentPanelLayout`. 22 tests. |
 | `logic_nih_plug_xtask/` + `xtask/` | Bundling lib + shim |
 | `logic_nih_plug_graphics/`, `_animation/`, `_crypto/` | 2D primitives + vector graphics (tiny-skia backed `Painter` / `Path` / `Stroke` / `ColourGradient` / `DropShadow`), glyph arrangement, image rescale/convolve, easing/chaining, SHA/MD5/RSA |
 | `plugins/examples/` | Example plugins. See [FORMAT_EXAMPLES.md](plugins/examples/FORMAT_EXAMPLES.md) |

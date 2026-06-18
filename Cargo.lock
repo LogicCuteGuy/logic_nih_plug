@@ -3941,6 +3941,15 @@ dependencies = [
  "criterion",
  "hound",
  "lewton",
+ "logic_nih_plug_audio_basics",
+ "proptest",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "logic_nih_plug_audio_processors"
+version = "0.0.0"
+dependencies = [
  "proptest",
  "thiserror 2.0.18",
 ]

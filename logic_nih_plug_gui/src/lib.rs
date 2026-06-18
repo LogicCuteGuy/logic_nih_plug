@@ -80,6 +80,12 @@ pub mod layout;
 #[cfg(feature = "components")]
 pub mod lookandfeel;
 
+#[cfg(feature = "components")]
+pub mod commands;
+
+#[cfg(feature = "components")]
+pub mod multi_doc_panel;
+
 // Optional editor helpers (softbuffer-backed windows)
 #[cfg(feature = "softbuffer-editor")]
 pub mod editor;
@@ -111,6 +117,15 @@ pub use controls_extra::{
     CheckBox, ComboBox, DrawableButton, HyperlinkButton, ImageComponent, ImageScalingMode,
     KeyboardOrientation, MidiKeyboardComponent, ProgressBar, TextEditor, ToggleButton, Tooltip,
 };
+
+#[cfg(feature = "components")]
+pub use commands::{
+    ApplicationCommandManager, ApplicationCommandTarget, CommandFlags, CommandId, CommandInfo,
+    CommandListener, InvocationInfo, InvocationOrigin, KeyPress, KeyPressMappingSet,
+};
+
+#[cfg(feature = "components")]
+pub use multi_doc_panel::{DocumentEntry, MultiDocumentPanel, MultiDocumentPanelLayout};
 
 #[cfg(feature = "components")]
 pub use input::{

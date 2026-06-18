@@ -34,6 +34,12 @@ pub mod flac;
 #[cfg(feature = "ogg")]
 pub mod ogg;
 
+#[cfg(feature = "midi")]
+pub mod midi_file;
+
+#[cfg(feature = "midi")]
+pub mod midi_file_player;
+
 pub use error::{AudioFormatError, Result};
 
 use std::path::Path;

@@ -426,19 +426,90 @@ already. These are the missing processors.
 
 ## 6. Audio processors (host side)
 
-- [ ] **Port `juce_audio_processors` host utilities**
-  - `AudioPluginInstance` trait (host → plugin bridge)
-  - `PluginDescription`, `PluginDirectoryScanner`
-  - `KnownPluginList`
-  - Standalone host harness using `cpal` + `nih_plug_xtask` plugin-loader
+- [x] **Port `juce_audio_processors` host utilities** — ✅ done (2026-06-18)
+  - `PluginDescription` — immutable metadata (name, manufacturer, version,
+    format, unique ID, channel counts, file path). Tab-delimited compact
+    serialization for cross-session caching.
+  - `PluginFormat` trait — format-specific scanning/loading abstraction
+    (VST3, CLAP, AU, LV2, etc.) with `find_plugins_in_file`,
+    `default_search_paths`, `needs_rescanning`, `plugin_still_exists`.
+  - `PluginFormatType` enum — 8 variants with `name()`, `from_name()`,
+    `extensions()`, `is_supported_on_current_platform()`,
+    `default_search_paths()`, `file_might_be_plugin()`.
+  - `NullPluginFormat` — placeholder for testing.
+  - `KnownPluginList` — persistent registry with deduplication (case-
+    insensitive by format+ID), sorting (6 methods), change listener,
+    compact serialization, dead-plugin removal.
+  - `PluginDirectoryScanner` — incremental directory scanner (decoupled
+    from list), blacklisting, dead-man's-pedal file I/O, progress
+    reporting.
+  - `AudioProcessorsError` / `AudioProcessorsResult` — 7 error variants.
+  - 65 unit tests + 14 doc-tests passing under `--features full`.
+  - Features: `scanner` (default off), `full` (all).
+  - Crate: [`logic_nih_plug_audio_processors`](logic_nih_plug_audio_processors)
 
-- [ ] **Port `juce_audio_utils`**
-  - `MidiKeyboardComponent`
-  - `AudioThumbnail` (waveform preview)
-  - `MidiFilePlayer` / `MidiFileWriter` (re-use
-    `logic_nih_plug_audio_formats`)
-  - `AudioFilePlayer` (streaming)
-  - `MultiDocumentPanel`, `ApplicationCommandManager`
+- [x] **Port `juce_audio_utils`** — ✅ done (2026-06-18)
+  - `MidiFile` (SMF format reader/writer) added to
+    `logic_nih_plug_audio_formats` (feature `midi`):
+    - `MidiFileFormat { SingleTrack, MultiTrack, SequentialTracks }`
+    - `MidiFileTrack` — sorted event list, `push_event`,
+      `tempo_events()`, `time_signature_events()`,
+      `key_signature_events()` helpers
+    - `MidiFileEvent` — `(tick, MidiMessage)` pair
+    - Read/write round-trip with VLQ-encoded delta times, running
+      status, meta events (tempo / time signature / key signature /
+      end of track), SysEx
+    - Helper constructors on `MidiMessage`: `meta_event(type, data)`,
+      `tempo_meta(TempoEvent)`, `time_signature_meta(TimeSignature)`,
+      `key_signature_meta(KeySignature)`, `end_of_track_meta()`,
+      plus `meta_type()` / `meta_data()` accessors
+    - `TempoEvent`, `TimeSignature`, `KeySignature` types defined in
+      `logic_nih_plug_audio_basics::mtc` and re-used by the SMF
+      reader/writer
+  - `MidiFilePlayer` — tempo-aware transport in
+    `logic_nih_plug_audio_formats::midi_file_player`:
+    - `set_position_ticks` / `set_position_seconds` / `position_seconds`
+    - `get_next_midi_block(out, sample_rate, buffer_seconds, buffer_size)`
+      emits events with sample-offset `time_stamp` field
+    - `total_seconds`, `is_finished`, optional `loop_range` (set via
+      `set_loop_range(tick_range)` or `set_loop_in_bars(start, end, num)`)
+  - `ApplicationCommandManager` family added to
+    `logic_nih_plug_gui::commands`:
+    - `CommandId` newtype, `CommandFlags` bitflags
+      (`IS_DISABLED`, `IS_TICKED`, `HIDE_IN_MENU`, …)
+    - `KeyPress` — key code + `Modifiers`, virtual-key constants
+      (F1..F12, arrows, INSERT/HOME/END/PAGE_UP/PAGE_DOWN),
+      `get_text_description()` ("Ctrl+S"), `is_printable()`
+    - `CommandInfo` builder (`with_long_name`, `with_description`,
+      `with_category`, `with_flags`, `with_default_keypress`)
+    - `KeyPressMappingSet` — bidirectional mapping,
+      `add_mapping` / `remove_mapping` / `remove_all_mappings_for_command`,
+      `find_command_for_keypress`, compact string serialization
+    - `ApplicationCommandTarget` trait (`get_command_info`,
+      `get_next_command_target`, `perform`)
+    - `ApplicationCommandManager` — register / remove commands,
+      `invoke` (chain dispatch through targets), `invoke_directly`,
+      `command_status_changed` listener fan-out, default
+      keypress registered alongside commands
+  - `MultiDocumentPanel` added to `logic_nih_plug_gui::multi_doc_panel`:
+    - `MultiDocumentPanelLayout { FloatingWindows, MaximisedWindowsWithTabs }`
+    - `add_document(component, owned)`, `close_document(idx)`,
+      `close_all_documents`, `set_active_document_by_index`,
+      `set_active_document(component)`
+    - `set_max_documents`, `set_fullscreen_when_one_document`,
+      `set_background_colour(rgba)`
+    - Owns the active-index invariant when documents are added /
+      removed
+  - **Skipped** (out of scope for this pass):
+    - `AudioThumbnail` data + GUI component — defers to its own
+      session; the GUI half depends on the `graphics` painter +
+      an async source-loading thread that's worth doing properly
+    - `AudioFilePlayer` — small transport wrapper on the
+      `AudioFileReader`; fits but not yet wired in
+  - 81 unit tests in `logic_nih_plug_audio_formats` under
+    `--features full`, 50 unit tests in `logic_nih_plug_gui`
+    (`commands` + `multi_doc_panel`), zero regressions across the
+    workspace.
 
 ---
 
@@ -499,3 +570,5 @@ already. These are the missing processors.
 | `logic_nih_plug_osc` | ✅ Ported (OscSender, OscReceiver, OSCArgument, OSCBundle) |
 | `logic_nih_plug_midi_ci` | ✅ Ported (32 message types, transport-agnostic) |
 | `logic_nih_plug_video` | ✅ Ported (VideoFrame, VideoDecoder, VideoComponent; 39 tests) |
+| `logic_nih_plug_audio_processors` | ✅ Ported (PluginDescription, PluginFormat, KnownPluginList, PluginDirectoryScanner; 79 tests) |
+| `logic_nih_plug_audio_utils` (SMF + commands + MDI) | ✅ Ported (MidiFile/MidiFilePlayer in `audio_formats`; ApplicationCommandManager/KeyPress/KeyPressMappingSet + MultiDocumentPanel in `gui`; 81 audio_formats + 50 gui tests) |

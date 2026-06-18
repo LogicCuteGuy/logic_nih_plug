@@ -419,6 +419,77 @@ impl MtcEncoder {
     }
 }
 
+// ---------------------------------------------------------------------------
+// SMF meta-events (tempo, time signature, key signature)
+//
+// These live alongside MTC because they're all part of the "tempo / time /
+// transport" vocabulary that a sequencer needs to reason about. They use
+// the SMF (`<meta-event>` 0xFF + type) wire format which is built and read
+// via [`MidiMessage`].
+// ---------------------------------------------------------------------------
+
+/// A tempo meta-event in microseconds per quarter note.
+///
+/// The default SMF tempo (used when no tempo event has been seen yet) is
+/// 120 BPM = `500_000` microseconds per quarter note.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct TempoEvent {
+    /// Microseconds per quarter note. Standard range: ~50_000..2_000_000.
+    pub microseconds_per_quarter_note: u32,
+}
+
+impl TempoEvent {
+    /// 120 BPM — the SMF default tempo.
+    pub const DEFAULT: TempoEvent = TempoEvent {
+        microseconds_per_quarter_note: 500_000,
+    };
+
+    /// Convert to BPM (beats per minute).
+    pub fn bpm(&self) -> f64 {
+        60_000_000.0 / self.microseconds_per_quarter_note as f64
+    }
+
+    /// Construct from a BPM value. Clamped to a positive `u32`.
+    pub fn from_bpm(bpm: f64) -> Self {
+        let us = (60_000_000.0 / bpm).round().clamp(1.0, u32::MAX as f64) as u32;
+        Self {
+            microseconds_per_quarter_note: us,
+        }
+    }
+}
+
+/// A time-signature meta-event.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct TimeSignature {
+    /// Numerator (beats per bar). e.g. 4 for 4/4, 3 for 3/4.
+    pub numerator: u8,
+    /// Denominator power-of-two exponent. e.g. 2 for "/4", 3 for "/8".
+    pub denominator_log2: u8,
+    /// MIDI clocks per metronome click. Default: 24.
+    pub clocks_per_click: u8,
+    /// Number of 32nd notes per 24 MIDI clocks. Default: 8.
+    pub thirty_seconds_per_24_clocks: u8,
+}
+
+impl TimeSignature {
+    /// 4/4 time — the SMF default.
+    pub const FOUR_FOUR: TimeSignature = TimeSignature {
+        numerator: 4,
+        denominator_log2: 2,
+        clocks_per_click: 24,
+        thirty_seconds_per_24_clocks: 8,
+    };
+}
+
+/// A key-signature meta-event.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct KeySignature {
+    /// Number of sharps (positive) or flats (negative). Range: -7..=7.
+    pub sharps: i8,
+    /// `true` if the key is minor.
+    pub is_minor: bool,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

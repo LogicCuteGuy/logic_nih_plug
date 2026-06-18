@@ -1,0 +1,22 @@
+[package]
+name = "logic_nih_plug_audio_processors"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["audio", "plugin", "host", "scanner"]
+description = "Host-side plugin discovery, scanning, and management ported from JUCE for nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[features]
+default = []
+scanner = []
+full = ["scanner"]
+
+[dependencies]
+thiserror = "2.0"
+
+[dev-dependencies]
+proptest = "1.8"
