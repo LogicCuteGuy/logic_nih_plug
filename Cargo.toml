@@ -3,12 +3,12 @@ name = "logic_nih_plug"
 version = "0.0.0"
 edition = "2021"
 rust-version = "1.80"
-authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
 license = "ISC"
 
 keywords = ["audio", "plugin", "vst", "vst3"]
 description = "A simple but modern API-agnostic audio plugin framework"
-repository = "https://github.com/robbert-vdh/nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
 
 [workspace]
 resolver = "2"
@@ -26,6 +26,8 @@ members = [
   "logic_nih_plug_animation",
   "logic_nih_plug_data",
   "logic_nih_plug_crypto",
+  "logic_nih_plug_osc",
+  "logic_nih_plug_midi_ci",
 
   "cargo_logic_nih_plug",
   "xtask",

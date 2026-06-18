@@ -1,0 +1,39 @@
+[package]
+name = "logic_nih_plug_osc"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["osc", "udp", "network", "plugin"]
+description = "OSC (Open Sound Control) sender and receiver ported from JUCE for nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[features]
+# The default surface includes both the sender and the receiver, since you almost
+# always want to be able to talk *to* an OSC peer as well as listen for inbound
+# messages.
+default = ["sender", "receiver"]
+
+# Enables [`sender::OscSender`] — a synchronous UDP OSC sender.
+sender = ["dep:rosc"]
+
+# Enables [`receiver::OscReceiver`] — a thread-driven UDP OSC receiver with
+# pattern-matched listeners.
+receiver = ["dep:rosc"]
+
+# Equivalent to the default feature set.
+full = ["sender", "receiver"]
+
+[dependencies]
+thiserror = "2.0.18"
+
+# The rosc crate handles the OSC 1.0 wire format (encoder/decoder/address
+# matching). It's gated behind `sender`/`receiver` so you can pull in just one
+# half if you only ever send or only ever listen.
+rosc = { version = "0.11", optional = true }
+
+[dev-dependencies]
+# We round-trip real packets through the kernel in the integration tests, so
+# nothing beyond what's already a dependency is needed.

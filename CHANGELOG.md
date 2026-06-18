@@ -10,6 +10,238 @@ Since there is no stable release yet, the changes are organized per day in
 reverse chronological order. The main purpose of this document in its current
 state is to list breaking changes.
 
+## [2026-06-18]
+
+### Added
+
+- **FFT upgrades** (`logic_nih_plug_dsp::analysis`) — real-only FFT,
+  STFT, and a top-level `WindowingFunction` re-export:
+  - `RealFFT` — real-only FFT path: real input → one-sided complex
+    spectrum (N/2+1 bins) and back. Uses `rustfft::FftPlanner`
+    plans (forward + inverse) and exploits Hermitian symmetry.
+  - `STFT` — short-time Fourier transform with per-frame
+    `analyze_frame` / `synthesize_frame` and one-shot
+    `process_block` (windowed OLA with COLA normalisation).
+  - `WindowingFunction` — moved from `processors::pitch` to the
+    `analysis` module for cross-cutting access; the pitch module
+    re-exports it for backwards compatibility.
+  - 17 unit tests + 4 doc-tests for `RealFFT` and `STFT`; 9
+    windowing tests now under `analysis`; gated behind the
+    existing `analysis` feature flag.
+
+### Changed
+
+- **PhaseVocoder** (`logic_nih_plug_dsp::processors::pitch`) — now
+  uses `RealFFT` internally instead of two separate
+  `Arc<dyn rustfft::Fft<f32>>` plans. Spectrum buffer is now
+  one-sided (`fft_size/2 + 1` bins), the manual mirror-after-phase-
+  processing step is gone, and the FFT path is a single source of
+  truth across `analysis` and `pitch`. All 20 pitch tests pass.
+
+## [2026-06-18]
+
+### Added
+
+- **Analysis module** (`logic_nih_plug_dsp::analysis`) — four new analysis tools:
+  - `LevelMeter` — peak / RMS metering with configurable attack/release ballistics,
+    per-channel and global tracking, dB domain queries.
+  - `Follower` — single-path envelope follower with absolute / squared rectification,
+    attack/release smoothing.
+  - `LoudnessMeter` — ITU-R BS.1770 K-weighting (high-shelf pre-filter + 38 Hz
+    Butterworth high-pass), momentary (400 ms), short-term (3 s), integrated LUFS
+    with absolute gating.
+  - `Oscilloscope` — circular min/max block buffer for waveform display,
+    chronological iteration, age-based access.
+  - 33 unit tests + 9 doc-tests; gated behind `analysis` feature flag.
+
+- **Pitch processing** (`logic_nih_plug_dsp::processors::pitch`) — phase
+  vocoder, pitch shifting, and time stretching:
+  - `PhaseVocoder` — STFT analysis → phase unwrapping → overlap-add
+    synthesis with Hann windows, configurable FFT size and hop divisor.
+  - `PitchShift` — pitch shifting without changing duration, via phase
+    vocoder + linear resampling. Supports any fractional ratio.
+  - `TimeStretching` — time stretching / compressing without pitch change.
+  - `WindowingFunction` — 8 window types (rectangular, triangular, Hann,
+    Hamming, Blackman, Blackman-Harris, FlatTop, Kaiser).
+  - 29 unit tests + 2 doc-tests; gated behind `pitch` feature flag.
+
+- **Resampling** (`logic_nih_plug_dsp::processors::resampling`) — sample-rate
+  conversion and fractional-delay interpolation:
+  - `GenericInterpolator<T>` — circular buffer wrapper that delegates to any
+    [`Interpolator`] strategy.
+  - `ZeroOrderHold` — lo-fi staircase (latency 0, memory 1).
+  - `Linear` — low-cost linear blend (latency 1, memory 2).
+  - `CatmullRom` — cubic spline (latency 2, memory 4).
+  - `Lagrange` — 4th-order polynomial (latency 2, memory 5).
+  - `WindowedSinc` — Hann-windowed sinc with precomputed 1000-entry lookup
+    table (latency 100, memory 200).
+  - 14 unit tests + 2 doc-tests; gated behind `resampling` feature flag.
+
+- Mixer helpers ported from `juce::dsp` are now available in
+  `logic_nih_plug_dsp::processors` (gated behind the new `mixer`
+  feature flag, enabled by the existing `processors` umbrella feature):
+  - `Panner` — stereo panner with 7 pan laws (linear, balanced,
+    sin3dB, sin4p5dB, sin6dB, squareRoot3dB, squareRoot4p5dB).
+    Smoothed L/R volumes, in-place stereo processing.
+    Port of JUCE's `juce::dsp::Panner`.
+  - `DryWetMixer` — dry/wet mixer with 7 mixing rules matching
+    the panner laws. Ring-buffer dry storage with push/mix API.
+    Port of JUCE's `juce::dsp::DryWetMixer` (simplified single-
+    threaded API without AbstractFifo complexity).
+  - `Gain` — already existed; no changes needed.
+  - 25 unit tests + 6 doc-tests.
+
+### Added
+
+- Modulation processors ported from `juce::dsp` are now available in
+  `logic_nih_plug_dsp::processors` (gated behind the new `modulation`
+  feature flag, enabled by the existing `processors` umbrella feature):
+  - `Phaser` — 6-stage LFO-modulated first-order allpass phaser.
+    Sine LFO subsampled by factor 4, per-channel feedback, dry/wet
+    mix. Allpass stages use the TPT (Topology-Preserving Transform)
+    formulation from JUCE's `FirstOrderTPTFilter`.
+  - `Chorus` — LFO-modulated delay line chorus / flanger / vibrato.
+    Reuses `DelayLine<LinearInterpolation>` from the `delay` module.
+    Classic chorus (7–8 ms centre delay), flanging (short delay,
+    high feedback), and vibrato (mix = 1.0) modes.
+  - `WahWah` — LFO-modulated resonant bandpass filter (auto-wah).
+    TPT state variable filter bandpass, log-mapped centre frequency
+    sweep between configurable min/max. Not a JUCE DSP widget but
+    follows the same API conventions.
+  - `LadderFilter` — Moog ladder filter with 6 modes (`LPF12`,
+    `HPF12`, `BPF12`, `LPF24`, `HPF24`, `BPF24`), tanh saturation
+    LUT, smoothed cutoff / resonance, drive parameter. Follows
+    Valimaki (2006) as implemented in JUCE's `LadderFilter`.
+  - 30 unit tests + 4 doc-tests.
+
+### Added
+
+- Delay effect ported from `juce::dsp::DelayLine` is now available in
+  `logic_nih_plug_dsp::processors::delay` (gated behind the new
+  `delay` feature flag, enabled by the existing `processors` umbrella
+  feature):
+  - `DelayLine<Interp>` — multi-channel, fractional-sample delay line
+    with pluggable interpolation. Direct port of
+    `juce::dsp::DelayLine<SampleType, InterpolationType>`. Uses an
+    inverted ring buffer (write_pos / read_pos decrement mod
+    `total_size`) so per-sample push/pop is O(1) without branches.
+    `total_size = max(4, max_delay + 2)` matches JUCE exactly.
+  - `DelayLineInterpolation` trait with four implementations matching
+    the JUCE `DelayLineInterpolationTypes` line-for-line:
+    `NoInterpolation` (integer read), `LinearInterpolation`
+    (linear blend), `Lagrange3rdInterpolation` (4-tap, frac<2 → +1
+    canonical shift), and `ThiranInterpolation` (1st-order allpass,
+    frac<0.618 → +1 canonical shift, pre-computed `alpha`). The
+    canonical-shift logic lives in a `canonicalize` hook on the trait
+    so each interpolator controls its own kernel conditioning.
+  - `set_delay(samples)` clamps to `[0, total_size - 2]`, then
+    canonicalises through the trait. `push_sample`, `pop_sample`,
+    `pop_sample_with_delay(channel, delay, update_read_pointer)`
+    (the last form enables multi-tap reads without advancing the
+    pointer, exactly like JUCE). `process(input, output)` block form.
+  - `DefaultDelayLine = DelayLine<LinearInterpolation>` type alias
+    for the common case.
+  - `Delay` effect — feedback delay with `DelayParameters { ... }`
+    (`delay_time_seconds`, `feedback` ∈ [0, 1.2], `mix` ∈ [0, 1],
+    `ping_pong`, `tempo_sync`, `tempo_bpm`, `note_division`,
+    `max_delay_seconds`, `enabled`). The delay-line input is
+    hard-clipped to ±1.0 to prevent NaN/Inf at high feedback.
+  - `process_sample` (mono, uses only the left line), `process`
+    (mono block, `Processor` trait), and `process_stereo(in_l, in_r,
+    out_l, out_r)` (stereo, with cross-feedback when `ping_pong` is
+    on). `set_tempo_bpm` updates the target without re-allocating.
+  - 12 `NoteDivision` values (whole, half, quarter, eighth, sixteenth,
+    thirty-second + dotted-half/quarter/eighth + triplet-half/quarter/
+    eighth) with a `delay_samples(bpm, sample_rate)` helper.
+  - 10 ms linear parameter smoothing for `mix`, `feedback`, and
+    `delay_time` via an internal `SmoothedValue` helper. The smoother
+    **snaps** on the first `set_target_value` (no fade-in from 0) and
+    ramps on subsequent changes, so the very first parameter setup
+    uses the target value immediately while later UI changes stay
+    click-free.
+  - 25 new unit tests + 1 doc-test cover NoteDivision math, ring-buffer
+    push/pop semantics, all four interpolators (integer, linear blend,
+    multi-tap, Thiran impulse-through), tempo sync, ping-pong cross
+    feedback, feedback-driven echo count, and `prepare` /
+    `prepare_spec` round-trip. `cargo test --features "full" --lib`
+    stays clean; clippy is silent on the new code (3 pre-existing
+    warnings in `fir.rs` / `bias.rs` only).
+
+- Algorithmic reverb ported from `juce::Reverb` and `juce::dsp::Reverb` is
+  now available in `logic_nih_plug_dsp::processors::reverb` (gated behind
+  the new `reverb` feature flag, enabled by the existing `processors`
+  umbrella feature):
+  - `Reverb` — FreeVerb-style stereo algorithmic reverb with
+    Schroeder/Moorer-Filter topology: 8 parallel low-pass-feedback comb
+    filters per channel summed into 4 series allpass filters per
+    channel. Stereo decorrelation via a 23-sample offset on the right
+    channel tunings.
+  - `Reverb::Parameters` mirrors `juce::Reverb::Parameters`
+    (roomSize, damping, wetLevel, dryLevel, width, freezeMode) with
+    matching defaults (0.5, 0.5, 0.33, 0.4, 1.0, 0.0). Parameter
+    changes are ramped over 10 ms via a small `SmoothedValue` helper.
+  - `process_sample` (mono), `process` (mono block) and
+    `process_stereo` (left/right, matches JUCE's `processStereo`)
+    entry points. `set_enabled` bypasses the wet path for A/B.
+  - 12 unit tests + 1 doc-test covering tunings, sample-rate scaling,
+    damping/feedback mapping, freeze mode, enable/disable bypass,
+    block vs. per-sample equivalence, and impulse-decay shape.
+  - Internal: `CombFilter` and `AllPassFilter` (Schroeder allpass with
+    0.5 feedback coefficient) matching `juce::Reverb`'s `CombFilter` /
+    `AllPassFilter` line-for-line.
+
+- Dynamics processors ported from `juce::dsp` are now available in
+  `logic_nih_plug_dsp::processors` (gated behind the new `dynamics` feature
+  flag, enabled by the existing `processors` umbrella feature):
+  - `BallisticsFilter` — peak-rectifying / RMS attack-release envelope
+    follower (`juce::dsp::BallisticsFilter`). `LevelCalculationType::Peak`
+    is the default; `LevelCalculationType::Rms` squares before smoothing
+    and square-roots afterwards, matching JUCE exactly.
+  - `Compressor` — feed-forward compressor with threshold / ratio /
+    attack / release controls (`juce::dsp::Compressor`). Per-channel
+    state via `prepare_with_channels`; `set_ratio` panics below 1.0.
+  - `NoiseGate` — RMS-driven downward expander / gate
+    (`juce::dsp::NoiseGate`). Mirrors JUCE's two-filter topology
+    (RMS pre-filter at 0 ms / 50 ms, then a smoothed envelope
+    controlling the VCA).
+  - `Limiter` — two-stage brick-wall limiter
+    (`juce::dsp::Limiter`). First stage is 4:1 @ -10 dB with 2 ms / 200 ms
+    ballistics; second stage is 1000:1 @ the user threshold with
+    1 µs attack. A smoothed output volume compensates for the first-stage
+    gain reduction and the output is hard-clipped to ±1.0.
+  - `LookaheadLimiter` — wraps a `Limiter` with a per-channel delay
+    line (default 5 ms) so the listener never hears an overshoot on a
+    step transient.
+  - Shared `ProcessSpec` (`sample_rate`, `num_channels`,
+    `maximum_block_size`) and `db_to_linear` / `linear_to_db` helpers
+    in `processors::dynamics`.
+  - 35 new unit tests + 9 new doc-tests pass with `--features processors`;
+    default-features lib build stays clean and clippy `-D warnings` is
+    silent on every new module.
+
+- New `logic_nih_plug_midi_ci` crate: pure-Rust port of `juce_midi_ci`
+  (MIDI 2.0 Capability Inquiry). Provides 32 message body types (Discovery,
+  Profile configuration, Property exchange, Process inquiry) and a
+  transport-agnostic `Device` struct that parses incoming UMP payloads via
+  `process_message` and dispatches them through a `DeviceListener` callback
+  trait. Outbound messages are produced by the `Device` and surfaced through
+  the consumer's `MessageSink` implementation. Core types include `Muid`
+  (28-bit), `ChannelAddress`, `Profile` (5-byte ID), `DeviceInfo`,
+  `CapabilityFlags`, `Category` (the wire status byte index), `Encoding`,
+  `SubscriptionCommand`, and `ProtocolVersion`. Feature flags: `discovery`
+  (default), `profiles` (default), `property-exchange` (default), `full` =
+  all three. 47 unit tests + 1 doctest passing; clippy `-D warnings` clean
+  on every feature combination.
+
+- New `logic_nih_plug_osc` crate: pure-Rust port of `juce_osc`.
+  Provides `OscSender` (synchronous UDP sender), `OscReceiver` (thread-driven
+  UDP receiver with typed message listeners and pattern-matched dispatch),
+  `OSCArgument` (sum type covering every OSC 1.0 argument type), `OSCMessage`,
+  `OSCBundle`, and `OSCTimeTag` (with `immediate()` for "as soon as possible").
+  Wire-format encoding/decoding is delegated to the `rosc` crate. Feature
+  flags: `sender` (default), `receiver` (default), `full` = both. 27 unit
+  tests + 5 doctests passing; clippy clean on every feature combination.
+
 ## [2025-02-23]
 
 ### Added

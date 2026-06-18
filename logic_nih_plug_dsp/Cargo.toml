@@ -3,12 +3,12 @@ name = "logic_nih_plug_dsp"
 version = "0.0.0"
 edition = "2021"
 rust-version = "1.80"
-authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
 license = "ISC"
 
 keywords = ["audio", "dsp", "plugin"]
 description = "Digital signal processing algorithms ported from JUCE for nih-plug"
-repository = "https://github.com/robbert-vdh/nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
 
 [features]
 default = ["filters", "oscillators"]
@@ -17,10 +17,18 @@ oscillators = []
 convolution = ["dep:rustfft"]
 envelopes = []
 smoothing = []
-processors = []
+processors = ["dynamics", "reverb", "delay", "modulation", "mixer", "pitch", "resampling"]
+dynamics = []
+reverb = []
+delay = []
+modulation = []
+mixer = []
+pitch = ["dep:rustfft"]
+resampling = []
 analysis = ["dep:rustfft"]
 simd = []
-full = ["filters", "oscillators", "convolution", "envelopes", "smoothing", "processors", "analysis", "simd"]
+full = ["filters", "oscillators", "convolution", "envelopes", "smoothing", "processors", "dynamics", "reverb", "delay", "modulation", "mixer", "pitch", "resampling", "analysis", "simd"]
+
 
 [dependencies]
 logic_nih_plug = { path = "..", default-features = false }

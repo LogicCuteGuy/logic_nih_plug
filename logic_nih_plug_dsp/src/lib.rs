@@ -9,6 +9,19 @@
 //! - **Convolution**: FFT-based convolution for reverb
 //! - **Envelopes**: ADSR envelope generators
 //! - **Smoothing**: Parameter smoothing utilities
+//! - **Dynamics**: Compressor, Limiter, NoiseGate, LookaheadLimiter
+//! - **Reverb**: FreeVerb-style algorithmic reverb (Schroeder/Moorer)
+//! - **Delay**: `DelayLine` (fractional, pluggable interpolation) and a
+//!   feedback `Delay` effect (tempo-synced, ping-pong)
+//! - **Modulation**: `Phaser`, `Chorus`, `WahWah`, `LadderFilter`
+//! - **Mixer**: `Panner` (7 pan laws), `DryWetMixer` (7 mixing rules), `Gain`
+//! - **Pitch**: `PhaseVocoder`, `PitchShift`, `TimeStretching`
+//! - **Resampling**: `GenericInterpolator` with `ZeroOrderHold`, `Linear`, `CatmullRom`, `Lagrange`, `WindowedSinc`
+//! - **Analysis**: `FFT` / `RealFFT` (real-only FFT path) and
+//!   `STFT` (short-time Fourier transform with forward/inverse
+//!   helpers), plus `WindowingFunction` (Hann, Hamming, Blackman,
+//!   Kaiser, etc.) and metering/analysis tools (`LevelMeter`,
+//!   `Follower`, `LoudnessMeter`, `Oscilloscope`)
 //!
 //! ## Examples
 //!

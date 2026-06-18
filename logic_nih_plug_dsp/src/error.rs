@@ -38,4 +38,13 @@ pub enum DspError {
         /// Maximum valid size.
         max: usize,
     },
+
+    /// Invalid STFT hop size.
+    #[error("Invalid STFT hop size {hop_size} for FFT size {fft_size} (must be 1..=fft_size)")]
+    InvalidHopSize {
+        /// The invalid hop size that was provided.
+        hop_size: usize,
+        /// The FFT size it was paired with.
+        fft_size: usize,
+    },
 }

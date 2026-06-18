@@ -252,15 +252,15 @@ without any C++ dependencies. These modules are designed to integrate seamlessly
 with nih-plug while maintaining compatibility with JUCE's design patterns.
 
 **Available Modules:**
-- `logic_nih_plug_dsp` - Digital signal processing (filters, oscillators, envelopes, convolution)
+- `logic_nih_plug_dsp` - Digital signal processing (filters, oscillators, envelopes, convolution, dynamics, reverb, delay, modulation)
 - `logic_nih_plug_audio_formats` - Audio file I/O (WAV, AIFF, FLAC, OGG)
 - `logic_nih_plug_data` - Data structures (ValueTree, UndoManager)
 - `logic_nih_plug_graphics` - 2D graphics primitives
 - `logic_nih_plug_gui` - GUI components and layout
-- `logic_nih_plug_osc` - Open Sound Control networking
+- `logic_nih_plug_osc` - Open Sound Control networking (OscSender, OscReceiver, OSCArgument, OSCBundle)
 - `logic_nih_plug_crypto` - Cryptography utilities
 - `logic_nih_plug_animation` - Animation and easing functions
-- `logic_nih_plug_midi_ci` - MIDI Capability Inquiry (MIDI 2.0)
+- `logic_nih_plug_midi_ci` - MIDI 2.0 Capability Inquiry: 32 message types, transport-agnostic `Device` + `DeviceListener` pattern, Discovery / Profile / Property Exchange state caches.
 
 **Documentation:**
 - 📚 [Documentation Index](DOCUMENTATION_INDEX.md) - **Complete documentation guide**

@@ -21,7 +21,8 @@ working copy and what `AGENTS.md` points to but doesn't.
 | `logic_nih_plug_gui` | [CONTROLS.md](logic_nih_plug_gui/CONTROLS.md), [LOOKANDFEEL.md](logic_nih_plug_gui/LOOKANDFEEL.md) (no README) |
 
 `logic_nih_plug_audio_formats`, `logic_nih_plug_derive`, `logic_nih_plug_dsp`, `logic_nih_plug_graphics`
-have no README — read their `src/lib.rs` module docs and tests instead.
+have no README — read their `src/lib.rs` module docs and tests instead. `logic_nih_plug_osc`,
+`logic_nih_plug_data`, and `logic_nih_plug_crypto` each have a README in their own directory.
 
 ## Example plugins
 

@@ -3,12 +3,12 @@ name = "logic_nih_plug_audio_formats"
 version = "0.0.0"
 edition = "2021"
 rust-version = "1.80"
-authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
 license = "ISC"
 
 keywords = ["audio", "wav", "aiff", "flac", "ogg"]
 description = "Audio file format support ported from JUCE for nih-plug"
-repository = "https://github.com/robbert-vdh/nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
 
 [features]
 default = ["wav", "aiff"]

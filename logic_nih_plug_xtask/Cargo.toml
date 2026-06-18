@@ -2,7 +2,7 @@
 name = "logic_nih_plug_xtask"
 version = "0.1.0"
 edition = "2021"
-authors = ["Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
 description = "NIH-plug's cargo xtask command, as a library"
 license = "ISC"
 

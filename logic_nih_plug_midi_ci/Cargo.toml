@@ -1,0 +1,35 @@
+[package]
+name = "logic_nih_plug_midi_ci"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+keywords = ["midi-ci", "midi-2.0", "ump", "capability-inquiry"]
+description = "MIDI-CI (MIDI 2.0 Capability Inquiry) protocol primitives ported from JUCE for nih-plug"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[features]
+# The default feature set turns on every protocol layer. Most hosts / plugins
+# that want to act as MIDI-CI participants will need all three.
+default = ["discovery", "profiles", "property-exchange"]
+
+# Discovery (PE = Protocol, PI = Protocol Inquiry in older drafts).
+# - Invalidate MUID, Discovery, Discovery Response, Endpoint Inquiry.
+discovery = []
+
+# Profile configuration: declaring supported profiles, profile inquiry,
+# profile on/off, profile details, profile-specific data, and the
+# profile enabled / disabled reports.
+profiles = []
+
+# Property Exchange (PE stream): Get / Set / Subscribe / Notify / Notifype,
+# property-exchange capabilities, request/subscription accounting.
+property-exchange = []
+
+# Equivalent to the default feature set.
+full = ["discovery", "profiles", "property-exchange"]
+
+[dependencies]
+thiserror = "2.0.18"
