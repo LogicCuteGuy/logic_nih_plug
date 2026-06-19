@@ -1,0 +1,19 @@
+[package]
+name = "audio_playback_demo"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["audio", "playback", "wav", "juce-port"]
+description = "Standalone audio playback demo — reads WAV and plays through MockAudioIODevice"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[[bin]]
+name = "audio_playback_demo"
+path = "src/main.rs"
+
+[dependencies]
+logic_nih_plug_audio_formats = { path = "../../../logic_nih_plug_audio_formats" }
+logic_nih_plug_audio_devices = { path = "../../../logic_nih_plug_audio_devices" }

@@ -707,6 +707,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "audio_playback_demo"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_audio_devices",
+ "logic_nih_plug_audio_formats",
+]
+
+[[package]]
+name = "audio_recording_demo"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_audio_devices",
+ "logic_nih_plug_audio_formats",
+]
+
+[[package]]
+name = "audio_workgroup_demo"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_audio_devices",
+ "logic_nih_plug_audio_formats",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1215,6 +1239,14 @@ name = "checked_int_cast"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "17cc5e6b5ab06331c33589842070416baa137e8b0eb912b008cfd4a78ada7919"
+
+[[package]]
+name = "chorus"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+ "logic_nih_plug_dsp",
+]
 
 [[package]]
 name = "chrono"
@@ -1852,6 +1884,14 @@ name = "dasp_sample"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c87e182de0887fd5361989c677c4e8f5000cd9491d6d563161a8f3a5519fc7f"
+
+[[package]]
+name = "delay"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+ "logic_nih_plug_dsp",
+]
 
 [[package]]
 name = "der"
@@ -3668,6 +3708,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "juce_audio_plugin_host_egui"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_audio_devices",
+ "logic_nih_plug_audio_processors",
+]
+
+[[package]]
+name = "juce_chorus_demo"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+]
+
+[[package]]
+name = "juce_convolution_demo"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+]
+
+[[package]]
+name = "juce_demorunner"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_animation",
+ "logic_nih_plug_dsp",
+ "logic_nih_plug_graphics",
+ "logic_nih_plug_gui",
+]
+
+[[package]]
+name = "juce_distortion_demo"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+ "logic_nih_plug_dsp",
+]
+
+[[package]]
 name = "juce_dsp_filter"
 version = "0.1.0"
 dependencies = [
@@ -3689,6 +3769,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "juce_iir_filter_demo"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+]
+
+[[package]]
+name = "juce_limiter_demo"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+]
+
+[[package]]
 name = "juce_multi_module"
 version = "0.1.0"
 dependencies = [
@@ -3698,6 +3792,27 @@ dependencies = [
  "logic_nih_plug_crypto",
  "logic_nih_plug_data",
  "logic_nih_plug_dsp",
+]
+
+[[package]]
+name = "juce_noise_gate_demo"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+]
+
+[[package]]
+name = "juce_oscillator_demo"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+]
+
+[[package]]
+name = "juce_phaser_demo"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
 ]
 
 [[package]]
@@ -4122,6 +4237,7 @@ dependencies = [
  "goblin",
  "reflink",
  "serde",
+ "serde_json",
  "toml",
 ]
 
@@ -4309,6 +4425,14 @@ name = "midi-consts"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f2dd5c7f8aaf48a76e389068ab25ed80bdbc226b887f9013844c415698c9952"
+
+[[package]]
+name = "midi_file_inspector"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_audio_basics",
+ "logic_nih_plug_audio_formats",
+]
 
 [[package]]
 name = "midi_inverter"
@@ -4565,6 +4689,14 @@ name = "noop_proc_macro"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0676bb32a98c1a483ce53e500a81ad9c3d5b3f7c920c28c24e9cb0980d0b5bc8"
+
+[[package]]
+name = "note_expressions"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+ "logic_nih_plug_dsp",
+]
 
 [[package]]
 name = "num-bigint"
@@ -5210,6 +5342,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "osc_receiver_demo"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_osc",
+]
+
+[[package]]
+name = "osc_sender_demo"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_osc",
+]
+
+[[package]]
 name = "overdrive"
 version = "0.1.0"
 dependencies = [
@@ -5541,6 +5687,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "51bae2ac328883f7acdfea3d66a7c35751187f870bc81f94563733a154d7a670"
 dependencies = [
  "plotters-backend",
+]
+
+[[package]]
+name = "plugin_host_cli"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_audio_processors",
 ]
 
 [[package]]
@@ -6210,6 +6363,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "19b30a45b0cd0bcca8037f3d0dc3421eaf95327a17cad11964fb8179b4fc4832"
 
 [[package]]
+name = "reverb"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+ "logic_nih_plug_dsp",
+]
+
+[[package]]
 name = "rgb"
 version = "0.8.53"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6585,6 +6746,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bd5ac56c121948b4879bba9e519852c211bcdd8f014efff766441deff0b91bdb"
 dependencies = [
  "num-traits",
+]
+
+[[package]]
+name = "sidechain_compressor"
+version = "0.1.0"
+dependencies = [
+ "logic_nih_plug",
+ "logic_nih_plug_dsp",
 ]
 
 [[package]]
@@ -7821,6 +7990,20 @@ dependencies = [
  "hashbrown 0.15.5",
  "indexmap",
  "semver",
+]
+
+[[package]]
+name = "wav_reader"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_audio_formats",
+]
+
+[[package]]
+name = "wav_writer"
+version = "0.0.0"
+dependencies = [
+ "logic_nih_plug_audio_formats",
 ]
 
 [[package]]

@@ -28,6 +28,8 @@ have no README — read their `src/lib.rs` module docs and tests instead. `logic
 
 - [FORMAT_EXAMPLES.md](plugins/examples/FORMAT_EXAMPLES.md) — VST2/AU/AUv3/LV2/AAX/multi-format variants
 - [JUCE_EXAMPLES.md](plugins/examples/JUCE_EXAMPLES.md) — `juce_dsp_filter`, `juce_gui_demo`
+- DSP effect examples: [`delay`](plugins/examples/delay/), [`reverb`](plugins/examples/reverb/), [`chorus`](plugins/examples/chorus/), [`sidechain_compressor`](plugins/examples/sidechain_compressor/)
+- Polyphonic MIDI example: [`note_expressions`](plugins/examples/note_expressions/)
 - Per-format READMEs: [gain_vst2](plugins/examples/gain_vst2/README.md), [gain_aax](plugins/examples/gain_aax/README.md), [gain_au](plugins/examples/gain_au/README.md), [gain_auv3](plugins/examples/gain_auv3/README.md), [overdrive](plugins/examples/overdrive/README.md)
 
 ## Real plugins

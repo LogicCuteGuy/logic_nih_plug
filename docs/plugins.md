@@ -42,6 +42,11 @@ cargo xtask bundle <name> --release
 - [stft](../plugins/examples/stft/), [spectrum_analyzer](../plugins/examples/spectrum_analyzer/)
 - [state_variable_filter](../plugins/examples/state_variable_filter/), [juce_dsp_filter](../plugins/examples/juce_dsp_filter/)
 - [flexbox_demo](../plugins/examples/flexbox_demo/) — `logic_nih_plug_gui` FlexBox port
+- [delay](../plugins/examples/delay/) — tempo-synced feedback delay with ping-pong
+- [reverb](../plugins/examples/reverb/) — FreeVerb-style algorithmic reverb
+- [chorus](../plugins/examples/chorus/) — LFO-modulated stereo chorus
+- [sidechain_compressor](../plugins/examples/sidechain_compressor/) — aux sidechain input + envelope-follower compressor
+- [note_expressions](../plugins/examples/note_expressions/) — polyphonic synth reacting to every `NoteEvent::*Poly*` event
 
 See [FORMAT_EXAMPLES.md](../plugins/examples/FORMAT_EXAMPLES.md) and
 [JUCE_EXAMPLES.md](../plugins/examples/JUCE_EXAMPLES.md).

@@ -1,0 +1,15 @@
+[package]
+name = "reverb"
+version = "0.1.0"
+edition = "2021"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
+license = "ISC"
+
+description = "Example plugin demonstrating a FreeVerb-style algorithmic reverb using the `Reverb` processor"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+logic_nih_plug = { path = "../../../", features = ["assert_process_allocs"] }
+logic_nih_plug_dsp = { path = "../../../logic_nih_plug_dsp", features = ["processors", "analysis"] }

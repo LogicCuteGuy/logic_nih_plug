@@ -1,0 +1,18 @@
+[package]
+name = "juce_audio_plugin_host_egui"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["plugin-host", "egui", "juce-port"]
+description = "Plugin host example with an egui-based editor — scans, loads, and runs other plugins"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+logic_nih_plug_audio_processors = { path = "../../../../logic_nih_plug_audio_processors", features = ["scanner"] }
+logic_nih_plug_audio_devices = { path = "../../../../logic_nih_plug_audio_devices" }

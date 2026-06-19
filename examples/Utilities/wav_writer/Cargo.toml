@@ -1,0 +1,18 @@
+[package]
+name = "wav_writer"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["wav", "writer", "audio-format", "juce-port"]
+description = "CLI demo: writes a 1-second 440 Hz sine WAV and round-trips through the reader"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[[bin]]
+name = "wav_writer"
+path = "src/main.rs"
+
+[dependencies]
+logic_nih_plug_audio_formats = { path = "../../../logic_nih_plug_audio_formats" }

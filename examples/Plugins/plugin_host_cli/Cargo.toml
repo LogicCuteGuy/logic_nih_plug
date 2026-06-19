@@ -1,0 +1,18 @@
+[package]
+name = "plugin_host_cli"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["plugin-host", "scanner", "juce-port"]
+description = "Headless plugin host CLI — scans a directory and lists discovered plugins"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[[bin]]
+name = "plugin_host_cli"
+path = "src/main.rs"
+
+[dependencies]
+logic_nih_plug_audio_processors = { path = "../../../logic_nih_plug_audio_processors", features = ["scanner"] }

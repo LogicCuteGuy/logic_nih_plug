@@ -234,6 +234,12 @@ examples.
 - [**poly_mod_synth**](plugins/examples/poly_mod_synth) is a simple polyphonic
   synthesizer with support for polyphonic modulation in supported CLAP hosts.
   This demonstrates how polyphonic modulation can be used in NIH-plug.
+- **[JUCE-style Examples Portfolio](examples/README.md)** — a curated gallery
+  of 22 Rust crates porting the most instructive JUCE `examples/` to
+  NIH-plug. Covers 8 DSP plugin examples (distortion, oscillator, IIR filter,
+  phaser, chorus, convolution, noise gate, limiter), 3 standalone audio apps
+  (playback, recording, workgroup), a headless + GUI plugin host, 5 file-IO /
+  OSC utilities, and a multi-backend GUI DemoRunner (egui / iced / vizia).
 - [**sine**](plugins/examples/sine) is a simple test tone generator plugin with
   frequency smoothing that can also make use of MIDI input instead of generating
   a static signal based on the plugin's parameters.

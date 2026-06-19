@@ -23,6 +23,9 @@ fn build_usage_string(command_name: &str) -> String {
   {command_name} bundle-universal <package> [--release]  (macOS only)
   {command_name} bundle-universal -p <package1> -p <package2> ... [--release]  (macOS only)
 
+  {command_name} test-examples [--category <Audio|DSP|GUI|Plugins|Utilities|DemoRunner>]
+  {command_name} baseline-ci
+
   All other 'cargo build' options are supported, including '--target' and '--profile'."
     )
 }
@@ -146,6 +149,8 @@ pub fn main_with_args(command_name: &str, args: impl IntoIterator<Item = String>
         // This is only meant to be used by the CI, since using awk for this can be a bit spotty on
         // macOS
         "known-packages" => list_known_packages(),
+        "test-examples" => test_examples(args),
+        "baseline-ci" => baseline_ci(),
         _ => anyhow::bail!("Unknown command '{command}'\n\n{usage_string}"),
     }
 }
@@ -654,6 +659,224 @@ pub fn list_known_packages() -> Result<()> {
     }
 
     Ok(())
+}
+
+/// Run the doc-tests for every example in the JUCE-style examples portfolio
+/// (or a single category if `--category <X>` is supplied).
+///
+/// This is the per-user-story smoke test. It walks the workspace's
+/// `plugins/examples/` and `examples/` trees, finds every crate that declares
+/// `category: <X>` in its `README.md` front-matter, and runs
+/// `cargo test --doc -p <name>` for each one. The exit code is non-zero if any
+/// crate's doc-tests fail.
+///
+/// Supports T019, T039, T049, T058, T068, T085, T095.
+pub fn test_examples(args: impl IntoIterator<Item = String>) -> Result<()> {
+    use std::time::Instant;
+
+    let mut category: Option<String> = None;
+    for arg in args {
+        if let Some(rest) = arg.strip_prefix("--category=") {
+            category = Some(rest.to_string());
+        } else if arg == "--category" {
+            // next arg is the value; we'd need a peekable iterator to support
+            // this cleanly, but `--category=<X>` is the documented form.
+            anyhow::bail!("Use `--category=<X>` (with `=`) so the parser stays single-pass.");
+        } else {
+            anyhow::bail!("Unknown test-examples arg: `{arg}`");
+        }
+    }
+
+    let examples = discover_examples(category.as_deref())?;
+    if examples.is_empty() {
+        eprintln!("No examples matched the filter.");
+        return Ok(());
+    }
+
+    let mut failures: Vec<(String, String)> = Vec::new();
+    let started = Instant::now();
+    for (name, _readme, cat) in &examples {
+        eprintln!("[test-examples] {cat:?} :: {name}");
+        let status = Command::new("cargo")
+            .arg("test")
+            .arg("--doc")
+            .arg("-p")
+            .arg(name)
+            .arg("--locked")
+            .status()
+            .with_context(|| format!("Could not run `cargo test --doc -p {name}`"))?;
+        if !status.success() {
+            failures.push((name.clone(), format!("exit {status}")));
+        }
+    }
+    let elapsed = started.elapsed();
+    eprintln!(
+        "[test-examples] ran {} crate(s) in {:.1}s; {} failure(s)",
+        examples.len(),
+        elapsed.as_secs_f64(),
+        failures.len()
+    );
+    if !failures.is_empty() {
+        for (name, why) in &failures {
+            eprintln!("  - {name}: {why}");
+        }
+        anyhow::bail!("{} doc-test failure(s)", failures.len());
+    }
+    Ok(())
+}
+
+#[derive(Debug, Clone, Copy)]
+enum ExampleCategory {
+    Audio,
+    DSP,
+    GUI,
+    Plugins,
+    Utilities,
+    DemoRunner,
+}
+
+impl ExampleCategory {
+    fn parse(s: &str) -> Option<Self> {
+        Some(match s {
+            "Audio" => Self::Audio,
+            "DSP" => Self::DSP,
+            "GUI" => Self::GUI,
+            "Plugins" => Self::Plugins,
+            "Utilities" => Self::Utilities,
+            "DemoRunner" => Self::DemoRunner,
+            _ => return None,
+        })
+    }
+}
+
+fn discover_examples(filter: Option<&str>) -> Result<Vec<(String, std::path::PathBuf, ExampleCategory)>> {
+    let mut out = Vec::new();
+    let roots = ["plugins/examples", "examples"];
+    for root in roots {
+        let path = Path::new(root);
+        if !path.is_dir() { continue; }
+        walk_for_examples(path, &mut out)?;
+    }
+    if let Some(f) = filter {
+        let cat = ExampleCategory::parse(f)
+            .with_context(|| format!("Unknown category `{f}`; valid: Audio|DSP|GUI|Plugins|Utilities|DemoRunner"))?;
+        out.retain(|(_, _, c)| std::mem::discriminant(c) == std::mem::discriminant(&cat));
+    }
+    out.sort_by(|a, b| a.0.cmp(&b.0));
+    Ok(out)
+}
+
+fn walk_for_examples(dir: &Path, out: &mut Vec<(String, std::path::PathBuf, ExampleCategory)>) -> Result<()> {
+    let entries = match std::fs::read_dir(dir) {
+        Ok(it) => it,
+        Err(_) => return Ok(()),
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            if path.join("Cargo.toml").is_file() && path.join("README.md").is_file() {
+                let text = fs::read_to_string(path.join("README.md"))?;
+                let cat = text
+                    .lines()
+                    .skip_while(|l| l.trim() != "---")
+                    .skip(1)
+                    .take_while(|l| l.trim() != "---")
+                    .find_map(|l| l.trim().strip_prefix("category:").map(|s| s.trim().to_string()))
+                    .and_then(|c| ExampleCategory::parse(&c));
+                if let Some(cat) = cat {
+                    let name = fs::read_to_string(path.join("Cargo.toml"))?
+                        .lines()
+                        .find_map(|l| {
+                            let t = l.trim();
+                            t.strip_prefix("name =")?
+                                .trim()
+                                .trim_matches('"')
+                                .to_string()
+                                .into()
+                        })
+                        .unwrap_or_else(|| path.file_name().unwrap().to_string_lossy().to_string());
+                    out.push((name, path.join("README.md"), cat));
+                }
+            } else {
+                walk_for_examples(&path, out)?;
+            }
+        }
+    }
+    Ok(())
+}
+
+/// Measure the workspace's full `cargo test --locked --workspace --features
+/// "simd,standalone,zstd"` wall-clock duration and write it to
+/// `specs/001-juce-examples/ci-baseline.json`. Used by SC-009 (CI time budget).
+///
+/// Supports T020.
+pub fn baseline_ci() -> Result<()> {
+    use std::time::Instant;
+    let started = Instant::now();
+    let status = Command::new("cargo")
+        .arg("test")
+        .arg("--locked")
+        .arg("--workspace")
+        .arg("--features")
+        .arg("simd,standalone,zstd")
+        .status()
+        .context("Could not run `cargo test --locked --workspace --features \"simd,standalone,zstd\"`")?;
+    let elapsed_secs = started.elapsed().as_secs_f64();
+    if !status.success() {
+        anyhow::bail!("`cargo test --locked --workspace ...` exited {status}; baseline not written");
+    }
+    let out_dir = Path::new("specs/001-juce-examples");
+    fs::create_dir_all(out_dir)?;
+    let payload = serde_json::json!({
+        "schema_version": 1,
+        "measured_at_utc": chrono_like_iso8601(),
+        "command": "cargo test --locked --workspace --features \"simd,standalone,zstd\"",
+        "wall_clock_seconds": elapsed_secs,
+    });
+    fs::write(
+        out_dir.join("ci-baseline.json"),
+        serde_json::to_string_pretty(&payload)?,
+    )?;
+    eprintln!("[baseline-ci] wrote ci-baseline.json ({elapsed_secs:.1}s)");
+    Ok(())
+}
+
+/// Minimal RFC-3339 / ISO-8601 timestamp without pulling in `chrono`.
+///
+/// Format: `YYYY-MM-DDTHH:MM:SSZ`. Best-effort — uses `SystemTime::now()`.
+fn chrono_like_iso8601() -> String {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    let secs = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    // Days since 1970-01-01
+    let days = secs / 86_400;
+    let mut y = 1970_i64;
+    let mut d = days as i64;
+    loop {
+        let leap = (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+        let dy = if leap { 366 } else { 365 };
+        if d < dy { break; }
+        d -= dy;
+        y += 1;
+    }
+    let leap = (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    let mdays = [31u32, if leap {29} else {28}, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let mut m = 0usize;
+    for (i, dm) in mdays.iter().enumerate() {
+        if d < *dm as i64 { m = i; break; }
+        d -= *dm as i64;
+    }
+    let day = d + 1;
+    let time_secs = secs % 86_400;
+    let hh = time_secs / 3600;
+    let mm = (time_secs / 60) % 60;
+    let ss = time_secs % 60;
+    format!(
+        "{y:04}-{:02}-{day:02}T{hh:02}:{mm:02}:{ss:02}Z",
+        m + 1
+    )
 }
 
 /// Load the `bundler.toml` file, if it exists. If it does exist but it cannot be parsed, then this

@@ -1,0 +1,10 @@
+{
+  "feature_directory": "specs/001-juce-examples",
+  "spec_file": "specs/001-juce-examples/spec.md",
+  "checklist_file": "specs/001-juce-examples/checklists/requirements.md",
+  "branch_name": "001-new-feature",
+  "feature_num": "001",
+  "short_name": "juce-examples",
+  "created": "2026-06-19",
+  "status": "draft"
+}

@@ -1,0 +1,13 @@
+[package]
+name = "juce_noise_gate_demo"
+version = "0.1.0"
+edition = "2021"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+description = "JUCE-style noise gate with envelope follower example"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+logic_nih_plug = { path = "../../../../", features = ["assert_process_allocs"] }

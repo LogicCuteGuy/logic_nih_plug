@@ -1,0 +1,18 @@
+[package]
+name = "wav_reader"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["wav", "reader", "audio-format", "juce-port"]
+description = "CLI demo: prints a WAV file's header summary using logic_nih_plug_audio_formats"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[[bin]]
+name = "wav_reader"
+path = "src/main.rs"
+
+[dependencies]
+logic_nih_plug_audio_formats = { path = "../../../logic_nih_plug_audio_formats" }

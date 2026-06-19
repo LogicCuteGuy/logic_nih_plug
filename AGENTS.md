@@ -56,8 +56,15 @@ Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **
 | `logic_nih_plug_gui::multi_doc_panel` | Tabbed MDI container. `MultiDocumentPanel`, `MultiDocumentPanelLayout`. 22 tests. |
 | `logic_nih_plug_xtask/` + `xtask/` | Bundling lib + shim |
 | `logic_nih_plug_graphics/`, `_animation/`, `_crypto/` | 2D primitives + vector graphics (tiny-skia backed `Painter` / `Path` / `Stroke` / `ColourGradient` / `DropShadow`), glyph arrangement, image rescale/convolve, easing/chaining, SHA/MD5/RSA (incl. `RSAKey::d_bytes` for raw textbook-RSA ops) |
-| `plugins/examples/juce_dsp_filter` / `juce_gui_demo` / `juce_multi_module` | JUCE-port demonstration plugins — `juce_multi_module` combines DSP + ValueTree + crypto + animation into one synth. See [plugins/examples/JUCE_EXAMPLES.md](plugins/examples/JUCE_EXAMPLES.md). |
-| `plugins/examples/` | Example plugins. See [FORMAT_EXAMPLES.md](plugins/examples/FORMAT_EXAMPLES.md) |
+| `plugins/examples/dsp/` | JUCE DSP port demos — `juce_distortion_demo`, `juce_oscillator_demo`, `juce_iir_filter_demo`, `juce_phaser_demo`, `juce_chorus_demo`, `juce_convolution_demo`, `juce_noise_gate_demo`, `juce_limiter_demo`. All `cdylib`, bundled via `bundler.toml`. |
+| `plugins/examples/plugins/` | Plugin host examples — `juce_audio_plugin_host_egui` (scanner + editor scaffolding, lib target) |
+| `plugins/examples/gui/` | GUI port demos — future JUCE GUI example ports (currently scaffolded) |
+| `plugins/examples/` | Example plugins (excluding `dsp/`, `plugins/`, `gui/`). See [FORMAT_EXAMPLES.md](plugins/examples/FORMAT_EXAMPLES.md) |
+| `examples/Audio/` | Standalone audio apps: `audio_playback_demo` (WAV playback via `MockAudioIODevice`), `audio_recording_demo` (WAV recording), `audio_workgroup_demo` (2-node shared buffer). All `[[bin]]` targets. |
+| `examples/Plugins/` | `plugin_host_cli` — headless CLI plugin scanner + list printer (`[[bin]]`). |
+| `examples/Utilities/` | `wav_reader`, `wav_writer`, `midi_file_inspector`, `osc_sender_demo`, `osc_receiver_demo`. All `[[bin]]` file-IO / OSC demos. |
+| `examples/DemoRunner/` | `juce_demorunner` — GUI showcase with mutually exclusive `gui-egui` / `gui-iced` / `gui-vizia` backends (lib + bin). |
+| `examples/` | Categorized gallery (see [examples/README.md](examples/README.md)). `audio-assets/` and `midi-assets/` hold reference WAV/MIDI fixtures for doc-tests. |
 | `plugins/soft_vacuum/` etc. | Real plugins; all listed in [bundler.toml](bundler.toml) |
 
 All plugin crates: `crate-type = ["cdylib"]`.

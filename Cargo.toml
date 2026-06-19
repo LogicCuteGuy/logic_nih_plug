@@ -62,6 +62,39 @@ members = [
   "plugins/examples/overdrive",
   "plugins/examples/spectrum_analyzer",
   "plugins/examples/flexbox_demo",
+  "plugins/examples/delay",
+  "plugins/examples/reverb",
+  "plugins/examples/chorus",
+  "plugins/examples/sidechain_compressor",
+  "plugins/examples/note_expressions",
+
+  "plugins/examples/dsp/juce_distortion_demo",
+  "plugins/examples/dsp/juce_oscillator_demo",
+  "plugins/examples/dsp/juce_iir_filter_demo",
+  "plugins/examples/dsp/juce_phaser_demo",
+  "plugins/examples/dsp/juce_chorus_demo",
+  "plugins/examples/dsp/juce_convolution_demo",
+  "plugins/examples/dsp/juce_noise_gate_demo",
+  "plugins/examples/dsp/juce_limiter_demo",
+
+  # US2 (Audio) standalone apps — see specs/001-juce-examples/plan.md §"Phase 4"
+  "examples/Audio/audio_playback_demo",
+  "examples/Audio/audio_recording_demo",
+  "examples/Audio/audio_workgroup_demo",
+
+  # US3 (Plugins) — see specs/001-juce-examples/plan.md §"Phase 5"
+  "examples/Plugins/plugin_host_cli",
+  "plugins/examples/plugins/juce_audio_plugin_host_egui",
+
+  # US4 (Utilities) — see specs/001-juce-examples/plan.md §"Phase 6"
+  "examples/Utilities/wav_reader",
+  "examples/Utilities/wav_writer",
+  "examples/Utilities/midi_file_inspector",
+  "examples/Utilities/osc_sender_demo",
+  "examples/Utilities/osc_receiver_demo",
+
+  # US5 (DemoRunner) — see specs/001-juce-examples/plan.md §"Phase 7"
+  "examples/DemoRunner/juce_demorunner",
 
   "plugins/soft_vacuum",
   "plugins/buffr_glitch",
@@ -72,6 +105,17 @@ members = [
   "plugins/puberty_simulator",
   "plugins/safety_limiter",
   "plugins/spectral_compressor",
+
+  # --- JUCE-Style Examples Portfolio (specs/001-juce-examples) -----------------
+  # Note: cargo workspace `members` does not support globs that would skip
+  # non-crate files (e.g. `.gitkeep` placeholders). Each new example crate is
+  # listed explicitly below as it lands; the source of truth is
+  # `specs/001-juce-examples/example-inventory.md`.
+  # US1 (DSP): only `juce_distortion_demo` is ported in this commit; the
+  # remaining 7 (oscillator, IIR, phaser, chorus, convolution, noise gate,
+  # limiter) are scaffolded in their per-task turn. They are kept out of
+  # `members` until their `Cargo.toml` is created to avoid a manifest error.
+  "plugins/examples/dsp/juce_distortion_demo",
 ]
 
 [workspace.dependencies]

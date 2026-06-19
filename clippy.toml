@@ -1,0 +1,67 @@
+# Clippy configuration for the logic_nih_plug workspace.
+#
+# Constitution §I + §G6: `process()` is real-time; no allocations, no blocking
+# locks, no `println!`/`dbg!`/`assert!`. We enforce the discipline with
+# `disallowed-methods` / `disallowed-types` so the violation is a build failure,
+# not a code review.
+#
+# Scope: by default these applies to the whole workspace. The plugin/examples/
+# and examples/ trees are the *primary* audience — every plugin example's
+# `process()` is a hard real-time context.
+
+# --- Real-time safety (constitution G1) ---------------------------------------
+
+disallowed-methods = [
+    # Blocking locks are forbidden in the audio thread.
+    { path = "std::sync::Mutex::lock",      reason = "blocking lock forbidden in real-time audio thread (use parking_lot::Mutex or AtomicX) — constitution G1" },
+    { path = "std::sync::RwLock::read",     reason = "blocking lock forbidden in real-time audio thread — constitution G1" },
+    { path = "std::sync::RwLock::write",    reason = "blocking lock forbidden in real-time audio thread — constitution G1" },
+    { path = "std::sync::mpsc::channel",    reason = "use crossbeam_channel for audio-thread-safe comms — constitution G1" },
+    { path = "std::sync::mpsc::sync_channel", reason = "use crossbeam_channel for audio-thread-safe comms — constitution G1" },
+    # println!/dbg!/eprintln! in plugin code clobbers the audio thread and
+    # makes CI logs noisy. The framework's nih_log!/nih_dbg! macros are the
+    # only sanctioned channel.
+    { path = "std::io::stdio::_print",      reason = "println!/print forbidden in plugin code (use nih_log! from logic_nih_plug::debug) — constitution G6" },
+    { path = "std::io::stdio::_eprint",     reason = "eprintln!/eprint forbidden in plugin code (use nih_log!) — constitution G6" },
+    { path = "std::dbg",                    reason = "dbg! forbidden in plugin code (use nih_dbg! from logic_nih_plug::debug) — constitution G6" },
+    # assert!/panic! in plugin code path: assertions may format strings, which
+    # allocates. The framework's assert_process_allocs feature is the gate.
+    { path = "std::assertions::assert_eq",  reason = "assert! may format strings and allocate; use nih_dbg! + a CI check, or move the check to a test" },
+    { path = "std::assertions::assert_ne",  reason = "assert! may format strings and allocate; use nih_dbg! + a CI check, or move the check to a test" },
+    { path = "std::assertions::assert",     reason = "assert! may format strings and allocate; use nih_dbg! + a CI check, or move the check to a test" },
+]
+
+# --- Identifier stability (constitution G2) -----------------------------------
+# We can't lint string-literal values in `#[id = "..."]`, but we DO lint the
+# surrounding source: every new crate must use the shared identity helper
+# (see contracts/example-crate-contract.md §3.1). This rule is enforced by the
+# workspace integration test tests/id_uniqueness.rs (T015), not by clippy.
+
+# --- Lint level (moderate) ----------------------------------------------------
+# The workspace's plugins target a stable, real-time-safe style. We start at
+# `warn` for pedantic and `warn` for nursery lints, and the framework's own
+# crates use `allow` overrides to suppress what isn't relevant.
+
+warn = [
+    "clippy::correctness",
+    "clippy::suspicious",
+    "clippy::style",
+    "clippy::complexity",
+    "clippy::perf",
+    "clippy::unwrap_used",
+    "clippy::expect_used",
+    "clippy::panic",
+    "clippy::todo",
+]
+
+allow = [
+    # Documentation: the `missing_docs` lint is too noisy for example code
+    # (the README is the documentation, not the rustdoc).
+    "missing-docs",
+    # Module name rules: examples sometimes use `examples::*` namespaces that
+    # don't follow `snake_case` strictly.
+    "non_camel_case_types",
+    # The `dsp` crate exposes types like `SampleType` that the analyzer
+    # occasionally mis-flags.
+    "clippy::module_inception",
+]

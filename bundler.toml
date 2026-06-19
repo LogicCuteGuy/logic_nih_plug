@@ -33,3 +33,27 @@ name = "Spectral Compressor"
 
 [juce_multi_module]
 name = "JUCE Multi-Module Synth"
+
+[juce_distortion_demo]
+name = "JUCE Distortion Demo"
+
+[juce_oscillator_demo]
+name = "JUCE Oscillator Demo"
+
+[juce_iir_filter_demo]
+name = "JUCE IIR Filter Demo"
+
+[juce_phaser_demo]
+name = "JUCE Phaser Demo"
+
+[juce_chorus_demo]
+name = "JUCE Chorus Demo"
+
+[juce_convolution_demo]
+name = "JUCE Convolution Demo"
+
+[juce_noise_gate_demo]
+name = "JUCE Noise Gate Demo"
+
+[juce_limiter_demo]
+name = "JUCE Limiter Demo"

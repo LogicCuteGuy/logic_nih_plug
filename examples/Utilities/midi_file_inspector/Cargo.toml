@@ -1,0 +1,19 @@
+[package]
+name = "midi_file_inspector"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["midi", "smf", "inspector", "juce-port"]
+description = "CLI demo: parses a Standard MIDI File and prints tempo, tracks, and events"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[[bin]]
+name = "midi_file_inspector"
+path = "src/main.rs"
+
+[dependencies]
+logic_nih_plug_audio_formats = { path = "../../../logic_nih_plug_audio_formats", features = ["midi"] }
+logic_nih_plug_audio_basics = { path = "../../../logic_nih_plug_audio_basics" }

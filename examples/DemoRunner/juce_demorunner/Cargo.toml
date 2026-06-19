@@ -1,0 +1,32 @@
+[package]
+name = "juce_demorunner"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["gui", "demorunner", "showcase", "juce-port"]
+description = "GUI showcase of every public component from logic_nih_plug_gui, with selectable backend (egui/iced/vizia)"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "juce_demorunner"
+path = "src/main.rs"
+
+[features]
+# Exactly one of these must be enabled per build (mutually exclusive).
+# The default is `gui-egui`.
+default = ["gui-egui"]
+gui-egui = []
+gui-iced = []
+gui-vizia = []
+
+[dependencies]
+logic_nih_plug_gui = { path = "../../../logic_nih_plug_gui" }
+logic_nih_plug_dsp = { path = "../../../logic_nih_plug_dsp", features = ["analysis"] }
+logic_nih_plug_animation = { path = "../../../logic_nih_plug_animation" }
+logic_nih_plug_graphics = { path = "../../../logic_nih_plug_graphics" }

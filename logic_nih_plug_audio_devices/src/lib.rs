@@ -64,7 +64,7 @@ pub use io_callback::{
     AudioIODeviceCallback, AudioIODeviceCallbackData, NullAudioIODeviceCallback,
 };
 pub use io_device::{AudioDeviceInfo, AudioIODevice};
-pub use mock::MockAudioIODevice;
+pub use mock::{MockAudioIODevice, MockAudioIODeviceEvent};
 
 #[cfg(feature = "manager")]
 pub use device_manager::{

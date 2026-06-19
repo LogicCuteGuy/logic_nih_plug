@@ -1,0 +1,18 @@
+[package]
+name = "osc_sender_demo"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["osc", "sender", "network", "juce-port"]
+description = "CLI demo: sends OSC messages via logic_nih_plug_osc"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[[bin]]
+name = "osc_sender_demo"
+path = "src/main.rs"
+
+[dependencies]
+logic_nih_plug_osc = { path = "../../../logic_nih_plug_osc" }

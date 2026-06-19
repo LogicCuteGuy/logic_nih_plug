@@ -1,0 +1,13 @@
+[package]
+name = "juce_iir_filter_demo"
+version = "0.1.0"
+edition = "2021"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+description = "JUCE-style IIR filter example (low-pass / high-pass / band-pass)"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+logic_nih_plug = { path = "../../../../", features = ["assert_process_allocs"] }

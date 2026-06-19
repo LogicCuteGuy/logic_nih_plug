@@ -43,6 +43,8 @@ state is to list breaking changes.
   PKCS#1-v1.5-only public surface. Returns `None` for public-only
   keys. Adds 1 round-trip + 1 doc-style use-test to the existing
   45-test / 4-doc-test suite in `logic_nih_plug_crypto`.
+- **`logic_nih_plug_audio_devices::MockAudioIODeviceEvent` re-exported** — the `MockAudioIODeviceEvent` enum (Opened/Closed/Started/Stopped) is now accessible from the public API for writing deterministic lifecycle assertions against `MockAudioIODevice` without internal crate access. One new public re-export; no breaking changes.
+- **JUCE-style Examples Portfolio** — 22 new crates porting JUCE `examples/` to Rust, organized in 5 user stories + Polish. Covers DSP plugins, standalone audio apps, a plugin host, file format utilities, and a multi-backend GUI showcase. All new crates compile, have unit tests, and are registered in `bundler.toml` and the workspace. Key crates added under `plugins/examples/dsp/` (8 DSP plugin demos), `examples/Audio/` (3 standalone audio apps), `examples/Plugins/` (headless plugin host CLI), `examples/Utilities/` (WAV reader/writer, MIDI inspector, OSC sender/receiver), and `examples/DemoRunner/juce_demorunner` (GUI showcase with egui/iced/vizia backends). New integration tests under `tests/` (id_uniqueness, readme_required, categorized). Updated `examples/README.md` categorized gallery. CI now builds DemoRunner with all 3 backends via `demorunner-backends` matrix in `.github/workflows/build.yml`.
 
 ## [2026-06-18]
 

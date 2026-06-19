@@ -1,0 +1,19 @@
+[package]
+name = "audio_workgroup_demo"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.80"
+authors = ["LogicCuteGuy <contact@logiccuteguy.com>"]
+license = "ISC"
+
+keywords = ["audio", "workgroup", "multi-node", "juce-port"]
+description = "Standalone audio workgroup demo — two nodes share an audio buffer and lifecycle"
+repository = "https://github.com/LogicCuteGuy/logic_nih_plug"
+
+[[bin]]
+name = "audio_workgroup_demo"
+path = "src/main.rs"
+
+[dependencies]
+logic_nih_plug_audio_devices = { path = "../../../logic_nih_plug_audio_devices" }
+logic_nih_plug_audio_formats = { path = "../../../logic_nih_plug_audio_formats" }

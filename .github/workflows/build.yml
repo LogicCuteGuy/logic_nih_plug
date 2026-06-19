@@ -102,3 +102,35 @@ jobs:
         with:
           name: ${{ env.ARCHIVE_NAME }}
           path: ${{ env.ARCHIVE_NAME }}
+
+  # Build the DemoRunner showcase app with each of the 3 mutually
+  # exclusive GUI backends (gui-egui / gui-iced / gui-vizia) on
+  # Ubuntu. The default build uses egui; the other two are built
+  # here to catch backend-specific regressions early.
+  demorunner-backends:
+    name: DemoRunner (${{ matrix.backend }})
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [gui-egui, gui-iced, gui-vizia]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libgl-dev libjack-dev libx11-xcb-dev libxcb1-dev libxcb-dri2-0-dev libxcb-icccm4-dev libxcursor-dev libxkbcommon-dev libxcb-shape0-dev libxcb-xfixes0-dev
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: demorunner-${{ matrix.backend }}
+      - name: Set up Rust toolchain (stable)
+        uses: dtolnay/rust-toolchain@stable
+      - name: Build + test DemoRunner with ${{ matrix.backend }}
+        run: |
+          cargo build -p juce_demorunner --no-default-features --features "${{ matrix.backend }}"
+          cargo test  -p juce_demorunner --no-default-features --features "${{ matrix.backend }}"
