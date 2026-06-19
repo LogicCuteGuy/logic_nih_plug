@@ -57,7 +57,7 @@ This folder.
 | File | Purpose |
 |---|---|
 | [README.md](README.md) | this index |
-| [../TODO.md](../TODO.md) | full JUCE feature-parity backlog (root of the repo) |
+| [TODO.md](TODO.md) | full JUCE feature-parity backlog |
 | [getting-started.md](getting-started.md) | build, test, toolchain, hard rules |
 | [plugin-skeleton.md](plugin-skeleton.md) | minimal `gain`-style plugin walkthrough |
 | [dsp-and-gui.md](dsp-and-gui.md) | `logic_nih_plug_dsp`, GUI backends, BYO-GUI, animation |

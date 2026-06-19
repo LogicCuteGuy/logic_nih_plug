@@ -217,7 +217,7 @@ examples/                                      # NEW top-level dir (does not exi
 Cargo.toml                                     # UPDATE — add ~33 new members to [workspace.members]
 bundler.toml                                   # UPDATE — register each new plugin example (FR-014)
 CHANGELOG.md                                   # UPDATE — Added entry under 2026-06-19 (per constitution)
-TODO.md                                        # UPDATE — tick off JUCE-port example items
+docs/TODO.md                                    # UPDATE — tick off JUCE-port example items
 ```
 
 **Structure Decision**:
@@ -329,7 +329,7 @@ The following artifacts are produced by this plan (and will be created by `/spec
 - [ ] `Cargo.toml` — add ~33 new workspace members
 - [ ] `bundler.toml` — add ~25 new plugin entries (FR-014, SC-008)
 - [ ] `CHANGELOG.md` — Added entry under 2026-06-19
-- [ ] `TODO.md` — tick off JUCE example ports
+- [ ] `docs/TODO.md` — tick off JUCE example ports
 
 ---
 

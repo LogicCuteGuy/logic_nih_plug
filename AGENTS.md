@@ -2,7 +2,7 @@
 
 Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **Smallest correct change; keep the codebase intact.**
 
-> Prefer linking to existing docs over restating them. See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for the full index.
+> Prefer linking to existing docs over restating them. See [docs/README.md](docs/README.md) for the full index.
 
 ---
 
@@ -11,8 +11,8 @@ Rust audio-plugin framework (`logic_nih_plug`). ~30 plugins, many sub-crates. **
 | Doc | What it covers |
 |---|---|
 | [README.md](README.md) | Project overview, plugin list, features |
-| [TODO.md](TODO.md) | JUCE port backlog with per-crate status — **check this first when starting a new port** |
-| [QUICK_START.md](QUICK_START.md) | 5-min intro to ported modules (dsp, audio_formats, gui, animation) |
+| [TODO.md](docs/TODO.md) | JUCE port backlog with per-crate status — **check this first when starting a new port** |
+| [docs/getting-started.md](docs/getting-started.md) | Build, test, toolchain, hard rules |
 | [src/prelude.rs](src/prelude.rs) | Everything re-exported by `use logic_nih_plug::prelude::*` |
 
 ---
@@ -126,7 +126,7 @@ See [plugins/examples/gain/src/lib.rs](plugins/examples/gain/src/lib.rs) — the
 
 ## 9. `juce_core` / `juce_events` — no crate, use stdlib + existing deps
 
-Every JUCE item in [TODO.md](TODO.md) §4 is already covered by Rust
+Every JUCE item in [TODO.md](docs/TODO.md) §4 is already covered by Rust
 stdlib or by a dep already in the workspace tree. **Do not** create a
 `logic_nih_plug_core` (or similar) crate that wraps them — that's just
 cargo-culting `pub struct X(pub Y);`. Use the stdlib equivalents directly:

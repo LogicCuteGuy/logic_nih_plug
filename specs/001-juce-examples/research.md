@@ -107,7 +107,7 @@ implementation uses the recommended default; resolving Q2-Q5 narrows the
 
 - [JUCE `examples/`](https://github.com/juce-framework/JUCE/tree/master/examples)
 - [Project `AGENTS.md`](../../AGENTS.md) — hard rules, build commands, conventions
-- [Project `TODO.md`](../../TODO.md) — JUCE port backlog
+- [Project `TODO.md`](../../docs/TODO.md) — JUCE port backlog
 - [`logic_nih_plug_dsp` README](../../logic_nih_plug_dsp/README.md) — DSP module inventory
 - [`logic_nih_plug_gui` README](../../logic_nih_plug_gui/README.md) — GUI module inventory
 - [`logic_nih_plug_audio_devices` MockAudioIODevice](../../logic_nih_plug_audio_devices/src/mock.rs)

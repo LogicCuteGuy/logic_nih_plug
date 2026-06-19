@@ -33,6 +33,9 @@ quickly get started with NIH-plug.
   - [Plugin formats](#plugin-formats)
   - [Example plugins](#example-plugins)
 - [JUCE Ported Modules](#juce-ported-modules)
+  - [Available Modules](#available-modules)
+  - [Documentation](#documentation)
+- [Project Structure](#project-structure)
 - [Licensing](#licensing)
 
 ## Plugins
@@ -207,48 +210,71 @@ Exporting a specific plugin format for a plugin is as simple as calling the
 which plugin formats your plugin supports and create the appropriate bundles
 accordingly, even when cross compiling.
 
-For detailed information on using these formats, see the
-[Multi-Format Export Guide](MULTI_FORMAT_EXPORT.md).
+For detailed information on multi-format examples, see the
+[Multi-Format Plugin Examples](plugins/examples/FORMAT_EXAMPLES.md).
 
 ### Example plugins
 
 The best way to get an idea for what the API looks like is to look at the
 examples.
 
-- [**gain**](plugins/examples/gain) is a simple smoothed gain plugin that shows
-  off a couple other parts of the API, like support for storing arbitrary
+- [**gain**](plugins/examples/gain) — simple smoothed gain plugin with
   serializable state.
-- **gain-gui** is the same plugin as gain, but with a GUI to control the
-  parameter and a digital peak meter. Comes in three exciting flavors:
+- **gain-gui** — gain with a GUI and peak meter, in three flavors:
   [egui](plugins/examples/gain_gui_egui),
-  [iced](plugins/examples/gain_gui_iced), and
+  [iced](plugins/examples/gain_gui_iced),
   [VIZIA](plugins/examples/gain_gui_vizia).
+  Also [OpenGL](plugins/examples/byo_gui_gl),
+  [wgpu](plugins/examples/byo_gui_wgpu),
+  [softbuffer](plugins/examples/byo_gui_softbuffer) BYO-GUI examples.
+- [**midi_inverter**](plugins/examples/midi_inverter) — note/MIDI event
+  transformation.
+- [**poly_mod_synth**](plugins/examples/poly_mod_synth) — polyphonic synth with
+  CLAP poly modulation.
+- **[JUCE-style Examples Portfolio](examples/README.md)** — 22 Rust crates
+  porting JUCE `examples/` to NIH-plug. See the full catalog below.
+- [**sine**](plugins/examples/sine) — test tone generator with frequency
+  smoothing and MIDI input.
+- [**stft**](plugins/examples/stft) — short-time Fourier transform overlap-add
+  processing.
+- [**sysex**](plugins/examples/sysex) — custom SysEx message types.
 
-  There are also examples for making custom GUIs with
-  [OpenGL](plugins/examples/byo_gui_gl), [wgpu](plugins/examples/byo_gui_wgpu),
-  and [softbuffer](plugins/examples/byo_gui_softbuffer).
+#### JUCE DSP Plugin Examples
 
-- [**midi_inverter**](plugins/examples/midi_inverter) takes note/MIDI events and
-  flips around the note, channel, expression, pressure, and CC values. This
-  example demonstrates how to receive and output those events.
-- [**poly_mod_synth**](plugins/examples/poly_mod_synth) is a simple polyphonic
-  synthesizer with support for polyphonic modulation in supported CLAP hosts.
-  This demonstrates how polyphonic modulation can be used in NIH-plug.
-- **[JUCE-style Examples Portfolio](examples/README.md)** — a curated gallery
-  of 22 Rust crates porting the most instructive JUCE `examples/` to
-  NIH-plug. Covers 8 DSP plugin examples (distortion, oscillator, IIR filter,
-  phaser, chorus, convolution, noise gate, limiter), 3 standalone audio apps
-  (playback, recording, workgroup), a headless + GUI plugin host, 5 file-IO /
-  OSC utilities, and a multi-backend GUI DemoRunner (egui / iced / vizia).
-- [**sine**](plugins/examples/sine) is a simple test tone generator plugin with
-  frequency smoothing that can also make use of MIDI input instead of generating
-  a static signal based on the plugin's parameters.
-- [**stft**](plugins/examples/stft) shows off some of NIH-plug's other optional
-  higher level helper features, such as an adapter to process audio with a
-  short-term Fourier transform using the overlap-add method, all using the
-  compositional `Buffer` interfaces.
-- [**sysex**](plugins/examples/sysex) is a simple example of how to send and
-  receive SysEx messages by defining custom message types.
+Located in `plugins/examples/dsp/`, these are direct ports of JUCE's DSP demo plugins:
+
+| Example | What it demonstrates |
+|---|---|
+| `juce_distortion_demo` | Waveshaper distortion |
+| `juce_oscillator_demo` | Oscillator waveforms |
+| `juce_iir_filter_demo` | IIR filter types |
+| `juce_phaser_demo` | Phaser effect |
+| `juce_chorus_demo` | Chorus effect |
+| `juce_convolution_demo` | Convolution / IR loading |
+| `juce_noise_gate_demo` | Noise gate dynamics |
+| `juce_limiter_demo` | Limiter dynamics |
+
+#### Standalone Audio Apps
+
+Located in `examples/Audio/` — runnable binaries (`[[bin]]` targets):
+
+| Example | What it demonstrates |
+|---|---|
+| `audio_playback_demo` | WAV playback via `MockAudioIODevice` |
+| `audio_recording_demo` | WAV recording |
+| `audio_workgroup_demo` | Two-node shared audio buffer |
+
+#### Utilities
+
+Located in `examples/Utilities/` — file-IO and OSC demos:
+
+| Example | What it demonstrates |
+|---|---|
+| `wav_reader` | Print WAV header summary |
+| `wav_writer` | Write a 1-second sine WAV |
+| `midi_file_inspector` | Print SMF tempo, tracks, events |
+| `osc_sender_demo` | Send OSC bundles |
+| `osc_receiver_demo` | Receive OSC messages |
 
 ## JUCE Ported Modules
 
@@ -257,32 +283,96 @@ DSP algorithms, audio file I/O, data structures, graphics, GUI components, and m
 without any C++ dependencies. These modules are designed to integrate seamlessly
 with nih-plug while maintaining compatibility with JUCE's design patterns.
 
-**Available Modules:**
-- `logic_nih_plug_dsp` - Digital signal processing (filters, oscillators, envelopes, convolution, dynamics, reverb, delay, modulation)
-- `logic_nih_plug_audio_formats` - Audio file I/O (WAV, AIFF, FLAC, OGG)
-- `logic_nih_plug_data` - Data structures (ValueTree, UndoManager)
-- `logic_nih_plug_graphics` - 2D graphics primitives
-- `logic_nih_plug_gui` - GUI components and layout
-- `logic_nih_plug_osc` - Open Sound Control networking (OscSender, OscReceiver, OSCArgument, OSCBundle)
-- `logic_nih_plug_crypto` - Cryptography utilities
-- `logic_nih_plug_animation` - Animation and easing functions
-- `logic_nih_plug_midi_ci` - MIDI 2.0 Capability Inquiry: 32 message types, transport-agnostic `Device` + `DeviceListener` pattern, Discovery / Profile / Property Exchange state caches.
+### Available Modules
 
-**Documentation:**
-- 📚 [Documentation Index](DOCUMENTATION_INDEX.md) - **Complete documentation guide**
-- 🚀 [Quick Start Guide](QUICK_START.md) - Get started in 5 minutes
-- 📖 [Module Overview](README_PORTED_MODULES.md) - Detailed information about each module
-- 🔄 [Migration Guide](MIGRATION_GUIDE.md) - Migrating from JUCE C++ to Rust
-- 📋 [API Reference](API_REFERENCE.md) - Comprehensive API documentation
+| Module | Description | Features |
+|---|---|---|
+| `logic_nih_plug_dsp` | Digital signal processing: filters, oscillators, envelopes, convolution, dynamics, reverb, delay, modulation, mixer, analysis (FFT, STFT, level metering), pitch (Phase Vocoder, pitch shift, time stretching), resampling (windowed sinc, Catmull-Rom, Lagrange) | `filters`+`oscillators` (default), `dynamics`/`reverb`/`delay`/`modulation`/`mixer`/`resampling` under `processors`, `analysis`, `pitch`, `full` |
+| `logic_nih_plug_audio_formats` | Audio file I/O: WAV, AIFF (+ optional FLAC/OGG), MIDI file read/write with tempo-aware transport (`MidiFilePlayer`) | `midi` (default off) |
+| `logic_nih_plug_audio_basics` | Core audio types: `AudioSampleBuffer`, `AudioChannelSet`, `MidiMessage`, `MidiRPN`, `MidiClock`, MTC timecode types | — |
+| `logic_nih_plug_audio_devices` | Host-side audio device management: `AudioDeviceManager`, `AudioIODevice` trait, `MockAudioIODevice`. Driver bindings (cpal, coreaudio-rs, ASIO) plug in by implementing the trait | `manager` (default), `full` |
+| `logic_nih_plug_audio_processors` | Plugin discovery/management: `PluginDescription`, `PluginFormat` trait, `KnownPluginList`, `PluginDirectoryScanner` | `scanner`, `full` |
+| `logic_nih_plug_data` | Data structures: `ValueTree`, `UndoManager`, `CachedValue<T>` | — |
+| `logic_nih_plug_gui` | JUCE-style `Component`/`Button`/FlexBox port, BYO-GUI helpers, extra controls (`ComboBox`, `TextEditor`, `MidiKeyboardComponent`), CSS Grid layout, OpenGL support | `components`, `layout`, `graphics`, `text`, `softbuffer-editor`, `gl-editor`, `full` |
+| `logic_nih_plug_graphics` | 2D vector graphics (tiny-skia backed `Painter`/`Path`/`Stroke`), glyph arrangement, image rescale/convolve | — |
+| `logic_nih_plug_animation` | Easing functions, animation chaining | — |
+| `logic_nih_plug_osc` | Open Sound Control: `OscSender`, `OscReceiver`, `OSCArgument`, `OSCBundle` | — |
+| `logic_nih_plug_crypto` | Cryptography: SHA, MD5, RSA (textbook) | — |
+| `logic_nih_plug_product_unlocking` | JUCE-style licensing: keyfile generation, `OnlineUnlockStatus` state machine, machine ID helpers | `key_generation`, `online_unlock_status`, `full` |
+| `logic_nih_plug_video` | Video playback: `VideoFrame` (RGBA8888), `VideoDecoder` (ffmpeg), `VideoComponent` (GUI) | `decoder`, `gui`, `full` |
+| `logic_nih_plug_midi_ci` | MIDI 2.0 Capability Inquiry: 32 message types, transport-agnostic `Device` + `DeviceListener` pattern | — |
+| `logic_nih_plug_derive` | `#[derive(Params)]` proc macro | — |
+| `logic_nih_plug_xtask` | Plugin bundling library (`cargo xtask bundle`) | — |
+| `logic_nih_plug_egui` / `_iced` / `_vizia` | GUI backend adapters for egui, iced, and VIZIA | — |
+
+### Documentation
+
+- 📚 [Documentation Index](docs/README.md) — complete docs guide and file inventory
+- 🚀 [Getting Started](docs/getting-started.md) — build, test, toolchain, hard rules
+- 📖 [DSP & GUI Guide](docs/dsp-and-gui.md) — `logic_nih_plug_dsp`, GUI backends, BYO-GUI
+- 📋 [Plugin Guide](docs/plugins.md) — the 9 real plugins + examples directory
+- 🔄 [Plugin Skeleton](docs/plugin-skeleton.md) — minimal plugin walkthrough
+- 📦 [Bundling Guide](docs/bundling.md) — `cargo xtask`, formats, CI
+- 🔀 [JUCE Feature Backlog](docs/TODO.md) — per-crate JUCE feature-parity status
 - 💻 Full API docs: `cargo doc --open --workspace`
 
-**Quick Example:**
+### Quick Example
+
 ```rust
 use logic_nih_plug_dsp::filters::IIRFilter;
 
 let mut filter = IIRFilter::new();
 filter.set_coefficients(&[1.0, 0.5], &[1.0, -0.5])?;
 filter.process(&input, &mut output);
+```
+
+## Project Structure
+
+```
+logic_nih_plug/
+├── src/                          # Core framework (Plugin trait, Buffer, Params, wrappers)
+├── logic_nih_plug_derive/        # #[derive(Params)] proc macro
+├── logic_nih_plug_dsp/           # DSP algorithms (filters, oscillators, dynamics, …)
+├── logic_nih_plug_gui/           # JUCE-style GUI components + layout + OpenGL
+├── logic_nih_plug_graphics/      # 2D vector graphics (tiny-skia backed)
+├── logic_nih_plug_animation/     # Easing and animation
+├── logic_nih_plug_audio_formats/ # WAV/AIFF/FLAC/OGG + MIDI file I/O
+├── logic_nih_plug_audio_basics/  # Core audio types (Buffer, MidiMessage, MTC)
+├── logic_nih_plug_audio_devices/ # AudioDeviceManager + IODevice trait
+├── logic_nih_plug_audio_processors/ # Plugin discovery and scanning
+├── logic_nih_plug_data/          # ValueTree, UndoManager, CachedValue
+├── logic_nih_plug_osc/           # Open Sound Control
+├── logic_nih_plug_crypto/        # SHA, MD5, RSA
+├── logic_nih_plug_video/         # Video playback (ffmpeg)
+├── logic_nih_plug_midi_ci/       # MIDI 2.0 Capability Inquiry
+├── logic_nih_plug_product_unlocking/ # Licensing / keyfile system
+├── logic_nih_plug_egui/          # egui GUI backend
+├── logic_nih_plug_iced/          # iced GUI backend
+├── logic_nih_plug_vizia/         # VIZIA GUI backend
+├── logic_nih_plug_xtask/         # Plugin bundling library
+├── plugins/                      # Real plugins + example plugins
+│   ├── examples/                 # Example plugins (gain, sine, stft, …)
+│   │   └── dsp/                  # JUCE DSP demo ports
+│   ├── buffr_glitch/             # Real plugins
+│   ├── crisp/
+│   ├── crossover/
+│   ├── diopser/
+│   ├── loudness_war_winner/
+│   ├── puberty_simulator/
+│   ├── safety_limiter/
+│   ├── soft_vacuum/
+│   └── spectral_compressor/
+├── examples/                     # Standalone apps + utilities
+│   ├── Audio/                    # Playback, recording, workgroup demos
+│   ├── Utilities/                # WAV/MIDI/OSC CLI tools
+│   ├── Plugins/                  # Plugin host (CLI + egui GUI)
+│   ├── DemoRunner/               # Multi-backend GUI showcase
+│   ├── audio-assets/             # Reference WAV fixtures
+│   └── midi-assets/              # Reference MIDI fixtures
+├── docs/                         # Project documentation
+├── specs/                        # Feature specs and design docs
+├── xtask/                        # Cargo subcommand shim
+└── Cargo.toml                    # Workspace root
 ```
 
 ## Licensing
