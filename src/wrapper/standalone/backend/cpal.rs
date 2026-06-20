@@ -149,7 +149,7 @@ impl<P: Plugin> Backend<P> for CpalMidir {
                     ($sample_format:expr, $(($format:path, $primitive_type:ty)),*) => {
                         match $sample_format {
                             $($format => input.device.build_input_stream(
-                                &input.config,
+                                input.config,
                                 self.build_input_data_callback::<$primitive_type>(input_unparker, rb_producer),
                                 error_cb,
                                 None,
@@ -292,7 +292,7 @@ impl<P: Plugin> Backend<P> for CpalMidir {
                 ($sample_format:expr, $(($format:path, $primitive_type:ty)),*) => {
                     match $sample_format {
                         $($format => self.output.device.build_output_stream(
-                            &self.output.config,
+                            self.output.config,
                             self.build_output_data_callback::<P, $primitive_type>(
                                 unparker,
                                 input_rb_consumer,
@@ -389,16 +389,18 @@ impl CpalMidir {
                 let device = host
                     .input_devices()
                     .context("No audio input devices available")?
-                    // `.name()` returns a `Result` with a non-Eq error type so you can't compare this
-                    // directly
-                    .find(|d| d.name().as_deref().map(|n| n == name).unwrap_or(false))
+                    // `.description()` returns a `Result`; swallow errors and compare the name
+                    .find(|d| {
+                        d.description()
+                            .is_ok_and(|desc| desc.name() == name.as_str())
+                    })
                     .with_context(|| {
                         // This is a bit awkward, but instead of adding a dedicated option we'll just
                         // list all of the available devices in the error message when the chosen device
                         // does not exist
                         let mut message =
                             format!("Unknown input device '{name}'. Available devices are:");
-                        for device_name in host.input_devices().unwrap().flat_map(|d| d.name()) {
+                        for device_name in host.input_devices().unwrap().map(|d| d.to_string()) {
                             message.push_str(&format!("\n{device_name}"))
                         }
 
@@ -413,11 +415,14 @@ impl CpalMidir {
             Some(name) => host
                 .output_devices()
                 .context("No audio output devices available")?
-                .find(|d| d.name().as_deref().map(|n| n == name).unwrap_or(false))
+                .find(|d| {
+                    d.description()
+                        .is_ok_and(|desc| desc.name() == name.as_str())
+                })
                 .with_context(|| {
                     let mut message =
                         format!("Unknown output device '{name}'. Available devices are:");
-                    for device_name in host.output_devices().unwrap().flat_map(|d| d.name()) {
+                    for device_name in host.output_devices().unwrap().map(|d| d.to_string()) {
                         message.push_str(&format!("\n{device_name}"))
                     }
 

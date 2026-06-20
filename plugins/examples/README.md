@@ -19,7 +19,7 @@ reference.
 If you are new to the framework, the recommended reading order is:
 
 1. [`gain`](./gain) — the absolute minimum plugin (`Plugin` + `Params` + a
-   `FloatParam` with smoothing). No editor. ~80 lines of `lib.rs`.
+   `FloatParam` with smoothing). No editor. ~215 lines of `lib.rs`.
 2. [`gain_gui_egui`](./gain_gui_egui) — `gain` with an `egui` editor that
    binds a slider to the `FloatParam`.
 3. [`juce_dsp_filter`](./juce_dsp_filter) — the same `gain` shape but with

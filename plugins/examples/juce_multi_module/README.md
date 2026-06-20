@@ -117,3 +117,31 @@ Potential additions to explore:
 - Implement preset browser with ValueTree
 - Add more complex modulation routing
 - Integrate OSC control using `logic_nih_plug_osc`
+
+## What this example ports
+
+- **JUCE source**: this is a workspace-original composite that combines several ported JUCE modules into a single multi-module synthesizer; it demonstrates how a ported `dsp` (oscillator/filter/envelope), a ported `data` (ValueTree + XML), a ported `animation` (easing curves), and a ported `crypto` (SHA-256) module integrate the way the equivalent JUCE source modules (`juce_dsp`, `juce_data_structures`, etc.) do.
+- **What to learn from this example**: how to initialise and reset several `Processor`-style components in lock-step with the host sample rate, and how to layer `ValueTree` preset storage on top of `nih_plug` plugin state.
+
+## Running the doc-tests
+
+```bash
+cargo test -p juce_multi_module --doc
+cargo test -p juce_multi_module
+```
+
+The first command runs the doctests embedded in the crate's `lib.rs` (parameter range and signal-flow examples); the second runs the integration suite that drives the synthesizer end-to-end through a `MockAudioIODevice`.
+
+## References
+
+- [`logic_nih_plug_dsp`](../../../logic_nih_plug_dsp/src/lib.rs) — oscillators, IIR filter, ADSR, smoothing
+- [`logic_nih_plug_data`](../../../logic_nih_plug_data/src/lib.rs) — ValueTree + XML serialization
+- [`logic_nih_plug_animation`](../../../logic_nih_plug_animation/src/lib.rs) — easing curves used for filter modulation
+- [`logic_nih_plug_crypto`](../../../logic_nih_plug_crypto/src/lib.rs) — SHA-256 preset verification
+
+## JUCE fidelity checklist
+
+- **Oscillator set**: sine, saw, square, and triangle waveforms are produced by the same `Oscillator` interface used in ported `juce_dsp` modules, with identical naive/integrated anti-aliasing entry points.
+- **Envelope ranges**: ADSR attack/decay/release span 1 ms – 2 s (release up to 5 s) and sustain 0.0 – 1.0, matching the JUCE `ADSR` defaults so existing presets port over unchanged.
+- **Filter**: a TPT-style state-variable low-pass with resonance (Q) control preserves the topology-preserving behaviour of JUCE's `StateVariableTPTFilter`.
+- **Preset integrity**: the SHA-256 hash over the serialised ValueTree bytes reproduces JUCE's "verify on load" step so that tampered presets are rejected just as they would be in a JUCE host.

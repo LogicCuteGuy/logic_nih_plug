@@ -68,3 +68,30 @@ The implementation processes audio through each processor in sequence:
 5. Finally through the output gain
 
 This architecture demonstrates the processor chain concept and makes it easy to understand the signal flow. The modular design allows for easy modification of the chain by adding, removing, or reordering processors.
+
+## What this example ports
+
+- **JUCE source**: `examples/ DSP/PluginProcessorChainDemo.h` (processor-chain composition).
+- **What to learn from this example**: how to compose the ported `Gain`, `Bias`, `WaveShaper`, and `DCFilter` processors from `logic_nih_plug_dsp` into a single named chain, in the same order the JUCE demo uses.
+
+## Running the doc-tests
+
+```bash
+cargo test -p overdrive --doc
+cargo test -p overdrive
+```
+
+The `--doc` run executes the doctests in the crate's `lib.rs` (chain ordering, parameter ranges, and signal-flow snippets); the plain `cargo test` run executes the integration test that drives the full drive → bias → waveshaper → DC filter → output chain through `MockAudioIODevice`.
+
+## References
+
+- [`logic_nih_plug_dsp`](../../../logic_nih_plug_dsp/src/lib.rs) — `Gain`, `Bias`, `WaveShaper`, `DCFilter` processors
+- [`plugins/examples/overdrive/src/lib.rs`](../../../plugins/examples/overdrive/src/lib.rs) — chain composition entry point
+- [`specs/001-juce-examples/spec.md`](../../../specs/001-juce-examples/spec.md) — JUCE examples validation spec (reqs 3.4, 4.2, 5.1, 6.1, 11.1, 12.1)
+
+## JUCE fidelity checklist
+
+- **Signal chain order**: input gain → bias → waveshaper → DC filter → output gain, matching the JUCE `PluginProcessorChainDemo` order so that the bias-shaping-then-DC-removal invariant is preserved.
+- **Drive range**: drive gain spans 0–24 dB, exactly as the JUCE demo's input gain stage.
+- **Bias range**: bias offset is clamped to −0.5 … +0.5 to keep the asymmetry behaviour identical to the upstream example.
+- **DC removal**: the post-shaper `DCFilter` is configured with the same time constant as the JUCE reference, so low-frequency content is restored equivalently after asymmetric clipping.

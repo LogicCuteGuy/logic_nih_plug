@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["NIH-plug Contributors"]
 license = "ISC"
+description = "Gain plugin with a biquad IIR filter using logic_nih_plug_dsp"
 
 [lib]
 crate-type = ["cdylib"]

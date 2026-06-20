@@ -44,3 +44,35 @@ cargo test -p juce_audio_plugin_host_egui
 - [`logic_nih_plug_audio_processors`](../../../logic_nih_plug_audio_processors/src/lib.rs) — scanner
 - [`logic_nih_plug_audio_devices`](../../../logic_nih_plug_audio_devices/src/lib.rs) — `MockAudioIODevice`
 - [`specs/001-juce-examples/spec.md`](../../../../specs/001-juce-examples/spec.md) — feature spec
+
+## Parameters
+
+Not applicable — this example is a *plugin host* rather than a plugin with its own parameters; it surfaces parameters belonging to whatever scan-loaded plugin is currently hosted in the `host` engine. The visible host-level UI controls are limited to scan, load, and play/stop rather than audio parameters.
+
+## Building
+
+```bash
+cargo build -p juce_audio_plugin_host_egui --features standalone --release
+```
+
+The crate is also built as part of the standard workspace bundle step:
+
+```bash
+cargo xtask bundle juce_audio_plugin_host_egui --release
+```
+
+## Running the doc-tests
+
+```bash
+cargo test -p juce_audio_plugin_host_egui --doc
+cargo test -p juce_audio_plugin_host_egui
+```
+
+The first command runs the doctests embedded in the crate's `lib.rs`; the second runs the integration test suite that exercises the host engine and the `PluginDirectoryScanner` wrapper.
+
+## JUCE fidelity checklist
+
+- **Plugin discovery**: `PluginDirectoryScanner` + `KnownPluginList` are wired through `scanner.rs` exactly as in `examples/Plugins/HostPluginDemo.h`, preserving JUCE's scan/sort/dedupe pipeline.
+- **Audio path**: the `host` engine calls `process()` on the loaded plugin per buffer in the same order JUCE's host demo does, including the `MockAudioIODevice` fallback for offline/CI runs.
+- **Parameter binding**: `editor.rs` mirrors JUCE's slider-to-APVTS binding pattern via `nih_plug::ParamPtr` so the host UI controls behave like the original `HostPluginDemo` panel.
+- **State save/load**: the host preserves JUCE's chunk-based state round-tripping for any loaded plugin instance.

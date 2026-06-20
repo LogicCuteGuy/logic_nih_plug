@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
 license = "ISC"
+description = "Short-time Fourier transform spectrogram plugin"
 
 [lib]
 crate-type = ["cdylib"]

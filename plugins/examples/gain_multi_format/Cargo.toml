@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["LogicCuteGuy <contact@logiccuteguy.com>", "Robbert van der Helm <mail@robbertvanderhelm.nl>"]
 license = "ISC"
+description = "Minimal gain plugin exported in VST3, CLAP, AU, AUv3, LV2, AAX, and VST2 simultaneously"
 
 [lib]
 crate-type = ["cdylib"]

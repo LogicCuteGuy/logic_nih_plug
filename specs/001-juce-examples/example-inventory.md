@@ -19,11 +19,7 @@
 | Plugins | 14 | 0 | 13 | 1 | 0 | 0 |
 | Utilities | 16 | 0 | 11 | 5 | 0 | 0 |
 | DemoRunner | 1 | 0 | 0 | 1 | 0 | 0 |
-| GUI | 27 | 0 | 27 | 0 | 0 | 0 |
-| Plugins | 14 | 0 | 14 | 0 | 0 | 0 |
-| Utilities | 16 | 0 | 16 | 0 | 0 | 0 |
-| DemoRunner | 1 | 0 | 1 | 0 | 0 | 0 |
-| **Total** | **80** | **0** | **80** | **0** | **0** | **0** |
+| **Total** | **80** | **0** | **62** | **18** | **0** | **0** |
 
 > Counts above enumerate every `*.h` file in the matching `examples/<Category>/` directory
 > (excluding `CMakeLists.txt` and `extern/`/`Builds/`/`JuceLibraryCode/`/`Source/` scaffolding).

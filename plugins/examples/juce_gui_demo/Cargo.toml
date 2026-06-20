@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["NIH-plug Contributors"]
 license = "ISC"
+description = "Showcase plugin exercising every logic_nih_plug_gui primitive"
 
 [lib]
 crate-type = ["cdylib"]

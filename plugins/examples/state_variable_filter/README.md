@@ -39,3 +39,30 @@ This example validates the following requirements from the JUCE examples validat
 - **Requirement 1.2**: Smooth filter type changes without clicks
 - **Requirement 1.3**: Stable filtering at all parameter settings
 - **Requirement 10.3**: Example demonstrating ported JUCE DSP features
+
+## What this example ports
+
+- **JUCE source**: `examples/DSP/StateVariableFilterDemo.h`.
+- **What to learn from this example**: how to drive the ported TPT state-variable filter from `logic_nih_plug_dsp` with `nih_plug` parameters, and how to mirror the frequency-response visualiser from the JUCE demo using `logic_nih_plug_gui`'s OpenGL widgets.
+
+## Running the doc-tests
+
+```bash
+cargo test -p state_variable_filter --doc
+cargo test -p state_variable_filter
+```
+
+The `--doc` run covers the embedded doctests in `lib.rs` (cutoff/resonance ranges and TPT stability notes); the plain `cargo test` runs the integration suite that steps the cutoff and asserts the magnitude response matches the analytical transfer function.
+
+## References
+
+- [`logic_nih_plug_dsp`](../../../logic_nih_plug_dsp/src/lib.rs) — TPT state-variable filter
+- [`logic_nih_plug_gui`](../../../logic_nih_plug_gui/src/lib.rs) — OpenGL frequency-response widget
+- [`specs/001-juce-examples/spec.md`](../../../specs/001-juce-examples/spec.md) — JUCE examples validation spec (reqs 1.1, 1.2, 1.3, 10.3)
+
+## JUCE fidelity checklist
+
+- **Topology**: uses the TPT (Topology-Preserving Transform) state-variable structure, the same one as JUCE's `StateVariableTPTFilter`, so the filter is stable at every cutoff/Q setting (req 1.3).
+- **Modes**: lowpass, bandpass, and highpass are produced by selecting different internal nodes of the same SVF core, mirroring JUCE's `setType()` API.
+- **Parameter ranges**: cutoff 20 Hz – 20 kHz on a logarithmic scale and resonance/Q 0.1 – 1.0, matching the JUCE demo so existing presets transfer unchanged.
+- **Smoothing**: cutoff and resonance changes are smoothed across blocks so that filter-type or cutoff switches remain click-free (req 1.2).
